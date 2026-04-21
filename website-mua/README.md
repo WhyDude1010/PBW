@@ -1,58 +1,95 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Website MUA (Make-Up Artist)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Welcome to the Website MUA repository! This is a Laravel-based project. Below you will find the requirements and instructions for collaborators to get started and edit this project.
 
-## About Laravel
+## Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+To run this project locally, make sure your development environment meets the following requirements:
+- **PHP**: >= 8.3 (or 8.4 if required by specific dependencies)
+- **Composer**: Dependency manager for PHP
+- **Node.js & npm**: For managing frontend assets
+- **Database**: SQLite (default), MySQL, or PostgreSQL
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Getting Started (Setup)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Follow these steps to set up the project on your local machine:
 
-## Learning Laravel
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd PBW/website-mua
+   ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+2. **Install PHP dependencies:**
+   ```bash
+   composer install
+   ```
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. **Install frontend dependencies:**
+   ```bash
+   npm install
+   ```
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+4. **Set up environment variables:**
+   Copy the example environment file and configure it if necessary (like database credentials).
+   ```bash
+   cp .env.example .env
+   ```
 
-## Agentic Development
+5. **Generate the application key:**
+   ```bash
+   php artisan key:generate
+   ```
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+6. **Run database migrations:**
+   ```bash
+   php artisan migrate
+   ```
 
-```bash
-composer require laravel/boost --dev
+7. **Start the development servers:**
+   You will need to run both the PHP server and the Vite frontend server.
+   
+   In one terminal, run:
+   ```bash
+   php artisan serve
+   ```
+   
+   In a second terminal, run:
+   ```bash
+   npm run dev
+   ```
 
-php artisan boost:install
-```
+## How to Edit This Branch
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+If you are collaborating and need to edit the project, follow these steps to ensure you are up-to-date and your changes are safely pushed:
 
-## Contributing
+### Pushing Directly to This Branch (`main`)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. **Pull the latest changes** before making any edits to avoid conflicts:
+   ```bash
+   git pull origin main
+   ```
+2. **Make your changes** in the codebase.
+3. **Stage your changes:**
+   ```bash
+   git add .
+   ```
+4. **Commit your changes** with a descriptive message:
+   ```bash
+   git commit -m "Add a descriptive message about what you changed"
+   ```
+5. **Push the changes** to GitHub:
+   ```bash
+   git push origin main
+   ```
 
-## Code of Conduct
+### Recommended Workflow (Using Feature Branches)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+For larger changes, it's highly recommended to use a separate branch:
+1. Ensure you are up-to-date: `git pull origin main`
+2. Create a new branch: `git checkout -b feature/your-feature-name`
+3. Make your changes, commit them, and push the branch: `git push origin feature/your-feature-name`
+4. Open a Pull Request on GitHub to merge into `main`.
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+Happy Coding!
