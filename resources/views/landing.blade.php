@@ -1,281 +1,227 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beautique MUA — Book Your Makeup Artist</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <style>
-        .material-icons-round { vertical-align: middle; }
-        .s-icon { width:64px; height:64px; border-radius:18px; background:var(--rose-light); display:flex; align-items:center; justify-content:center; margin-bottom:24px; transition:.4s; }
-        .s-icon .material-icons-round { font-size:30px; color:var(--rose); transition:.4s; }
-        .service-card:hover .s-icon { background:rgba(255,255,255,.2); }
-        .service-card:hover .s-icon .material-icons-round { color:#fff; }
-        .feat-icon .material-icons-round { font-size:22px; color:var(--rose); }
-        :root {
-            --rose: #C6937E;
-            --rose-light: #EED7CE;
-            --rose-dark: #a07060;
-            --cream: #FAF5F0;
-            --dark: #1a1010;
-            --text: #4a3a35;
-        }
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Poppins', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
+@extends('layouts.app')
 
-        /* NAVBAR */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            padding: 18px 6%;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: all .4s ease;
-        }
-        nav.scrolled {
-            background: rgba(250,245,240,.85);
-            backdrop-filter: blur(16px);
-            box-shadow: 0 2px 30px rgba(0,0,0,.08);
-            padding: 12px 6%;
-        }
-        .logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--rose); letter-spacing: 1px; text-decoration: none; }
-        .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-size: 14px; font-weight: 500; position: relative; transition: color .3s; }
-        .nav-links a::after { content:''; position:absolute; bottom:-3px; left:0; width:0; height:2px; background:var(--rose); transition: width .3s; }
-        .nav-links a:hover { color: var(--rose); }
-        .nav-links a:hover::after { width: 100%; }
-        .btn-nav { background: var(--rose); color: #fff !important; padding: 10px 24px; border-radius: 50px; transition: all .3s !important; }
-        .btn-nav::after { display: none !important; }
-        .btn-nav:hover { background: var(--rose-dark) !important; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(198,147,126,.4); }
+@section('title', 'Beautique MUA — Book Your Makeup Artist')
+@section('meta_description', 'Connect with Indonesia\'s top professional makeup artists. Book seamlessly for bridal, party, and editorial looks.')
 
-        /* HERO */
-        .hero {
-            min-height: 100vh;
-            display: grid; grid-template-columns: 1fr 1fr; align-items: end;
-            padding: 0 6%; gap: 0;
-            position: relative; overflow: hidden;
-            background: linear-gradient(135deg, #FAF5F0 60%, #f2e5dc 100%);
-        }
-        .hero::before {
-            content:''; position:absolute; top:-200px; right:-200px;
-            width:600px; height:600px; border-radius:50%;
-            background: radial-gradient(circle, rgba(198,147,126,.15) 0%, transparent 70%);
-            animation: pulse 6s ease-in-out infinite;
-        }
-        .hero::after {
-            content:''; position:absolute; bottom:-100px; left:10%;
-            width:400px; height:400px; border-radius:50%;
-            background: radial-gradient(circle, rgba(238,215,206,.4) 0%, transparent 70%);
-            animation: pulse 8s ease-in-out infinite reverse;
-        }
-        @keyframes pulse { 0%,100%{transform:scale(1) translate(0,0)} 50%{transform:scale(1.1) translate(20px,-20px)} }
+@section('content')
+<style>
+/* HERO */
+.hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    padding: 0 6%;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--cream) 55%, var(--cream-dark) 100%);
+}
+.hero::before {
+    content:''; position:absolute; top:-180px; right:-160px;
+    width:580px; height:580px; border-radius:50%;
+    background:radial-gradient(circle,rgba(198,147,126,.14) 0%,transparent 70%);
+    animation: pulse 7s ease-in-out infinite;
+}
+.hero::after {
+    content:''; position:absolute; bottom:-80px; left:8%;
+    width:360px; height:360px; border-radius:50%;
+    background:radial-gradient(circle,rgba(238,215,206,.45) 0%,transparent 70%);
+    animation: pulse 9s ease-in-out infinite reverse;
+}
+.hero-visual { align-self:end; position:relative; z-index:2; animation:slideUp .9s ease .1s both; }
+.hero-visual img { width:100%; max-width:500px; height:580px; object-fit:cover; border-radius:24px 24px 0 0; display:block; }
+.hero-badge {
+    position:absolute; top:36px; right:-16px;
+    background:rgba(255,255,255,.92); backdrop-filter:blur(12px);
+    padding:14px 18px; border-radius:16px;
+    box-shadow:0 8px 28px rgba(0,0,0,.1);
+    animation:float 4s ease-in-out infinite;
+}
+.hero-badge strong { display:block; font-size:20px; font-weight:700; color:var(--rose); font-family:var(--font-serif); }
+.hero-badge small { font-size:11px; color:var(--muted); }
+.hero-text { padding:0 0 80px 56px; z-index:2; animation:slideUp .9s ease .3s both; }
+.hero-text .eyebrow { margin-bottom:20px; }
+.hero-text h1 { font-family:var(--font-serif); font-size:clamp(52px,6vw,78px); line-height:1.04; font-weight:700; color:var(--dark); margin-bottom:20px; }
+.hero-text h1 em { font-style:italic; color:var(--rose); }
+.hero-text > p { font-size:15.5px; line-height:1.85; color:var(--muted); max-width:390px; margin-bottom:36px; }
+.hero-actions { display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+.btn-ghost-hero { color:var(--dark); font-size:14px; font-weight:500; display:flex; align-items:center; gap:8px; transition:var(--transition); }
+.btn-ghost-hero:hover { color:var(--rose); gap:12px; }
+.btn-ghost-hero .circle { width:38px; height:38px; border-radius:50%; border:1.5px solid currentColor; display:inline-flex; align-items:center; justify-content:center; font-size:18px; transition:var(--transition); }
 
-        .hero-img { align-self: end; position:relative; z-index:2; animation: slideUp 1s ease .2s both; }
-        .hero-img img { width:100%; max-width:520px; height:600px; object-fit:cover; border-radius:24px 24px 0 0; display:block; }
-        .hero-img .badge {
-            position:absolute; top:40px; right:-20px;
-            background:rgba(255,255,255,.9); backdrop-filter:blur(10px);
-            padding:14px 20px; border-radius:16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,.1);
-            animation: float 4s ease-in-out infinite;
-        }
-        .hero-img .badge span { display:block; font-size:22px; font-weight:700; color:var(--rose); }
-        .hero-img .badge small { font-size:11px; color:#888; }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+/* STATS */
+.stats-bar { background:var(--dark); padding:32px 6%; display:flex; justify-content:center; gap:80px; flex-wrap:wrap; }
+.stat { text-align:center; }
+.stat strong { display:block; font-family:var(--font-serif); font-size:40px; font-weight:700; color:var(--rose); }
+.stat small { font-size:11px; opacity:.55; letter-spacing:1.5px; text-transform:uppercase; color:#fff; }
 
-        .hero-text { padding: 0 0 80px 60px; z-index:2; animation: slideUp 1s ease .4s both; }
-        @keyframes slideUp { from{opacity:0; transform:translateY(40px)} to{opacity:1; transform:translateY(0)} }
-        .hero-text .eyebrow { font-size:12px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:var(--rose); margin-bottom:18px; display:flex; align-items:center; gap:10px; }
-        .hero-text .eyebrow::before { content:''; width:30px; height:1px; background:var(--rose); }
-        .hero-text h1 { font-family:'Cormorant Garamond',serif; font-size:72px; line-height:1.05; font-weight:700; color:var(--dark); margin-bottom:22px; }
-        .hero-text h1 em { font-style:italic; color:var(--rose); }
-        .hero-text p { font-size:16px; line-height:1.8; color:#7a6560; max-width:400px; margin-bottom:38px; }
-        .hero-actions { display:flex; gap:16px; align-items:center; }
-        .btn-primary {
-            background: var(--rose); color:#fff; padding:16px 36px; border-radius:50px;
-            text-decoration:none; font-weight:600; font-size:15px;
-            transition: all .3s; display:inline-flex; align-items:center; gap:8px;
-            box-shadow: 0 8px 30px rgba(198,147,126,.4);
-        }
-        .btn-primary:hover { background:var(--rose-dark); transform:translateY(-3px); box-shadow:0 16px 40px rgba(198,147,126,.5); }
-        .btn-ghost { color:var(--dark); text-decoration:none; font-size:14px; font-weight:500; display:flex; align-items:center; gap:8px; transition:.3s; }
-        .btn-ghost:hover { color:var(--rose); gap:12px; }
-        .arrow { display:inline-block; width:36px; height:36px; border-radius:50%; border:1.5px solid currentColor; display:inline-flex; align-items:center; justify-content:center; font-size:18px; transition:.3s; }
+/* SECTIONS */
+section { padding:100px 6%; }
 
-        /* STATS */
-        .stats-bar {
-            background: var(--dark); color:#fff; padding:28px 6%;
-            display:flex; justify-content:center; gap:80px;
-        }
-        .stat { text-align:center; animation: slideUp .8s ease both; }
-        .stat strong { display:block; font-family:'Cormorant Garamond',serif; font-size:38px; font-weight:700; color:var(--rose); }
-        .stat small { font-size:12px; opacity:.7; letter-spacing:1px; }
+/* ABOUT */
+.about { background:var(--white); }
+.about-inner { display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center; }
+.about-imgs { position:relative; }
+.about-imgs .main-img { width:100%; height:480px; object-fit:cover; border-radius:20px; }
+.about-imgs .accent-img { position:absolute; bottom:-28px; right:-28px; width:190px; height:190px; border-radius:16px; object-fit:cover; border:6px solid var(--white); box-shadow:var(--shadow-lg); animation:float 5s ease-in-out infinite; }
+.about-text p { font-size:15px; line-height:2; color:var(--muted); margin:22px 0 32px; }
+.about-feature { display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; }
+.feat-icon { width:44px; height:44px; border-radius:12px; background:var(--rose-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.feat-icon .material-icons-round { font-size:20px; color:var(--rose); }
+.feat-text strong { display:block; font-size:13.5px; font-weight:700; color:var(--dark); }
+.feat-text span { font-size:12.5px; color:#aaa; }
 
-        /* SECTION BASE */
-        section { padding: 100px 6%; }
-        .section-label { font-size:12px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:var(--rose); margin-bottom:12px; }
-        .section-title { font-family:'Cormorant Garamond',serif; font-size:48px; font-weight:700; color:var(--dark); line-height:1.1; margin-bottom:16px; }
-        .section-sub { font-size:15px; color:#7a6560; line-height:1.8; max-width:520px; }
+/* SERVICES */
+.services { background:var(--cream); }
+.services-head { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:52px; flex-wrap:wrap; gap:20px; }
+.services-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+.service-card { background:var(--white); border-radius:var(--radius-lg); padding:38px 28px; transition:all .4s cubic-bezier(.25,.8,.25,1); position:relative; overflow:hidden; }
+.service-card::before { content:''; position:absolute; inset:0; border-radius:var(--radius-lg); background:linear-gradient(135deg,var(--rose),var(--rose-dark)); opacity:0; transition:opacity .4s; }
+.service-card:hover { transform:translateY(-14px); box-shadow:0 30px 60px rgba(198,147,126,.22); }
+.service-card:hover::before { opacity:1; }
+.service-card > * { position:relative; z-index:1; }
+.s-icon { width:62px; height:62px; border-radius:16px; background:var(--rose-light); display:flex; align-items:center; justify-content:center; margin-bottom:22px; transition:.4s; }
+.s-icon .material-icons-round { font-size:28px; color:var(--rose); transition:.4s; }
+.service-card:hover .s-icon { background:rgba(255,255,255,.18); }
+.service-card:hover .s-icon .material-icons-round { color:#fff; }
+.service-card h3 { font-size:19px; font-weight:700; margin-bottom:10px; color:var(--dark); transition:color .4s; }
+.service-card p { font-size:13.5px; line-height:1.75; color:#999; transition:color .4s; }
+.service-card:hover h3, .service-card:hover p { color:#fff; }
 
-        /* ABOUT */
-        .about { background:#fff; }
-        .about-inner { display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:center; }
-        .about-imgs { position:relative; }
-        .about-imgs img { width:100%; height:480px; object-fit:cover; border-radius:20px; }
-        .about-imgs .img-accent {
-            position:absolute; bottom:-30px; right:-30px;
-            width:200px; height:200px; border-radius:16px; object-fit:cover;
-            border:6px solid #fff; box-shadow:0 10px 40px rgba(0,0,0,.12);
-            animation: float 5s ease-in-out infinite;
-        }
-        .about-text { padding:20px 0; }
-        .about-text p { font-size:15px; line-height:2; color:#7a6560; margin:24px 0 36px; }
-        .about-feature { display:flex; gap:12px; align-items:flex-start; margin-bottom:16px; }
-        .feat-icon { width:44px; height:44px; border-radius:12px; background:var(--rose-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-        .feat-text strong { display:block; font-size:14px; font-weight:600; color:var(--dark); }
-        .feat-text span { font-size:13px; color:#999; }
+/* GALLERY */
+.gallery { background:var(--white); }
+.gallery-head { text-align:center; margin-bottom:52px; }
+.gallery-head .section-sub { margin:12px auto 0; }
+.gallery-grid { display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:auto auto; gap:14px; }
+.gallery-item { overflow:hidden; border-radius:var(--radius-md); position:relative; cursor:pointer; }
+.gallery-item img { width:100%; height:220px; object-fit:cover; transition:transform .5s ease; }
+.gallery-item:hover img { transform:scale(1.08); }
+.gallery-item.tall img { height:454px; }
+.gallery-item::after { content:''; position:absolute; inset:0; background:linear-gradient(to top,rgba(26,16,16,.5) 0%,transparent 50%); opacity:0; transition:opacity .4s; }
+.gallery-item:hover::after { opacity:1; }
 
-        /* SERVICES */
-        .services { background:var(--cream); }
-        .services-head { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:56px; }
-        .services-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
-        .service-card {
-            background:#fff; border-radius:24px; padding:40px 30px;
-            transition: all .4s cubic-bezier(.25,.8,.25,1);
-            cursor:default; position:relative; overflow:hidden;
-        }
-        .service-card::before {
-            content:''; position:absolute; inset:0; border-radius:24px;
-            background: linear-gradient(135deg, var(--rose), var(--rose-dark));
-            opacity:0; transition: opacity .4s;
-        }
-        .service-card:hover { transform:translateY(-12px); box-shadow:0 30px 60px rgba(198,147,126,.25); }
-        .service-card:hover::before { opacity:1; }
-        .service-card > * { position:relative; z-index:1; transition: color .4s; }
-        .service-card:hover .s-icon, .service-card:hover h3, .service-card:hover p { color:#fff; }
-        /* s-icon styles moved to top */
-        .service-card h3 { font-size:20px; font-weight:600; margin-bottom:12px; color:var(--dark); }
-        .service-card p { font-size:14px; line-height:1.7; color:#888; }
+/* PACKAGES */
+.packages { background:var(--cream); }
+.packages-head { text-align:center; margin-bottom:52px; }
+.packages-head .section-sub { margin:12px auto 0; }
+.pkg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; align-items:start; }
+.pkg-card { border-radius:var(--radius-lg); overflow:hidden; background:var(--white); border:1.5px solid var(--border); transition:all .4s; position:relative; }
+.pkg-card:hover { transform:translateY(-8px); box-shadow:var(--shadow-lg); border-color:var(--rose); }
+.pkg-card.featured { border-color:var(--rose); box-shadow:0 8px 40px rgba(198,147,126,.18); }
+.pkg-badge { background:var(--rose); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:1.5px; text-align:center; padding:9px; text-transform:uppercase; }
+.pkg-img img { width:100%; height:185px; object-fit:cover; }
+.pkg-body { padding:26px; }
+.pkg-body h3 { font-size:16px; font-weight:700; color:var(--dark); margin-bottom:14px; }
+.pkg-list { margin-bottom:20px; }
+.pkg-list li { font-size:12.5px; color:var(--muted); padding:5px 0 5px 18px; position:relative; border-bottom:1px solid #f0e8e3; }
+.pkg-list li::before { content:'✦'; position:absolute; left:0; color:var(--rose); font-size:8px; top:8px; }
+.pkg-price { font-size:12px; color:#bbb; margin-bottom:4px; }
+.pkg-amount { font-size:15px; font-weight:700; color:var(--rose); margin-bottom:18px; }
+.btn-pkg { display:block; text-align:center; background:var(--rose-light); color:var(--rose); padding:12px; border-radius:10px; font-weight:700; font-size:13px; transition:.3s; }
+.btn-pkg:hover { background:var(--rose); color:#fff; }
 
-        /* PACKAGES */
-        .packages { background:#fff; }
-        .packages-head { text-align:center; margin-bottom:56px; }
-        .packages-head .section-sub { margin: 0 auto; }
-        .pkg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; align-items:start; }
-        .pkg-card {
-            border-radius:24px; overflow:hidden; background:var(--cream);
-            border:1.5px solid #ede0d8;
-            transition: all .4s; position:relative;
-        }
-        .pkg-card:hover { transform:translateY(-8px); box-shadow:0 24px 50px rgba(0,0,0,.1); border-color:var(--rose); }
-        .pkg-card.featured { border-color:var(--rose); background:#fff; box-shadow:0 8px 40px rgba(198,147,126,.2); }
-        .pkg-badge { background:var(--rose); color:#fff; font-size:11px; font-weight:600; letter-spacing:1px; text-align:center; padding:8px; }
-        .pkg-img img { width:100%; height:190px; object-fit:cover; }
-        .pkg-body { padding:28px; }
-        .pkg-body h3 { font-size:17px; font-weight:700; color:var(--dark); margin-bottom:16px; }
-        .pkg-list { list-style:none; margin-bottom:24px; }
-        .pkg-list li { font-size:13px; color:#888; padding:5px 0 5px 20px; position:relative; border-bottom:1px solid #f0e8e3; }
-        .pkg-list li::before { content:'✦'; position:absolute; left:0; color:var(--rose); font-size:9px; top:7px; }
-        .pkg-price { font-size:13px; color:#aaa; margin-bottom:6px; }
-        .pkg-amount { font-size:16px; font-weight:700; color:var(--rose); margin-bottom:20px; }
-        .btn-pkg {
-            display:block; text-align:center; background:var(--rose-light); color:var(--rose);
-            padding:13px; border-radius:12px; text-decoration:none; font-weight:600; font-size:14px;
-            transition:.3s;
-        }
-        .btn-pkg:hover { background:var(--rose); color:#fff; }
+/* TESTIMONIALS */
+.testimonials { background:var(--white); }
+.testimonials-head { text-align:center; margin-bottom:52px; }
+.testimonials-head .section-sub { margin:12px auto 0; }
+.testimonials-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+.testi-card { background:var(--cream); border-radius:var(--radius-lg); padding:32px 26px; position:relative; transition:var(--transition); border:1px solid transparent; }
+.testi-card:hover { border-color:var(--rose-light); box-shadow:var(--shadow-md); transform:translateY(-4px); }
+.testi-card::before { content:'\201C'; position:absolute; top:18px; right:22px; font-family:var(--font-serif); font-size:64px; color:var(--rose-light); line-height:1; }
+.testi-stars { display:flex; gap:3px; margin-bottom:14px; }
+.testi-stars span { font-size:15px; color:#F59E0B; }
+.testi-card p { font-size:14px; line-height:1.85; color:var(--text); margin-bottom:22px; }
+.testi-author { display:flex; align-items:center; gap:12px; }
+.testi-avatar { width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid var(--rose-light); }
+.testi-name { font-size:13.5px; font-weight:700; color:var(--dark); }
+.testi-sub { font-size:11.5px; color:var(--muted); }
 
-        /* CTA */
-        .cta {
-            background: linear-gradient(135deg, var(--dark) 0%, #2d1a14 100%);
-            text-align:center; position:relative; overflow:hidden;
-        }
-        .cta::before { content:''; position:absolute; top:-50%; left:50%; transform:translateX(-50%); width:800px; height:800px; border-radius:50%; background:radial-gradient(circle, rgba(198,147,126,.15) 0%, transparent 70%); }
-        .cta h2 { font-family:'Cormorant Garamond',serif; font-size:56px; font-weight:700; color:#fff; margin-bottom:20px; position:relative; }
-        .cta h2 em { color:var(--rose); font-style:italic; }
-        .cta p { font-size:16px; color:rgba(255,255,255,.65); max-width:480px; margin:0 auto 40px; position:relative; }
-        .cta .btn-primary { position:relative; font-size:16px; padding:18px 48px; }
+/* CTA */
+.cta-section { background:linear-gradient(135deg,var(--dark) 0%,#2d1a14 100%); text-align:center; position:relative; overflow:hidden; }
+.cta-section::before { content:''; position:absolute; top:-50%; left:50%; transform:translateX(-50%); width:800px; height:800px; border-radius:50%; background:radial-gradient(circle,rgba(198,147,126,.13) 0%,transparent 70%); }
+.cta-section h2 { font-family:var(--font-serif); font-size:clamp(38px,5vw,58px); font-weight:700; color:#fff; margin-bottom:18px; position:relative; }
+.cta-section h2 em { color:var(--rose); font-style:italic; }
+.cta-section p { font-size:15.5px; color:rgba(255,255,255,.6); max-width:460px; margin:0 auto 38px; position:relative; line-height:1.8; }
+.cta-section .btn { position:relative; font-size:15px; }
 
-        /* FOOTER */
-        footer { background:var(--dark); padding:40px 6%; display:flex; justify-content:space-between; align-items:center; }
-        footer .logo { color:var(--rose); }
-        footer p { font-size:13px; color:rgba(255,255,255,.4); }
-
-        /* REVEAL ANIMATION */
-        .reveal { opacity:0; transform:translateY(30px); transition: opacity .7s ease, transform .7s ease; }
-        .reveal.visible { opacity:1; transform:translateY(0); }
-        .reveal-left { opacity:0; transform:translateX(-40px); transition: opacity .8s ease, transform .8s ease; }
-        .reveal-left.visible { opacity:1; transform:translateX(0); }
-        .reveal-right { opacity:0; transform:translateX(40px); transition: opacity .8s ease, transform .8s ease; }
-        .reveal-right.visible { opacity:1; transform:translateX(0); }
-        .delay-1 { transition-delay: .1s; }
-        .delay-2 { transition-delay: .2s; }
-        .delay-3 { transition-delay: .3s; }
-    </style>
-</head>
-<body>
-
-<!-- NAVBAR -->
-<nav id="navbar">
-    <a href="#" class="logo">Beautique</a>
-    <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#packages">Packages</a></li>
-        <li><a href="{{ route('login') }}">Login</a></li>
-        <li><a href="{{ route('register') }}" class="btn-nav">Sign Up</a></li>
-    </ul>
-</nav>
+/* RESPONSIVE */
+@media(max-width:900px) {
+    .hero { grid-template-columns:1fr; padding-top:100px; text-align:center; }
+    .hero-visual { display:none; }
+    .hero-text { padding:40px 0 70px; }
+    .hero-text .eyebrow { justify-content:center; }
+    .hero-actions { justify-content:center; }
+    .about-inner, .services-grid, .pkg-grid, .testimonials-grid { grid-template-columns:1fr; }
+    .gallery-grid { grid-template-columns:repeat(2,1fr); }
+    .gallery-item.tall img { height:220px; }
+    .stats-bar { gap:40px; }
+    .services-head { flex-direction:column; }
+}
+@media(max-width:600px) {
+    section { padding:70px 5%; }
+    .gallery-grid { grid-template-columns:1fr 1fr; }
+}
+</style>
 
 <!-- HERO -->
-<section class="hero">
-    <div class="hero-img">
-        <img src="{{ asset('image/model-mua.jpeg') }}" alt="MUA Model">
-        <div class="badge">
-            <span>500+</span>
+<section class="hero" id="home">
+    <div class="hero-visual">
+        <img src="{{ asset('image/model-mua.jpeg') }}" alt="Professional Makeup Artist">
+        <div class="hero-badge">
+            <strong>500+</strong>
             <small>Happy Clients</small>
         </div>
     </div>
     <div class="hero-text">
         <div class="eyebrow">Premium MUA Platform</div>
         <h1>Your Beauty,<br><em>Crafted</em><br>Perfectly.</h1>
-        <p>Connect with Indonesia's top makeup artists. Book seamlessly, look stunning — at your studio or doorstep.</p>
+        <p>Connect with Indonesia's finest makeup artists. Book effortlessly, look stunning — at your studio or doorstep.</p>
         <div class="hero-actions">
-            <a href="{{ route('booking.choose-mua') }}" class="btn-primary">Book Now <span class="material-icons-round" style="font-size:18px">arrow_forward</span></a>
-            <a href="#about" class="btn-ghost">Learn More <span class="material-icons-round" style="font-size:18px;width:36px;height:36px;border:1.5px solid currentColor;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;transition:.3s">south</span></a>
+            <a href="{{ route('booking.choose-mua') }}" class="btn btn-primary btn-lg">
+                Book Now <span class="material-icons-round" style="font-size:19px">arrow_forward</span>
+            </a>
+            <a href="#about" class="btn-ghost-hero">
+                Learn More
+                <span class="circle"><span class="material-icons-round" style="font-size:16px">south</span></span>
+            </a>
         </div>
     </div>
 </section>
 
 <!-- STATS -->
 <div class="stats-bar">
-    <div class="stat reveal delay-1"><strong>500+</strong><small>Clients Served</small></div>
-    <div class="stat reveal delay-2"><strong>50+</strong><small>Expert MUAs</small></div>
-    <div class="stat reveal delay-3"><strong>4.9★</strong><small>Average Rating</small></div>
+    <div class="stat reveal delay-1"><strong data-count="500">500+</strong><small>Clients Served</small></div>
+    <div class="stat reveal delay-2"><strong data-count="50">50+</strong><small>Expert MUAs</small></div>
+    <div class="stat reveal delay-3"><strong>4.9★</strong><small>Avg Rating</small></div>
+    <div class="stat reveal delay-4"><strong data-count="6">6+</strong><small>Years Active</small></div>
 </div>
 
 <!-- ABOUT -->
 <section class="about" id="about">
     <div class="about-inner">
         <div class="about-imgs reveal-left">
-            <img src="{{ asset('image/about-mua.jpeg') }}" alt="About Us">
-            <img class="img-accent" src="{{ asset('image/makeup1.jpeg') }}" alt="Detail">
+            <img class="main-img" src="{{ asset('image/about-mua.jpeg') }}" alt="About Beautique">
+            <img class="accent-img" src="{{ asset('image/makeup1.jpeg') }}" alt="Makeup Detail">
         </div>
         <div class="about-text reveal-right">
             <div class="section-label">Who We Are</div>
             <h2 class="section-title">Beauty Meets<br>Technology</h2>
-            <p>A digital platform connecting clients with professional Makeup Artists for a seamless, personalized beauty experience — from bridal to editorial.</p>
+            <p>Beautique is Indonesia's premium platform connecting clients with professional makeup artists. From intimate bridal preparations to large-scale editorial shoots, we make every beauty experience seamless, transparent, and extraordinary.</p>
             <div class="about-feature">
                 <div class="feat-icon"><span class="material-icons-round">verified</span></div>
-                <div class="feat-text"><strong>Curated Artists</strong><span>Vetted, skilled professionals only</span></div>
+                <div class="feat-text"><strong>Curated Artists</strong><span>Vetted, certified professionals only</span></div>
             </div>
             <div class="about-feature">
                 <div class="feat-icon"><span class="material-icons-round">location_on</span></div>
-                <div class="feat-text"><strong>Anywhere in Indonesia</strong><span>Studio or doorstep service</span></div>
+                <div class="feat-text"><strong>Anywhere in Indonesia</strong><span>Studio visit or doorstep service</span></div>
             </div>
             <div class="about-feature">
                 <div class="feat-icon"><span class="material-icons-round">lock</span></div>
-                <div class="feat-text"><strong>Secure Booking</strong><span>Transparent pricing, no hidden fees</span></div>
+                <div class="feat-text"><strong>Secure & Transparent</strong><span>Clear pricing, no hidden fees</span></div>
+            </div>
+            <div class="about-feature">
+                <div class="feat-icon"><span class="material-icons-round">support_agent</span></div>
+                <div class="feat-text"><strong>24/7 Support</strong><span>We're here whenever you need us</span></div>
             </div>
         </div>
     </div>
@@ -294,7 +240,7 @@
         <div class="service-card reveal delay-1">
             <div class="s-icon"><span class="material-icons-round">auto_awesome</span></div>
             <h3>Bridal Makeup</h3>
-            <p>Timeless, elegant looks for your most important day — tailored precisely to your vision and skin.</p>
+            <p>Timeless, radiant looks crafted for your most important day — tailored precisely to your vision and skin tone.</p>
         </div>
         <div class="service-card reveal delay-2">
             <div class="s-icon"><span class="material-icons-round">celebration</span></div>
@@ -305,6 +251,35 @@
             <div class="s-icon"><span class="material-icons-round">photo_camera</span></div>
             <h3>Editorial &amp; Photoshoot</h3>
             <p>High-impact, camera-ready artistry for portraits, campaigns, and creative content production.</p>
+        </div>
+    </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+    <div class="gallery-head reveal">
+        <div class="section-label">Portfolio</div>
+        <h2 class="section-title">Our Work</h2>
+        <p class="section-sub">A glimpse of the artistry our MUAs bring to every booking.</p>
+    </div>
+    <div class="gallery-grid">
+        <div class="gallery-item tall reveal delay-1">
+            <img src="{{ asset('image/model-mua.jpeg') }}" alt="Bridal look">
+        </div>
+        <div class="gallery-item reveal delay-2">
+            <img src="{{ asset('image/makeup1.jpeg') }}" alt="Party glam">
+        </div>
+        <div class="gallery-item reveal delay-3">
+            <img src="{{ asset('image/about-mua.jpeg') }}" alt="Natural look">
+        </div>
+        <div class="gallery-item tall reveal delay-1">
+            <img src="{{ asset('image/makeup1.jpeg') }}" alt="Editorial">
+        </div>
+        <div class="gallery-item reveal delay-4">
+            <img src="{{ asset('image/model-mua.jpeg') }}" alt="Studio session">
+        </div>
+        <div class="gallery-item reveal delay-2">
+            <img src="{{ asset('image/about-mua.jpeg') }}" alt="Event makeup">
         </div>
     </div>
 </section>
@@ -329,12 +304,12 @@
                 </ul>
                 <div class="pkg-price">Starting Price</div>
                 <div class="pkg-amount">Rp 500.000 – Rp 2.000.000</div>
-                <a href="{{ route('booking.choose-mua') }}" class="btn-pkg">View Package</a>
+                <a href="{{ route('booking.choose-mua') }}" class="btn-pkg">Book This Package</a>
             </div>
         </div>
         <div class="pkg-card featured reveal delay-2">
-            <div class="pkg-badge"><span class="material-icons-round" style="font-size:13px;vertical-align:middle">star</span> BEST CHOICE <span class="material-icons-round" style="font-size:13px;vertical-align:middle">star</span></div>
-            <div class="pkg-img"><img src="{{ asset('image/makeup1.jpeg') }}" alt="Creative Glam"></div>
+            <div class="pkg-badge">★ Best Choice ★</div>
+            <div class="pkg-img"><img src="{{ asset('image/model-mua.jpeg') }}" alt="Creative Glam"></div>
             <div class="pkg-body">
                 <h3>Creative Glam Package</h3>
                 <ul class="pkg-list">
@@ -346,73 +321,98 @@
                 </ul>
                 <div class="pkg-price">Starting Price</div>
                 <div class="pkg-amount">Rp 2.500.000 – Rp 6.000.000</div>
-                <a href="{{ route('booking.choose-mua') }}" class="btn-pkg">View Package</a>
+                <a href="{{ route('booking.choose-mua') }}" class="btn-pkg">Book This Package</a>
             </div>
         </div>
         <div class="pkg-card reveal delay-3">
-            <div class="pkg-img"><img src="{{ asset('image/makeup1.jpeg') }}" alt="Signature Bridal"></div>
+            <div class="pkg-img"><img src="{{ asset('image/about-mua.jpeg') }}" alt="Signature Bridal"></div>
             <div class="pkg-body">
                 <h3>Signature Bridal &amp; Luxury</h3>
                 <ul class="pkg-list">
                     <li>Makeup + premium bridal hairdo</li>
                     <li>Trial makeup before the day</li>
                     <li>Multiple looks (akad, reception)</li>
-                    <li>Full-day touch-up</li>
+                    <li>Full-day touch-up service</li>
                     <li>Assistant &amp; stylist team</li>
                 </ul>
                 <div class="pkg-price">Starting Price</div>
                 <div class="pkg-amount">Rp 7.000.000 – Rp 25.000.000+</div>
-                <a href="{{ route('booking.choose-mua') }}" class="btn-pkg">View Package</a>
+                <a href="{{ route('booking.choose-mua') }}" class="btn-pkg">Book This Package</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+    <div class="testimonials-head reveal">
+        <div class="section-label">Reviews</div>
+        <h2 class="section-title">What Clients Say</h2>
+        <p class="section-sub">Real stories from brides, celebrants, and creators who trusted Beautique.</p>
+    </div>
+    <div class="testimonials-grid">
+        <div class="testi-card reveal delay-1">
+            <div class="testi-stars">
+                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <p>"Absolutely stunning work for my wedding. Sarah understood exactly what I wanted — natural yet glowing. Everyone kept complimenting my look all day long!"</p>
+            <div class="testi-author">
+                <img class="testi-avatar" src="{{ asset('image/model-mua.jpeg') }}" alt="Rina">
+                <div><div class="testi-name">Rina Maharani</div><div class="testi-sub">Bride · Jakarta</div></div>
+            </div>
+        </div>
+        <div class="testi-card reveal delay-2">
+            <div class="testi-stars">
+                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <p>"I booked a glam look for my company gala and the artist arrived on time, was incredibly professional, and the makeup lasted 10+ hours perfectly. Will definitely rebook!"</p>
+            <div class="testi-author">
+                <img class="testi-avatar" src="{{ asset('image/about-mua.jpeg') }}" alt="Delia">
+                <div><div class="testi-name">Delia Santoso</div><div class="testi-sub">Event Client · Bali</div></div>
+            </div>
+        </div>
+        <div class="testi-card reveal delay-3">
+            <div class="testi-stars">
+                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <p>"The booking process was so smooth — I found, booked, and paid within minutes. The editorial look for my brand campaign exceeded all expectations. Highly recommend!"</p>
+            <div class="testi-author">
+                <img class="testi-avatar" src="{{ asset('image/makeup1.jpeg') }}" alt="Citra">
+                <div><div class="testi-name">Citra Dewi</div><div class="testi-sub">Content Creator · Surabaya</div></div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- CTA -->
-<section class="cta">
+<section class="cta-section">
     <h2 class="reveal">Ready to Look<br><em>Breathtaking?</em></h2>
     <p class="reveal delay-1">Book your professional makeup artist today. Your perfect look is just a few taps away.</p>
-    <a href="{{ route('booking.choose-mua') }}" class="btn-primary reveal delay-2">Book Your MUA <span class="material-icons-round" style="font-size:18px;vertical-align:middle">arrow_forward</span></a>
+    <a href="{{ route('booking.choose-mua') }}" class="btn btn-primary btn-lg reveal delay-2">
+        Book Your MUA <span class="material-icons-round" style="font-size:19px">arrow_forward</span>
+    </a>
 </section>
+@endsection
 
-<!-- FOOTER -->
-<footer>
-    <a href="#" class="logo">Beautique</a>
-    <p>&copy; {{ date('Y') }} Beautique MUA. All rights reserved.</p>
-</footer>
-
+@push('scripts')
 <script>
-    // Sticky nav
-    const nav = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-        nav.classList.toggle('scrolled', window.scrollY > 60);
+// Counter animation for stats
+document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count);
+    const suffix = el.textContent.replace(/[0-9]/g,'');
+    let count = 0;
+    const step = Math.ceil(target / 50);
+    const observer = new IntersectionObserver(entries => {
+        if(entries[0].isIntersecting) {
+            const t = setInterval(() => {
+                count = Math.min(count + step, target);
+                el.textContent = count + suffix;
+                if(count >= target) clearInterval(t);
+            }, 25);
+            observer.disconnect();
+        }
     });
-
-    // Intersection Observer for reveal
-    const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.classList.add('visible');
-                observer.unobserve(e.target);
-            }
-        });
-    }, { threshold: 0.15 });
-    reveals.forEach(el => observer.observe(el));
-
-    // Counter animation
-    document.querySelectorAll('.stat strong').forEach(el => {
-        const target = parseInt(el.textContent);
-        if (isNaN(target)) return;
-        let count = 0;
-        const step = Math.ceil(target / 60);
-        const suffix = el.textContent.replace(/[0-9]/g, '');
-        const timer = setInterval(() => {
-            count = Math.min(count + step, target);
-            el.textContent = count + suffix;
-            if (count >= target) clearInterval(timer);
-        }, 20);
-    });
+    observer.observe(el);
+});
 </script>
-</body>
-</html>
+@endpush
