@@ -1,244 +1,323 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MUA Booking SPA - Figma Precision</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f0f0f0; }
-        .app-container {
-            width: 236px; height: 489px;
-            background-color: #FFFFFF; border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: relative; overflow: hidden; display: flex; flex-direction: column;
-        }
-        .btn-mua { background-color: #C19A84; color: white; transition: 0.2s; }
-        .btn-mua:hover { background-color: #AD866F; }
-        .text-mua { color: #C19A84; }
-        .bg-step-active { background-color: #C19A84; border-color: white; }
-        .hidden { display: none; }
-        
-        /* Styling Input & Select */
-        select, input, textarea { font-size: 8px !important; border: 0.5px solid #E5E7EB !important; border-radius: 4px !important; padding: 4px 8px !important; outline: none; width: 100%; }
-        label { font-size: 8px; font-weight: 700; margin-bottom: 2px; display: block; }
-    </style>
-</head>
-<body class="flex items-center justify-center min-h-screen">
+@extends('layouts.mobile')
+@section('title', 'Select Date & Time — Beautique')
+@section('flow_step', 'Step 2 · Schedule')
 
-    <div class="app-container">
-        
-        <!-- HEADER & PROGRESS BAR -->
-        <header class="pt-4 px-4">
-            <div class="flex items-center mb-4">
-                <button onclick="handleBack()" id="back-btn" class="invisible"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
-                <h1 id="header-title" class="flex-1 text-center font-bold text-[10px]">Select Date & Time</h1>
-            </div>
-            
-            <!-- Stepper -->
-            <div class="flex justify-between px-4 relative h-8">
-                <div class="absolute top-[6px] left-6 right-6 h-[0.5px] bg-gray-100"></div>
-                <div id="progress-line" class="absolute top-[6px] left-6 w-[45%] h-[0.5px] bg-[#C19A84]"></div>
-                
-                <div class="relative z-10 flex flex-col items-center">
-                    <div class="w-3.5 h-3.5 bg-step-active rounded-full flex items-center justify-center border shadow-sm"><svg width="6" height="6" stroke="white" stroke-width="4"><path d="M20 6L9 17l-5-5" fill="none"/></svg></div>
-                    <span class="text-[6px] font-bold mt-1">Booking</span>
-                </div>
-                <div class="relative z-10 flex flex-col items-center">
-                    <div id="dot-2" class="w-3.5 h-3.5 bg-step-active rounded-full flex items-center justify-center border shadow-sm"><svg width="6" height="6" stroke="white" stroke-width="4"><path d="M20 6L9 17l-5-5" fill="none"/></svg></div>
-                    <span class="text-[6px] font-bold mt-1">Appointment</span>
-                </div>
-                <div class="relative z-10 flex flex-col items-center">
-                    <div id="dot-3" class="w-3.5 h-3.5 bg-gray-200 rounded-full border shadow-sm transition-colors"></div>
-                    <span id="label-3" class="text-[6px] font-bold mt-1 text-gray-300">Service</span>
-                </div>
-            </div>
-        </header>
+@section('content')
+<style>
+.mobile-card { width:100%; max-width:480px; min-height:calc(100vh - 80px); border-radius:var(--radius-xl); box-shadow:0 24px 80px rgba(0,0,0,.1); background:var(--white); display:flex; flex-direction:column; overflow:hidden; }
+.mh { padding:22px 24px 0; flex-shrink:0; }
+.mh-top { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.mh-top a { width:34px; height:34px; border-radius:50%; background:var(--cream); display:flex; align-items:center; justify-content:center; color:var(--dark); transition:var(--transition); flex-shrink:0; }
+.mh-top a:hover { background:var(--rose-light); color:var(--rose-dark); }
+.mh-top h1 { flex:1; text-align:center; font-size:16px; font-weight:700; color:var(--dark); }
+.mh-top .spacer { width:34px; flex-shrink:0; }
+.flow-stepper { display:flex; align-items:center; justify-content:center; gap:0; padding:0 16px; margin-bottom:24px; }
+.fs-dot { width:26px; height:26px; border-radius:50%; background:var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; border:2px solid var(--white); box-shadow:var(--shadow-sm); }
+.fs-dot.done { background:var(--rose); }
+.fs-dot.active { background:var(--rose); box-shadow:0 0 0 4px rgba(198,147,126,.2); }
+.fs-dot svg { width:11px; height:11px; display:none; }
+.fs-dot.done svg { display:block; }
+.fs-line { flex:1; height:2px; background:var(--border); }
+.fs-line.done { background:var(--rose); }
+.fs-wrap { display:flex; flex-direction:column; align-items:center; gap:5px; }
+.fs-label { font-size:9.5px; font-weight:600; color:var(--muted); }
+.fs-wrap.done .fs-label, .fs-wrap.active .fs-label { color:var(--rose-dark); }
+/* Steps content */
+.step-body { flex:1; overflow-y:auto; padding:0 24px 24px; }
+.step-section { display:none; }
+.step-section.visible { display:block; }
+/* Calendar */
+.cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.cal-header span { font-size:14px; font-weight:700; color:var(--dark); }
+.cal-nav { width:30px; height:30px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:var(--transition); }
+.cal-nav:hover { border-color:var(--rose); color:var(--rose); }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center; }
+.cal-day-name { font-size:10px; font-weight:700; color:var(--muted); padding:4px 0; }
+.cal-day { font-size:12px; font-weight:500; color:var(--dark); padding:8px 4px; border-radius:8px; cursor:pointer; transition:var(--transition); }
+.cal-day:hover { background:var(--rose-light); color:var(--rose-dark); }
+.cal-day.selected { background:var(--rose); color:#fff; }
+.cal-day.disabled { color:var(--border); cursor:default; }
+.cal-day.today { border:1.5px solid var(--rose); }
+/* Time slots */
+.slot-label { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin:18px 0 10px; }
+.slot-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.slot { padding:10px 6px; border:1.5px solid var(--border); border-radius:10px; text-align:center; font-size:12px; font-weight:600; color:var(--muted); cursor:pointer; transition:var(--transition); }
+.slot:hover { border-color:var(--rose); color:var(--rose); }
+.slot.selected { background:var(--rose); border-color:var(--rose); color:#fff; }
+.slot.unavailable { background:var(--cream); color:var(--border); cursor:default; text-decoration:line-through; }
+/* Service type toggle */
+.type-toggle { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:20px; }
+.type-opt { padding:14px; border:1.5px solid var(--border); border-radius:var(--radius-md); text-align:center; cursor:pointer; transition:var(--transition); }
+.type-opt:hover { border-color:var(--rose); }
+.type-opt.selected { border-color:var(--rose); background:var(--rose-light); }
+.type-opt .material-icons-round { font-size:22px; color:var(--muted); display:block; margin-bottom:6px; }
+.type-opt.selected .material-icons-round { color:var(--rose); }
+.type-opt strong { font-size:13px; font-weight:700; color:var(--dark); display:block; }
+.type-opt span { font-size:11px; color:var(--muted); }
+/* Detail cards */
+.detail-card { background:var(--cream); border-radius:var(--radius-md); padding:20px; margin-bottom:20px; }
+.detail-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.detail-row:last-child { border-bottom:none; }
+.detail-row span:first-child { color:var(--muted); }
+.detail-row strong { color:var(--dark); font-weight:700; }
+/* Address fields */
+.addr-map { background:var(--cream-dark); border-radius:var(--radius-md); height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; position:relative; overflow:hidden; }
+.addr-map-dot { width:14px; height:14px; border-radius:50%; background:var(--rose); box-shadow:0 0 0 5px rgba(198,147,126,.3); z-index:1; }
+/* Footer */
+.mf { padding:16px 24px 28px; border-top:1px solid var(--border); flex-shrink:0; }
+.mf .btn { width:100%; justify-content:center; border-radius:var(--radius-sm); padding:15px; font-size:15px; }
+</style>
 
-        <!-- PAGE CONTENT -->
-        <div class="flex-1 overflow-y-auto px-4 pb-4">
-            
-            <!-- SECTION 1: SELECT DATE & TIME -->
-            <section id="step-1">
-                <div class="bg-[#F9F9F9] p-2 rounded-lg mb-4">
-                    <!-- Placeholder Kalender -->
-                    <div class="flex justify-between items-center mb-2 px-1"><span class="text-[7px] font-bold">April 2021</span></div>
-                    <div class="grid grid-cols-7 text-[6px] text-center gap-1 font-bold">
-                        <div class="text-gray-400">Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div><div>Su</div>
-                        <div class="py-1">12</div><div class="py-1">13</div><div class="py-1 bg-mua text-white rounded-full bg-[#C19A84]">14</div><div class="py-1 text-gray-300">15</div>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label>Pick Your Schedule</label>
-                    <div class="flex items-center gap-2">
-                        <input type="text" value="10:00" class="text-center">
-                        <span class="text-gray-300">-</span>
-                        <input type="text" value="12:30" class="text-center">
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <label>Select Your Service Type</label>
-                    <select id="service-type">
-                        <option value="home">Home Service</option>
-                        <option value="store">Studio Service</option>
-                    </select>
-                </div>
-
-                <button onclick="checkAvailability()" class="btn-mua w-full py-2 rounded-lg text-[9px] font-bold uppercase tracking-wider">Check Availability</button>
-            </section>
-
-            <!-- SECTION 2A: STORE SERVICE PAGE -->
-            <section id="step-2-store" class="hidden">
-                <label class="mb-2">Detail MUA</label>
-                <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80" class="w-full h-24 object-cover rounded-lg mb-3">
-                <div class="space-y-1 mb-4">
-                    <h2 class="text-[10px] font-bold">MUA Salon Studio</h2>
-                    <p class="text-[7px] text-yellow-500 font-bold">★★★★★</p>
-                    <p class="text-[7px] text-gray-400">email: muasalonstudio@gmail.com</p>
-                    <p class="text-[7px] text-gray-800">Price: Rp 2.000.000 - 15.000.000</p>
-                </div>
-                <label>Location</label>
-                <div class="flex items-center gap-2 mt-1">
-                    <div class="p-1.5 bg-gray-50 rounded-full"><svg width="10" height="10" stroke="gray" fill="none"><path d="M12 21s-8-4.5-8-11.8A8 8 0 0120 9.2c0 7.3-8 11.8-8 11.8z"/></svg></div>
-                    <span class="text-[8px] font-bold">Denpasar, Bali</span>
-                </div>
-                <button onclick="goToStep3()" class="btn-mua w-full py-2 rounded-lg text-[9px] font-bold mt-10 uppercase">Next</button>
-            </section>
-
-            <!-- SECTION 2B: HOME SERVICE PAGE -->
-            <section id="step-2-home" class="hidden">
-                <label class="mb-2">Your Location</label>
-                <div class="w-full h-28 bg-gray-100 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
-                    <!-- Placeholder Map -->
-                    <div class="absolute inset-0 bg-blue-50"></div>
-                    <div class="z-10 w-2 h-2 bg-blue-500 rounded-full shadow-lg border border-white"></div>
-                </div>
-                <div class="space-y-3">
-                    <div><label>Address</label><input type="text" placeholder="Jl. Raya Kuta..."></div>
-                    <div class="flex gap-2">
-                        <div class="flex-1"><label>From</label><input type="text" placeholder="Gg. Bunga"></div>
-                        <div class="flex-1"><label>City</label><input type="text" placeholder="Kuta"></div>
-                    </div>
-                </div>
-                <button onclick="goToStep3()" class="btn-mua w-full py-2 rounded-lg text-[9px] font-bold mt-6 uppercase">Next</button>
-            </section>
-
-            <!-- SECTION 3: ORDER CONFIGURATION PAGE -->
-            <section id="step-3" class="hidden">
-                <label class="text-[9px] border-b pb-1 mb-3">Your Service Details</label>
-                <div class="space-y-3 mb-4">
-                    <div><label>Package</label><select><option>Basic Package</option></select></div>
-                    <div><label>Make Up Type</label><select><option>Natural Make Up</option></select></div>
-                    <div>
-                        <label>Add-ons Service</label>
-                        <div class="space-y-1.5 px-1">
-                            <div class="flex justify-between items-center text-[7px] font-bold">Lash Application <input type="checkbox" checked class="accent-mua scale-75"></div>
-                            <div class="flex justify-between items-center text-[7px] font-bold">Hair Styling <input type="checkbox" class="accent-mua scale-75"></div>
-                        </div>
-                    </div>
-                    <div class="space-y-1 text-[7px] font-bold text-gray-500 pt-1">
-                        <div class="flex justify-between">Price</div>
-                        <div class="flex justify-between">Service Fee <span class="text-black">Rp. 500.000</span></div>
-                        <div class="flex justify-between">Home Service Fee <span class="text-black">Rp. 50.000</span></div>
-                    </div>
-                    <div><label>Notes for the MUA</label><textarea rows="2" placeholder="Tipe kulit berminyak..."></textarea></div>
-                    <div class="flex justify-between items-center pt-2 border-t">
-                        <span class="text-[10px] font-extrabold">Total</span>
-                        <span class="text-[10px] font-extrabold text-mua">Rp 550.000</span>
-                    </div>
-                </div>
-                <button class="btn-mua w-full py-2 rounded-lg text-[9px] font-bold uppercase">Confirmation</button>
-            </section>
+<div class="mobile-card">
+    <div class="mh">
+        <div class="mh-top">
+            <a href="{{ route('booking.choose-mua') }}" id="back-btn" aria-label="Back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </a>
+            <h1 id="page-title">Select Date &amp; Time</h1>
+            <div class="spacer"></div>
         </div>
-
-        <!-- AVAILABILITY POPUP -->
-        <div id="modal" class="hidden absolute inset-0 bg-black/60 z-[100] flex items-center justify-center p-6">
-            <div class="bg-white rounded-2xl p-5 text-center w-full">
-                <div class="w-12 h-12 border-2 border-black rounded-full mx-auto flex items-center justify-center mb-4">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                </div>
-                <h3 class="text-[10px] font-bold mb-1">Check Availability</h3>
-                <p class="text-[7px] text-gray-500 mb-5 leading-tight">Oh, no!, the schedule already taken</p>
-                <button onclick="closeModal()" class="w-full bg-[#C19A84] text-white text-[8px] font-bold py-2 rounded-lg mb-2">Select Another Date</button>
-                <button onclick="bookSuggested()" class="w-full border border-gray-300 text-gray-500 text-[8px] font-bold py-2 rounded-lg">Select From Available Artist</button>
+        <div class="flow-stepper">
+            <div class="fs-wrap done">
+                <div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div>
+                <span class="fs-label">Booking</span>
+            </div>
+            <div class="fs-line done"></div>
+            <div class="fs-wrap active">
+                <div class="fs-dot active"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div>
+                <span class="fs-label">Appointment</span>
+            </div>
+            <div class="fs-line" id="line-3"></div>
+            <div class="fs-wrap" id="step3-wrap">
+                <div class="fs-dot" id="dot-3"></div>
+                <span class="fs-label">Service</span>
             </div>
         </div>
     </div>
 
-    <script>
-        let currentStep = 1;
-        let selectedService = 'home';
+    <div class="step-body">
+        <!-- STEP 1: Date & Time -->
+        <div class="step-section visible" id="step-1">
+            <!-- Calendar -->
+            <div class="cal-header">
+                <button class="cal-nav" onclick="prevMonth()">‹</button>
+                <span id="cal-month">May 2026</span>
+                <button class="cal-nav" onclick="nextMonth()">›</button>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
 
-        function checkAvailability() {
-            // Simulasi popup sesuai figma
-            document.getElementById('modal').classList.remove('hidden');
-        }
+            <!-- Time Slots -->
+            <div class="slot-label">Morning</div>
+            <div class="slot-grid">
+                <div class="slot" onclick="selectSlot(this)">08:00</div>
+                <div class="slot" onclick="selectSlot(this)">09:00</div>
+                <div class="slot unavailable">10:00</div>
+                <div class="slot" onclick="selectSlot(this)">11:00</div>
+            </div>
+            <div class="slot-label">Afternoon</div>
+            <div class="slot-grid">
+                <div class="slot" onclick="selectSlot(this)">13:00</div>
+                <div class="slot unavailable">14:00</div>
+                <div class="slot" onclick="selectSlot(this)">15:00</div>
+                <div class="slot" onclick="selectSlot(this)">16:00</div>
+            </div>
+            <div class="slot-label">Evening</div>
+            <div class="slot-grid">
+                <div class="slot" onclick="selectSlot(this)">18:00</div>
+                <div class="slot" onclick="selectSlot(this)">19:00</div>
+                <div class="slot unavailable">20:00</div>
+            </div>
 
-        function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+            <!-- Service Type -->
+            <div class="slot-label" style="margin-top:22px">Service Type</div>
+            <div class="type-toggle">
+                <div class="type-opt selected" onclick="selectType(this,'home')" id="type-home">
+                    <span class="material-icons-round">home</span>
+                    <strong>Home Service</strong>
+                    <span>Artist comes to you</span>
+                </div>
+                <div class="type-opt" onclick="selectType(this,'studio')" id="type-studio">
+                    <span class="material-icons-round">storefront</span>
+                    <strong>Studio Visit</strong>
+                    <span>Visit the MUA studio</span>
+                </div>
+            </div>
+        </div>
 
-        function bookSuggested() {
-            closeModal();
-            // Lanjut ke Step 2 berdasarkan dropdown
-            selectedService = document.getElementById('service-type').value;
-            showPage(2);
-        }
+        <!-- STEP 2A: Home Service Address -->
+        <div class="step-section" id="step-2-home">
+            <div class="addr-map">
+                <div class="addr-map-dot"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Street Address</label>
+                <div class="input-icon-wrap">
+                    <span class="icon material-icons-round">location_on</span>
+                    <input type="text" class="form-control" placeholder="Jl. Raya Kuta No. 25">
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div class="form-group">
+                    <label class="form-label">District / Gang</label>
+                    <input type="text" class="form-control" placeholder="Kuta">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input type="text" class="form-control" placeholder="Badung">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notes for Artist</label>
+                <textarea class="form-control" rows="3" placeholder="e.g. oily skin, prefer natural look…" style="resize:none"></textarea>
+            </div>
+        </div>
 
-        function goToStep3() { showPage(3); }
+        <!-- STEP 2B: Studio Service -->
+        <div class="step-section" id="step-2-studio">
+            <div style="overflow:hidden;border-radius:var(--radius-md);margin-bottom:16px;">
+                <img src="{{ asset('image/about-mua.jpeg') }}" alt="Studio" style="width:100%;height:160px;object-fit:cover;">
+            </div>
+            <h4 style="font-size:15px;font-weight:700;color:var(--dark);margin-bottom:4px;">Sarah Wijaya Studio</h4>
+            <p style="font-size:12.5px;color:var(--muted);margin-bottom:4px;display:flex;align-items:center;gap:4px;"><span class="material-icons-round" style="font-size:14px;color:var(--rose)">location_on</span> Jl. Raya Seminyak 88, Bali</p>
+            <p style="font-size:12.5px;color:var(--muted);margin-bottom:16px;">⭐ 4.9 · Studio visit available</p>
+            <div class="detail-card">
+                <div class="detail-row"><span>Your Slot</span><strong id="selected-slot-display">Not selected</strong></div>
+                <div class="detail-row"><span>Duration</span><strong>~ 2 hours</strong></div>
+                <div class="detail-row"><span>Type</span><strong>Studio Visit</strong></div>
+            </div>
+        </div>
 
-        function showPage(step) {
-            currentStep = step;
-            // Hide all
-            document.getElementById('step-1').classList.add('hidden');
-            document.getElementById('step-2-store').classList.add('hidden');
-            document.getElementById('step-2-home').classList.add('hidden');
-            document.getElementById('step-3').classList.add('hidden');
+        <!-- STEP 3: Order Configuration -->
+        <div class="step-section" id="step-3">
+            <div class="slot-label" style="margin-top:0">Your Order Details</div>
+            <div class="form-group">
+                <label class="form-label">Package</label>
+                <select class="form-control">
+                    <option>Basic Beauty (Rp 500.000)</option>
+                    <option>Creative Glam (Rp 2.500.000)</option>
+                    <option>Signature Bridal (Rp 7.000.000)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Makeup Style</label>
+                <select class="form-control">
+                    <option>Natural</option>
+                    <option>Korean Dewy</option>
+                    <option>Soft Glam</option>
+                    <option>Full Glam</option>
+                    <option>Bold / Latina</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Add-on Services</label>
+                <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0;">
+                    <label class="form-check"><input type="checkbox" checked> Lash Application <span style="color:var(--rose);font-size:12px;margin-left:auto">+Rp 50k</span></label>
+                    <label class="form-check"><input type="checkbox"> Hair Styling <span style="color:var(--rose);font-size:12px;margin-left:auto">+Rp 150k</span></label>
+                    <label class="form-check"><input type="checkbox"> Touch-up Kit <span style="color:var(--rose);font-size:12px;margin-left:auto">+Rp 100k</span></label>
+                </div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-row"><span>Package</span><strong>Basic Beauty</strong></div>
+                <div class="detail-row"><span>Add-ons</span><strong>Lash Application</strong></div>
+                <div class="detail-row"><span>Service Fee</span><strong>Rp 500.000</strong></div>
+                <div class="detail-row"><span>Home Service Fee</span><strong>Rp 50.000</strong></div>
+                <div class="detail-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:12px"><span style="font-weight:700;color:var(--dark)">Total</span><strong style="color:var(--rose);font-size:15px">Rp 550.000</strong></div>
+            </div>
+        </div>
+    </div>
 
-            const backBtn = document.getElementById('back-btn');
-            const title = document.getElementById('header-title');
-            const dot3 = document.getElementById('dot-3');
-            const label3 = document.getElementById('label-3');
-            const line = document.getElementById('progress-line');
+    <div class="mf">
+        <button id="main-btn" class="btn btn-primary" onclick="nextStep()">
+            Check Availability <span class="material-icons-round" style="font-size:18px">arrow_forward</span>
+        </button>
+    </div>
+</div>
 
-            if (step === 1) {
-                document.getElementById('step-1').classList.remove('hidden');
-                title.innerText = "Select Date & Time";
-                backBtn.classList.add('invisible');
-                line.style.width = "45%";
-                dot3.classList.replace('bg-step-active', 'bg-gray-200');
-                label3.classList.replace('text-black', 'text-gray-300');
-            } 
-            else if (step === 2) {
-                document.getElementById(`step-2-${selectedService}`).classList.remove('hidden');
-                title.innerText = selectedService === 'home' ? "Home Service" : "Store Service";
-                backBtn.classList.remove('invisible');
-                line.style.width = "45%";
-            } 
-            else if (step === 3) {
-                document.getElementById('step-3').classList.remove('hidden');
-                title.innerText = "Order Configuration";
-                line.style.width = "100%";
-                dot3.classList.replace('bg-gray-200', 'bg-step-active');
-                dot3.innerHTML = `<svg width="6" height="6" stroke="white" stroke-width="4"><path d="M20 6L9 17l-5-5" fill="none"/></svg>`;
-                label3.classList.replace('text-gray-300', 'text-black');
-            }
-        }
+<!-- Availability Modal -->
+<div id="avail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:24px;" hidden>
+    <div style="background:var(--white);border-radius:var(--radius-xl);padding:32px;max-width:340px;width:100%;text-align:center;">
+        <div style="width:60px;height:60px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+            <span class="material-icons-round" style="font-size:28px;color:var(--muted)">schedule</span>
+        </div>
+        <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin-bottom:8px;">Schedule Taken</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">That time slot is already booked. Please select another time or choose from available artists.</p>
+        <button onclick="closeModal()" style="width:100%;background:var(--rose);color:#fff;padding:14px;border-radius:10px;font-weight:700;font-size:14px;border:none;cursor:pointer;margin-bottom:10px;">Select Another Time</button>
+        <button onclick="bookAnyway()" style="width:100%;border:1.5px solid var(--border);color:var(--muted);padding:13px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;background:none;">Continue with Any Available Artist</button>
+    </div>
+</div>
+@endsection
 
-        function handleBack() {
-            if (currentStep === 3) showPage(2);
-            else if (currentStep === 2) showPage(1);
-        }
+@push('scripts')
+<script>
+let currentStep = 1, serviceType = 'home', selectedDay = null, selectedSlotEl = null;
+const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let viewDate = new Date(2026, 4, 1);
 
-        /** 
-         * LOGIKA H-1 
-         * (Dapat dipanggil di tombol Edit jika Anda memiliki sistem login/data tersimpan)
-         */
-        function checkHMinOne(bookingDateStr) {
-            // Logika selisih hari di sini untuk membatasi fungsi edit
-            console.log("Validasi H-1 untuk tanggal: " + bookingDateStr);
-        }
-    </script>
-</body>
-</html>
+function renderCal() {
+    const grid = document.getElementById('cal-grid');
+    const y = viewDate.getFullYear(), m = viewDate.getMonth();
+    document.getElementById('cal-month').textContent = monthNames[m] + ' ' + y;
+    grid.innerHTML = '';
+    ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-day-name'; el.textContent = d; grid.appendChild(el);
+    });
+    const firstDay = (new Date(y, m, 1).getDay() + 6) % 7;
+    for(let i=0;i<firstDay;i++){ const e=document.createElement('div'); grid.appendChild(e); }
+    const days = new Date(y, m+1, 0).getDate();
+    const today = new Date();
+    for(let d=1;d<=days;d++) {
+        const el = document.createElement('div');
+        el.className = 'cal-day';
+        el.textContent = d;
+        const date = new Date(y,m,d);
+        if(date < new Date(today.getFullYear(),today.getMonth(),today.getDate())) el.classList.add('disabled');
+        else { el.onclick = ()=>selectDay(el,d); }
+        if(d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear()) el.classList.add('today');
+        if(d===selectedDay) el.classList.add('selected');
+        grid.appendChild(el);
+    }
+}
+function prevMonth(){ viewDate.setMonth(viewDate.getMonth()-1); renderCal(); }
+function nextMonth(){ viewDate.setMonth(viewDate.getMonth()+1); renderCal(); }
+function selectDay(el,d){ document.querySelectorAll('.cal-day.selected').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); selectedDay=d; }
+function selectSlot(el){ if(el.classList.contains('unavailable'))return; document.querySelectorAll('.slot.selected').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); selectedSlotEl=el; document.getElementById('selected-slot-display').textContent=el.textContent; }
+function selectType(el, type) {
+    document.querySelectorAll('.type-opt').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected'); serviceType = type;
+}
+function nextStep() {
+    if(currentStep===1) {
+        if(!selectedDay){ alert('Please select a date.'); return; }
+        if(!selectedSlotEl){ document.getElementById('avail-modal').removeAttribute('hidden'); return; }
+        showStep(2);
+    } else if(currentStep===2) {
+        showStep(3);
+    } else if(currentStep===3) {
+        window.location.href = '{{ route("booking.summary") }}';
+    }
+}
+function showStep(step) {
+    currentStep=step;
+    document.querySelectorAll('.step-section').forEach(s=>s.classList.remove('visible'));
+    const btn = document.getElementById('main-btn');
+    const title = document.getElementById('page-title');
+    if(step===2) {
+        document.getElementById(`step-2-${serviceType}`).classList.add('visible');
+        title.textContent = serviceType==='home' ? 'Your Location' : 'Studio Details';
+        btn.innerHTML = 'Continue <span class="material-icons-round" style="font-size:18px">arrow_forward</span>';
+    } else if(step===3) {
+        document.getElementById('step-3').classList.add('visible');
+        title.textContent = 'Order Configuration';
+        document.getElementById('line-3').classList.add('done');
+        document.getElementById('dot-3').classList.add('done');
+        document.getElementById('dot-3').innerHTML = '<svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg>';
+        document.getElementById('step3-wrap').classList.add('done');
+        btn.innerHTML = 'Confirm Booking <span class="material-icons-round" style="font-size:18px">arrow_forward</span>';
+    }
+}
+function closeModal(){ document.getElementById('avail-modal').setAttribute('hidden',''); }
+function bookAnyway(){ closeModal(); showStep(2); }
+renderCal();
+</script>
+@endpush
