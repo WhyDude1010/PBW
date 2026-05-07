@@ -1,142 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Summary - Confirmed</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-        .font-inter {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Custom Colors */
-        .bg-terracotta { background-color: #C19A84; }
-        .bg-confirmed-green { background-color: #C1FBC1; }
-        .text-confirmed-dark { color: #1E5128; }
-        .bg-tips-cream { background-color: #F2E3D5; }
-    </style>
-</head>
-<body class="bg-gray-50 flex justify-center items-center min-h-screen">
+@extends('layouts.mobile')
+@section('title','Booking Confirmed — Beautique')
+@section('flow_step','Step 4 · Confirmed')
 
-    <!-- Mobile Container -->
-    <div class="bg-white w-full max-w-md min-h-screen shadow-lg flex flex-col relative">
-        
-        <!-- Header Section -->
-        <div class="px-6 pt-8 flex items-center">
-            <button class="mr-4">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-            <h1 class="text-xl font-bold flex-1 text-center mr-8">Booking Summary</h1>
+@section('content')
+<style>
+.mobile-card{width:100%;max-width:480px;min-height:calc(100vh - 80px);border-radius:var(--radius-xl);box-shadow:0 24px 80px rgba(0,0,0,.1);background:var(--white);display:flex;flex-direction:column;overflow:hidden;}
+.mh{padding:22px 24px 0;flex-shrink:0;}
+.mh-top{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.mh-top a{width:34px;height:34px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--dark);transition:var(--transition);}
+.mh-top a:hover{background:var(--rose-light);color:var(--rose-dark);}
+.mh-top h1{flex:1;text-align:center;font-size:16px;font-weight:700;color:var(--dark);}
+.sp{width:34px;}
+.flow-stepper{display:flex;align-items:center;justify-content:center;gap:0;padding:0 16px;margin-bottom:24px;}
+.fs-dot{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--white);box-shadow:var(--shadow-sm);}
+.fs-dot.done{background:var(--rose);}
+.fs-dot svg{width:11px;height:11px;display:none;}
+.fs-dot.done svg{display:block;}
+.fs-line{flex:1;height:2px;background:var(--border);}
+.fs-line.done{background:var(--rose);}
+.fs-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.fs-label{font-size:9.5px;font-weight:600;color:var(--muted);}
+.fs-wrap.done .fs-label{color:var(--rose-dark);}
+.mb{flex:1;overflow-y:auto;padding:0 24px 16px;}
+/* Confirmed badge */
+.confirmed-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:4px;background:#C1FBC1;color:#1A7A3C;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+.confirmed-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;text-align:center;}
+/* Tips card */
+.tips-card{background:var(--rose-light);border-radius:var(--radius-md);padding:16px 18px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start;}
+.tips-card .material-icons-round{font-size:18px;color:var(--rose);flex-shrink:0;margin-top:1px;}
+.tips-card h5{font-size:13.5px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.tips-card p{font-size:12px;color:var(--rose-dark);line-height:1.6;}
+/* Status list */
+.status-list{background:var(--cream);border-radius:var(--radius-md);padding:20px;margin-bottom:20px;}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13.5px;}
+.status-row:last-child{border-bottom:none;}
+.status-row span:first-child{color:var(--muted);}
+.status-row .badge-confirmed{background:#C1FBC1;color:#1A7A3C;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;}
+.status-row .badge-paid{background:var(--success-light);color:var(--success);padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;}
+.mf{padding:16px 24px 28px;border-top:1px solid var(--border);flex-shrink:0;}
+.mf .info-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.mf .info-row .material-icons-round{font-size:16px;color:var(--muted);}
+.mf .info-row p{font-size:12px;color:var(--muted);}
+.mf .btn{width:100%;justify-content:center;border-radius:var(--radius-sm);padding:15px;font-size:15px;}
+</style>
+
+<div class="mobile-card">
+    <div class="mh">
+        <div class="mh-top">
+            <a href="{{ route('booking.summary') }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </a>
+            <h1>Booking Summary</h1>
+            <div class="sp"></div>
         </div>
-
-        <!-- Progress Bar Section -->
-        <div class="px-10 mt-8 relative">
-            <div class="flex justify-between items-center relative z-10">
-                <!-- Step 1 Checked -->
-                <div class="flex flex-col items-center">
-                    <div class="w-7 h-7 rounded-full bg-terracotta flex items-center justify-center border-2 border-white shadow-sm">
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 3L4.5 8.5L2 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <span class="text-[10px] font-bold mt-2 text-gray-700">Booking</span>
-                </div>
-                <!-- Step 2 Checked -->
-                <div class="flex flex-col items-center">
-                    <div class="w-7 h-7 rounded-full bg-terracotta flex items-center justify-center border-2 border-white shadow-sm">
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 3L4.5 8.5L2 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <span class="text-[10px] font-bold mt-2 text-gray-700">Appointment</span>
-                </div>
-                <!-- Step 3 Inactive -->
-                <div class="flex flex-col items-center">
-                    <div class="w-7 h-7 rounded-full bg-gray-300 border-2 border-white shadow-sm"></div>
-                    <span class="text-[10px] font-bold mt-2 text-gray-400">Service</span>
-                </div>
-            </div>
-            <!-- Progress Line Background -->
-            <div class="absolute top-3.5 left-14 right-14 h-[2px] bg-gray-100 -z-0"></div>
-            <!-- Progress Line Active -->
-            <div class="absolute top-3.5 left-14 w-[35%] h-[2px] bg-terracotta -z-0"></div>
+        <div class="flow-stepper">
+            <div class="fs-wrap done"><div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div><span class="fs-label">Booking</span></div>
+            <div class="fs-line done"></div>
+            <div class="fs-wrap done"><div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div><span class="fs-label">Appointment</span></div>
+            <div class="fs-line"></div>
+            <div class="fs-wrap"><div class="fs-dot"></div><span class="fs-label">Service</span></div>
         </div>
-
-        <!-- Status & Description Section -->
-        <div class="mt-10 px-6 flex flex-col items-center">
-            
-            <!-- CONFIRMED Badge - SEKARANG BENAR-BENAR DI TENGAH -->
-            <div class="bg-confirmed-green text-confirmed-dark font-inter flex items-center justify-center rounded-[2px] mb-4" 
-                 style="width: 108px; height: 22px; font-weight: 700; font-size: 12px; line-height: 100%;">
-                CONFIRMED
-            </div>
-
-            <p class="text-center text-gray-800 text-[13px] leading-relaxed px-4">
-                Your booking has been confirmed. Please arrive on time for your scheduled appointment.
-            </p>
-        </div>
-
-        <!-- Tips Box -->
-        <div class="mx-6 mt-8 bg-tips-cream p-5 rounded-2xl flex gap-3 items-start">
-            <div class="mt-0.5">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
-            </div>
-            <div>
-                <h4 class="font-bold text-[14px] text-gray-800 mb-1">Tips</h4>
-                <p class="text-[12px] text-gray-700 leading-snug">
-                    Bookings will be automatically canceled if payment is not completed before the deadline.
-                </p>
-            </div>
-        </div>
-
-        <!-- Detail Status List -->
-        <div class="mx-6 mt-8 space-y-5">
-            <div class="flex justify-between items-center">
-                <span class="text-[14px] font-bold text-gray-800">Status</span>
-                <span class="text-[14px] font-bold text-gray-900">CONFIRMED</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-[14px] font-bold text-gray-800">Service Fee</span>
-                <span class="text-[14px] font-bold text-gray-900">PAID</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-[14px] font-bold text-gray-800">Home Service Fee</span>
-                <span class="text-[14px] font-bold text-gray-900">CONFIRMED</span>
-            </div>
-        </div>
-
-        <!-- Spacer -->
-        <div class="flex-grow"></div>
-
-        <!-- Footer Section -->
-        <div class="px-6 pb-10">
-            <hr class="border-gray-200 mb-6">
-            
-            <div class="flex items-center gap-3 mb-6">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
-                <p class="text-[12px] text-gray-600 font-medium">Payment has been successfully processed.</p>
-            </div>
-
-            <button class="w-full bg-terracotta text-white font-bold py-4 rounded-xl text-lg shadow-sm active:opacity-80 transition-all">
-                View Booking
-            </button>
-        </div>
-
     </div>
 
-</body>
-</html>
+    <div class="mb">
+        <div style="text-align:center;margin-bottom:16px;">
+            <div class="confirmed-badge">✓ Confirmed</div>
+            <p class="confirmed-desc">Your booking has been confirmed. Please arrive on time for your scheduled appointment.</p>
+        </div>
+
+        <div class="tips-card">
+            <span class="material-icons-round">lightbulb</span>
+            <div>
+                <h5>Tips</h5>
+                <p>Bookings will be automatically cancelled if payment is not completed before the deadline. Keep your artist notified of any changes.</p>
+            </div>
+        </div>
+
+        <div class="status-list">
+            <div class="status-row"><span>Status</span><span class="badge-confirmed">CONFIRMED</span></div>
+            <div class="status-row"><span>Service Fee</span><span class="badge-paid">PAID</span></div>
+            <div class="status-row"><span>Home Service Fee</span><span class="badge-confirmed">CONFIRMED</span></div>
+            <div class="status-row"><span>Artist</span><strong>Sarah Wijaya</strong></div>
+            <div class="status-row"><span>Date</span><strong>10 May 2026 · 09:00</strong></div>
+        </div>
+    </div>
+
+    <div class="mf">
+        <div class="info-row">
+            <span class="material-icons-round">info</span>
+            <p>Payment has been successfully processed.</p>
+        </div>
+        <a href="{{ route('booking.countdown') }}" class="btn btn-primary">
+            View Booking Countdown <span class="material-icons-round" style="font-size:18px">arrow_forward</span>
+        </a>
+    </div>
+</div>
+@endsection
