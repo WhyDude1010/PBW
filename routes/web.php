@@ -49,3 +49,21 @@ Route::prefix('booking')->name('booking.')->group(function () {
     // Step 17: Completion
     Route::get('/completion', fn() => view('booking.completion'))->name('completion');
 });
+
+// Admin Panel Routes
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
+    
+    // Bookings
+    Route::get('/bookings', fn() => view('admin.bookings.index'))->name('bookings.index');
+    
+    // MUAs
+    Route::get('/muas', fn() => view('admin.muas.index'))->name('muas.index');
+    Route::get('/muas/create', fn() => view('admin.muas.create'))->name('muas.create');
+    
+    // Clients
+    Route::get('/clients', fn() => view('admin.clients.index'))->name('clients.index');
+    
+    // Reviews
+    Route::get('/reviews', fn() => view('admin.reviews.index'))->name('reviews.index');
+});
