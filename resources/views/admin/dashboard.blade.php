@@ -1,93 +1,118 @@
 @extends('layouts.admin')
 @section('title','Dashboard')
 @section('page_title','Dashboard')
-@section('page_meta','Welcome back, Admin · {{ date("l, d M Y") }}')
+@section('page_meta', 'Welcome back, Admin · ' . date("l, d M Y"))
 
 @section('content')
-<style>
-.chart-bar-wrap{display:flex;align-items:flex-end;gap:6px;height:80px;}
-.chart-bar{flex:1;border-radius:4px 4px 0 0;background:var(--rose-light);transition:height .4s ease;position:relative;cursor:pointer;}
-.chart-bar:hover{background:var(--rose);}
-.chart-bar span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted);white-space:nowrap;}
-.recent-table-wrap{margin-top:0;}
-.mua-pill{display:flex;align-items:center;gap:8px;}
-.mua-pill img{width:28px;height:28px;border-radius:50%;object-fit:cover;}
-.mua-pill span{font-size:13px;font-weight:600;color:var(--dark);}
-</style>
 
 <!-- Stat Cards -->
-<div class="stat-grid">
-    <div class="stat-card reveal delay-1">
-        <div class="stat-icon"><span class="material-icons-round">event_available</span></div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-2xl p-6 border border-border shadow-sm flex items-start gap-4 hover:border-brand transition-colors">
+        <div class="w-12 h-12 rounded-xl bg-brand/10 text-brand flex items-center justify-center shrink-0">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        </div>
         <div>
-            <div class="stat-value">24</div>
-            <div class="stat-label">Bookings Today</div>
-            <div class="stat-delta">↑ 12% vs yesterday</div>
+            <div class="text-[28px] font-serif font-bold text-dark leading-none mb-1">24</div>
+            <div class="text-[13px] font-bold text-muted mb-2">Bookings Today</div>
+            <div class="text-[11px] font-bold text-emerald-500 flex items-center gap-1">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                12% vs yesterday
+            </div>
         </div>
     </div>
-    <div class="stat-card reveal delay-2">
-        <div class="stat-icon"><span class="material-icons-round">payments</span></div>
+    
+    <div class="bg-white rounded-2xl p-6 border border-border shadow-sm flex items-start gap-4 hover:border-brand transition-colors">
+        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
         <div>
-            <div class="stat-value">Rp 18M</div>
-            <div class="stat-label">Revenue This Week</div>
-            <div class="stat-delta">↑ 8% vs last week</div>
-        </div>
-    </div>
-    <div class="stat-card reveal delay-3">
-        <div class="stat-icon"><span class="material-icons-round">face_retouching_natural</span></div>
-        <div>
-            <div class="stat-value">52</div>
-            <div class="stat-label">Active MUAs</div>
-            <div class="stat-delta">↑ 3 new this month</div>
-        </div>
-    </div>
-    <div class="stat-card reveal delay-4">
-        <div class="stat-icon"><span class="material-icons-round">star_rate</span></div>
-        <div>
-            <div class="stat-value">4.9</div>
-            <div class="stat-label">Avg Rating</div>
-            <div class="stat-delta">Based on 1,240 reviews</div>
-        </div>
-    </div>
-</div>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
-    <!-- Weekly Bookings Chart -->
-    <div class="page-card">
-        <div class="page-card-header">
-            <h4>Weekly Bookings</h4>
-            <span class="badge badge-rose">This Week</span>
-        </div>
-        <div style="padding:24px;">
-            <div class="chart-bar-wrap">
-                <div class="chart-bar" style="height:40%"><span>Mon</span></div>
-                <div class="chart-bar" style="height:65%"><span>Tue</span></div>
-                <div class="chart-bar" style="height:50%"><span>Wed</span></div>
-                <div class="chart-bar" style="height:90%;background:var(--rose)"><span>Thu</span></div>
-                <div class="chart-bar" style="height:75%"><span>Fri</span></div>
-                <div class="chart-bar" style="height:85%"><span>Sat</span></div>
-                <div class="chart-bar" style="height:60%"><span>Sun</span></div>
+            <div class="text-[28px] font-serif font-bold text-dark leading-none mb-1">18M</div>
+            <div class="text-[13px] font-bold text-muted mb-2">Revenue This Week</div>
+            <div class="text-[11px] font-bold text-emerald-500 flex items-center gap-1">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                8% vs last week
             </div>
         </div>
     </div>
 
-    <!-- Top MUAs -->
-    <div class="page-card">
-        <div class="page-card-header">
-            <h4>Top MUAs This Week</h4>
-            <a href="{{ route('admin.muas.index') }}" style="font-size:12px;color:var(--rose);font-weight:600;">View all</a>
+    <div class="bg-white rounded-2xl p-6 border border-border shadow-sm flex items-start gap-4 hover:border-brand transition-colors">
+        <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
         </div>
-        <div style="padding:16px 24px;">
+        <div>
+            <div class="text-[28px] font-serif font-bold text-dark leading-none mb-1">52</div>
+            <div class="text-[13px] font-bold text-muted mb-2">Active MUAs</div>
+            <div class="text-[11px] font-bold text-emerald-500 flex items-center gap-1">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                3 new this month
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-border shadow-sm flex items-start gap-4 hover:border-brand transition-colors">
+        <div class="w-12 h-12 rounded-xl bg-violet-500/10 text-violet-500 flex items-center justify-center shrink-0">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+        </div>
+        <div>
+            <div class="text-[28px] font-serif font-bold text-dark leading-none mb-1">4.9</div>
+            <div class="text-[13px] font-bold text-muted mb-2">Avg Rating</div>
+            <div class="text-[11px] font-medium text-muted">Based on 1,240 reviews</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+    <!-- Weekly Bookings Chart -->
+    <div class="bg-white rounded-2xl border border-border shadow-sm flex flex-col">
+        <div class="px-6 py-5 border-b border-border flex items-center justify-between">
+            <h3 class="font-bold text-[16px] text-dark">Weekly Bookings</h3>
+            <span class="px-3 py-1 rounded-full bg-brand/10 text-brand text-[11px] font-bold uppercase tracking-wider">This Week</span>
+        </div>
+        <div class="p-6 flex-1 flex flex-col">
+            <div class="flex items-end justify-between gap-2 h-48 mt-auto">
+                <div class="w-full bg-brand/20 hover:bg-brand transition-colors rounded-t-lg relative group cursor-pointer" style="height: 40%">
+                    <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[12px] font-medium text-muted">Mon</span>
+                </div>
+                <div class="w-full bg-brand/20 hover:bg-brand transition-colors rounded-t-lg relative group cursor-pointer" style="height: 65%">
+                    <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[12px] font-medium text-muted">Tue</span>
+                </div>
+                <div class="w-full bg-brand/20 hover:bg-brand transition-colors rounded-t-lg relative group cursor-pointer" style="height: 50%">
+                    <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[12px] font-medium text-muted">Wed</span>
+                </div>
+                <div class="w-full bg-brand transition-colors rounded-t-lg relative group cursor-pointer shadow-md" style="height: 90%">
+                    <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[12px] font-bold text-dark">Thu</span>
+                </div>
+                <div class="w-full bg-brand/20 hover:bg-brand transition-colors rounded-t-lg relative group cursor-pointer" style="height: 75%">
+                    <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[12px] font-medium text-muted">Fri</span>
+                </div>
+                <div class="w-full bg-brand/20 hover:bg-brand transition-colors rounded-t-lg relative group cursor-pointer" style="height: 85%">
+                    <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[12px] font-medium text-muted">Sat</span>
+                </div>
+                <div class="w-full bg-brand/20 hover:bg-brand transition-colors rounded-t-lg relative group cursor-pointer" style="height: 60%">
+                    <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[12px] font-medium text-muted">Sun</span>
+                </div>
+            </div>
+            <div class="h-6"></div> <!-- Spacer for labels -->
+        </div>
+    </div>
+
+    <!-- Top MUAs -->
+    <div class="bg-white rounded-2xl border border-border shadow-sm">
+        <div class="px-6 py-5 border-b border-border flex items-center justify-between">
+            <h3 class="font-bold text-[16px] text-dark">Top MUAs This Week</h3>
+            <a href="{{ route('admin.muas.index') }}" class="text-[13px] font-bold text-brand hover:text-brand-dark transition-colors">View all</a>
+        </div>
+        <div class="p-2">
             @foreach([['Sarah Wijaya','Bali','12'],['Mia Rahardjo','Jakarta','9'],['Dera Sanjaya','Surabaya','7']] as $mua)
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-                <div class="mua-pill">
-                    <img src="{{ asset('image/model-mua.jpeg') }}" alt="{{ $mua[0] }}">
+            <div class="flex items-center justify-between p-4 hover:bg-cream/50 transition-colors rounded-xl">
+                <div class="flex items-center gap-4">
+                    <img src="{{ asset('image/model-mua.jpeg') }}" alt="{{ $mua[0] }}" class="w-12 h-12 rounded-full object-cover border border-border">
                     <div>
-                        <span>{{ $mua[0] }}</span>
-                        <div style="font-size:11px;color:var(--muted)">{{ $mua[1] }}</div>
+                        <div class="font-bold text-[14.5px] text-dark">{{ $mua[0] }}</div>
+                        <div class="text-[12px] text-muted">{{ $mua[1] }}</div>
                     </div>
                 </div>
-                <span class="badge badge-rose">{{ $mua[2] }} bookings</span>
+                <span class="px-3 py-1 rounded-full bg-brand/10 text-brand text-[12px] font-bold">{{ $mua[2] }} bookings</span>
             </div>
             @endforeach
         </div>
@@ -95,41 +120,44 @@
 </div>
 
 <!-- Recent Bookings -->
-<div class="page-card recent-table-wrap">
-    <div class="page-card-header">
-        <h4>Recent Bookings</h4>
-        <a href="{{ route('admin.bookings.index') }}" style="font-size:12px;color:var(--rose);font-weight:600;">View all →</a>
+<div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+    <div class="px-6 py-5 border-b border-border flex items-center justify-between bg-white">
+        <h3 class="font-bold text-[16px] text-dark">Recent Bookings</h3>
+        <a href="{{ route('admin.bookings.index') }}" class="text-[13px] font-bold text-brand hover:text-brand-dark transition-colors flex items-center gap-1">
+            View all 
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+        </a>
     </div>
-    <div class="table-wrap" style="border:none;border-radius:0;">
-        <table>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[800px]">
             <thead>
-                <tr>
-                    <th>Client</th>
-                    <th>MUA</th>
-                    <th>Date</th>
-                    <th>Package</th>
-                    <th>Amount</th>
-                    <th>Status</th>
+                <tr class="bg-cream/50 border-b border-border">
+                    <th class="px-6 py-4 text-[12px] font-bold text-muted uppercase tracking-wider">Client</th>
+                    <th class="px-6 py-4 text-[12px] font-bold text-muted uppercase tracking-wider">MUA</th>
+                    <th class="px-6 py-4 text-[12px] font-bold text-muted uppercase tracking-wider">Date</th>
+                    <th class="px-6 py-4 text-[12px] font-bold text-muted uppercase tracking-wider">Package</th>
+                    <th class="px-6 py-4 text-[12px] font-bold text-muted uppercase tracking-wider">Amount</th>
+                    <th class="px-6 py-4 text-[12px] font-bold text-muted uppercase tracking-wider">Status</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-border">
                 @foreach([
-                    ['Rina Maharani','Sarah Wijaya','10 May 2026','Basic Beauty','Rp 550k','confirmed'],
-                    ['Delia Santoso','Mia Rahardjo','11 May 2026','Creative Glam','Rp 3.2M','pending'],
-                    ['Citra Dewi','Dera Sanjaya','12 May 2026','Editorial','Rp 2.1M','confirmed'],
-                    ['Ayu Pratiwi','Sarah Wijaya','13 May 2026','Signature Bridal','Rp 12M','pending'],
+                    ['Rina Maharani','Sarah Wijaya','10 May 2026','Basic Beauty','Rp 550.000','confirmed'],
+                    ['Delia Santoso','Mia Rahardjo','11 May 2026','Creative Glam','Rp 3.200.000','pending'],
+                    ['Citra Dewi','Dera Sanjaya','12 May 2026','Editorial','Rp 2.100.000','confirmed'],
+                    ['Ayu Pratiwi','Sarah Wijaya','13 May 2026','Signature Bridal','Rp 12.000.000','pending'],
                 ] as $b)
-                <tr>
-                    <td style="font-weight:600;color:var(--dark)">{{ $b[0] }}</td>
-                    <td>{{ $b[1] }}</td>
-                    <td>{{ $b[2] }}</td>
-                    <td>{{ $b[3] }}</td>
-                    <td style="font-weight:600;color:var(--rose)">{{ $b[4] }}</td>
-                    <td>
-                        @if($b[5]==='confirmed')
-                            <span class="badge badge-success">Confirmed</span>
+                <tr class="hover:bg-cream/30 transition-colors">
+                    <td class="px-6 py-4 text-[14px] font-bold text-dark">{{ $b[0] }}</td>
+                    <td class="px-6 py-4 text-[14px] text-muted">{{ $b[1] }}</td>
+                    <td class="px-6 py-4 text-[14px] text-muted">{{ $b[2] }}</td>
+                    <td class="px-6 py-4 text-[14px] text-muted">{{ $b[3] }}</td>
+                    <td class="px-6 py-4 text-[14px] font-bold text-brand">{{ $b[4] }}</td>
+                    <td class="px-6 py-4">
+                        @if($b[5] === 'confirmed')
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-500 uppercase tracking-wider">Confirmed</span>
                         @else
-                            <span class="badge badge-warning">Pending</span>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-600 uppercase tracking-wider">Pending</span>
                         @endif
                     </td>
                 </tr>
@@ -138,16 +166,5 @@
         </table>
     </div>
 </div>
-@endsection
 
-@push('scripts')
-<script>
-const revealEls = document.querySelectorAll('.reveal, .stat-card');
-if(revealEls.length){
-    const obs = new IntersectionObserver(entries=>{
-        entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';}});
-    },{threshold:.1});
-    revealEls.forEach(el=>{el.style.opacity='0';el.style.transform='translateY(16px)';el.style.transition='opacity .5s ease, transform .5s ease';obs.observe(el);});
-}
-</script>
-@endpush
+@endsection
