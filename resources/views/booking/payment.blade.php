@@ -1,92 +1,69 @@
-@extends('layouts.mobile')
-@section('title','Payment Complete — Beautique')
-@section('flow_step','Step 8 · Paid')
+@extends('layouts.app')
+@section('title', 'Payment Complete — Beautique')
 
 @section('content')
-<style>
-.mobile-card{width:100%;max-width:480px;min-height:calc(100vh - 80px);border-radius:var(--radius-xl);box-shadow:0 24px 80px rgba(0,0,0,.1);background:var(--white);display:flex;flex-direction:column;overflow:hidden;}
-.mh{padding:22px 24px 0;flex-shrink:0;}
-.mh-top{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
-.mh-top a{width:34px;height:34px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--dark);transition:var(--transition);}
-.mh-top a:hover{background:var(--rose-light);color:var(--rose-dark);}
-.mh-top h1{flex:1;text-align:center;font-size:16px;font-weight:700;color:var(--dark);}
-.sp{width:34px;}
-.flow-stepper{display:flex;align-items:center;justify-content:center;gap:0;padding:0 16px;margin-bottom:24px;}
-.fs-dot{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--white);box-shadow:var(--shadow-sm);}
-.fs-dot.done{background:var(--rose);}
-.fs-dot svg{width:11px;height:11px;display:none;}
-.fs-dot.done svg{display:block;}
-.fs-line{flex:1;height:2px;background:var(--border);}
-.fs-line.done{background:var(--rose);}
-.fs-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;}
-.fs-label{font-size:9.5px;font-weight:600;color:var(--muted);}
-.fs-wrap.done .fs-label{color:var(--rose-dark);}
-.mb{flex:1;overflow-y:auto;padding:0 24px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
-/* Success */
-.success-ring{width:90px;height:90px;border-radius:50%;background:var(--success-light);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:checkPop .7s cubic-bezier(.25,.8,.25,1) both;}
-.check-circle{width:68px;height:68px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;}
-.check-circle .material-icons-round{font-size:34px;color:#fff;}
-.mb h3{font-size:22px;font-weight:700;color:var(--dark);margin-bottom:10px;}
-.success-card{background:var(--success-light);border-radius:var(--radius-lg);padding:28px 24px;margin:20px 0;width:100%;text-align:center;}
-.success-card .material-icons-round{font-size:40px;color:var(--success);margin-bottom:12px;}
-.success-card h4{font-size:18px;font-weight:700;color:var(--dark);margin-bottom:12px;}
-.success-card hr{border:none;border-top:1px solid rgba(46,204,113,.2);margin-bottom:12px;}
-.success-card p{font-size:13.5px;color:#555;line-height:1.7;}
-.receipt-rows{width:100%;text-align:left;margin-top:20px;}
-.receipt-row{display:flex;justify-content:space-between;font-size:13px;padding:9px 0;border-bottom:1px solid var(--border);}
-.receipt-row:last-child{border-bottom:none;font-weight:700;padding-top:12px;}
-.receipt-row span:first-child{color:var(--muted);}
-.receipt-row strong{color:var(--dark);}
-.mf{padding:16px 24px 28px;border-top:1px solid var(--border);flex-shrink:0;}
-.mf .btn{width:100%;justify-content:center;border-radius:var(--radius-sm);padding:15px;font-size:15px;}
-</style>
+<div class="min-h-screen bg-cream pt-[80px] lg:pt-[100px] pb-24 flex flex-col items-center justify-center">
+    <div class="max-w-2xl mx-auto px-4 w-full">
+        
+        <div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden p-8 lg:p-12 text-center relative">
+            
+            <!-- Confetti / Success Background Effect -->
+            <div class="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl"></div>
+            </div>
 
-<div class="mobile-card">
-    <div class="mh">
-        <div class="mh-top">
-            <a href="{{ route('booking.done') }}">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </a>
-            <h1>Paid Complete</h1>
-            <div class="sp"></div>
-        </div>
-        <div class="flow-stepper">
-            <div class="fs-wrap done"><div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div><span class="fs-label">Booking</span></div>
-            <div class="fs-line done"></div>
-            <div class="fs-wrap done"><div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div><span class="fs-label">Appointment</span></div>
-            <div class="fs-line done"></div>
-            <div class="fs-wrap done"><div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div><span class="fs-label">Service</span></div>
-        </div>
-    </div>
+            <div class="relative z-10">
+                <div class="w-24 h-24 mx-auto bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 mb-6 shadow-sm border-4 border-white animate-[bounce_1s_ease-in-out]">
+                    <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path><path d="M22 4L12 14.01l-3-3"></path></svg>
+                </div>
+                
+                <h1 class="font-serif text-[32px] lg:text-[40px] font-bold text-dark leading-tight mb-4">Payment Successful!</h1>
+                <p class="text-[15px] text-muted max-w-md mx-auto mb-10 leading-relaxed">Your session has been fully paid. We hope you feel beautiful and confident with your new look.</p>
+                
+                <div class="bg-cream rounded-2xl p-6 lg:p-8 text-left mb-10 border border-border">
+                    <div class="flex items-center gap-3 mb-6 pb-6 border-b border-border">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand shadow-sm">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-[15px] text-dark">Receipt #B-98302</h4>
+                            <p class="text-[13px] text-muted">10 May 2026</p>
+                        </div>
+                    </div>
 
-    <div class="mb">
-        <div class="success-ring">
-            <div class="check-circle"><span class="material-icons-round">check</span></div>
-        </div>
-        <h3>Payment Successful!</h3>
-        <p style="font-size:13.5px;color:var(--muted);margin-bottom:8px;">Your session has been fully paid. We hope you love your look!</p>
+                    <div class="space-y-4 mb-6">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Artist</span>
+                            <strong class="text-[14px] text-dark">Sarah Wijaya</strong>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Package</span>
+                            <strong class="text-[14px] text-dark">Basic Beauty</strong>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Down Payment (Paid)</span>
+                            <strong class="text-[14px] text-dark">Rp 275.000</strong>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Final Payment (Paid)</span>
+                            <strong class="text-[14px] text-dark">Rp 275.000</strong>
+                        </div>
+                    </div>
 
-        <div class="success-card">
-            <span class="material-icons-round">receipt_long</span>
-            <h4>All Set ✓</h4>
-            <hr>
-            <p>Your booking is now complete. Your artist has been paid and the booking is closed.</p>
-        </div>
+                    <div class="flex justify-between items-center pt-4 border-t border-border">
+                        <span class="text-[15px] font-bold text-dark">Total Paid</span>
+                        <strong class="text-[20px] font-bold text-emerald-500">Rp 550.000</strong>
+                    </div>
+                </div>
+                
+                <a href="{{ route('booking.review') }}" class="inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5 w-full sm:w-auto">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    Leave a Review
+                </a>
+            </div>
 
-        <div class="receipt-rows">
-            <div class="receipt-row"><span>Artist</span><strong>Sarah Wijaya</strong></div>
-            <div class="receipt-row"><span>Date</span><strong>10 May 2026</strong></div>
-            <div class="receipt-row"><span>Package</span><strong>Basic Beauty</strong></div>
-            <div class="receipt-row"><span>DP Paid</span><strong>Rp 275.000</strong></div>
-            <div class="receipt-row"><span>Final Payment</span><strong>Rp 275.000</strong></div>
-            <div class="receipt-row"><span>Total Paid</span><strong style="color:var(--rose)">Rp 550.000</strong></div>
         </div>
-    </div>
-
-    <div class="mf">
-        <a href="{{ route('booking.review') }}" class="btn btn-primary">
-            Leave a Review <span class="material-icons-round" style="font-size:18px">star</span>
-        </a>
     </div>
 </div>
 @endsection

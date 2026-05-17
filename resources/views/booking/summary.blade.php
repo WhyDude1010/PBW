@@ -1,137 +1,212 @@
-@extends('layouts.mobile')
-@section('title','Booking Summary — Beautique')
-@section('flow_step','Step 3 · Summary')
+@extends('layouts.app')
+@section('title', 'Booking Summary — Beautique')
 
 @section('content')
-<style>
-.mobile-card{width:100%;max-width:480px;min-height:calc(100vh - 80px);border-radius:var(--radius-xl);box-shadow:0 24px 80px rgba(0,0,0,.1);background:var(--white);display:flex;flex-direction:column;overflow:hidden;}
-.mh{padding:22px 24px 0;flex-shrink:0;}
-.mh-top{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
-.mh-top a{width:34px;height:34px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--dark);transition:var(--transition);}
-.mh-top a:hover{background:var(--rose-light);color:var(--rose-dark);}
-.mh-top h1{flex:1;text-align:center;font-size:16px;font-weight:700;color:var(--dark);}
-.mh-top .sp{width:34px;}
-.flow-stepper{display:flex;align-items:center;justify-content:center;gap:0;padding:0 16px;margin-bottom:24px;}
-.fs-dot{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--white);box-shadow:var(--shadow-sm);}
-.fs-dot.done{background:var(--rose);}
-.fs-dot svg{width:11px;height:11px;display:none;}
-.fs-dot.done svg{display:block;}
-.fs-line{flex:1;height:2px;background:var(--border);}
-.fs-line.done{background:var(--rose);}
-.fs-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;}
-.fs-label{font-size:9.5px;font-weight:600;color:var(--muted);}
-.fs-wrap.done .fs-label{color:var(--rose-dark);}
-.mb{flex:1;overflow-y:auto;padding:0 24px 16px;}
-.status-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:var(--radius-pill);background:var(--warning-light);color:#9B6A00;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
-.summary-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
-.booking-recap{background:var(--cream);border-radius:var(--radius-md);padding:20px;margin-bottom:20px;}
-.recap-mua{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);}
-.recap-mua img{width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid var(--rose-light);}
-.recap-mua-name{font-weight:700;font-size:14px;color:var(--dark);}
-.recap-mua-sub{font-size:12px;color:var(--muted);}
-.recap-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px;}
-.recap-row:last-child{border-bottom:none;}
-.recap-row span:first-child{color:var(--muted);}
-.recap-row strong{color:var(--dark);font-weight:600;}
-.pay-box{background:var(--cream);border-radius:var(--radius-md);padding:20px;margin-bottom:16px;}
-.pay-box h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:14px;}
-.pay-opt{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;}
-.pay-opt:last-child{border-bottom:none;}
-.pay-opt-left{display:flex;align-items:center;gap:12px;}
-.pay-icon{width:36px;height:36px;border-radius:8px;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;}
-.pay-icon .material-icons-round{font-size:18px;color:var(--rose);}
-.pay-opt strong{font-size:13.5px;font-weight:600;color:var(--dark);}
-.pay-opt small{font-size:11px;color:var(--muted);}
-.pay-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:var(--transition);}
-.pay-opt.selected .pay-radio{border-color:var(--rose);background:var(--rose);}
-.pay-opt.selected .pay-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff;}
-.info-row{display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--rose-light);border-radius:10px;margin-bottom:16px;}
-.info-row .material-icons-round{font-size:16px;color:var(--rose);flex-shrink:0;margin-top:1px;}
-.info-row p{font-size:12px;color:var(--rose-dark);line-height:1.6;}
-.mf{padding:16px 24px 28px;border-top:1px solid var(--border);flex-shrink:0;}
-.mf .btn{width:100%;justify-content:center;border-radius:var(--radius-sm);padding:15px;font-size:15px;}
-</style>
-
-<div class="mobile-card">
-    <div class="mh">
-        <div class="mh-top">
-            <a href="{{ route('booking.select-date') }}">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </a>
-            <h1>Booking Summary</h1>
-            <div class="sp"></div>
-        </div>
-        <div class="flow-stepper">
-            <div class="fs-wrap done"><div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div><span class="fs-label">Booking</span></div>
-            <div class="fs-line done"></div>
-            <div class="fs-wrap done"><div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div><span class="fs-label">Appointment</span></div>
-            <div class="fs-line"></div>
-            <div class="fs-wrap"><div class="fs-dot"></div><span class="fs-label">Service</span></div>
-        </div>
-    </div>
-
-    <div class="mb">
-        <div style="text-align:center;margin-bottom:16px;">
-            <div class="status-pill">⏳ Pending Payment</div>
-            <p class="summary-desc">Complete your down payment within 24 hours to secure your booking. Unpaid bookings are cancelled automatically.</p>
-        </div>
-
-        <!-- Booking Recap -->
-        <div class="booking-recap">
-            <div class="recap-mua">
-                <img src="{{ asset('image/model-mua.jpeg') }}" alt="MUA">
-                <div><div class="recap-mua-name">Sarah Wijaya</div><div class="recap-mua-sub">⭐ 4.9 · Bali</div></div>
-            </div>
-            <div class="recap-row"><span>Date</span><strong>Saturday, 10 May 2026</strong></div>
-            <div class="recap-row"><span>Time</span><strong>09:00 – 11:00</strong></div>
-            <div class="recap-row"><span>Service</span><strong>Home Visit</strong></div>
-            <div class="recap-row"><span>Package</span><strong>Basic Beauty</strong></div>
-            <div class="recap-row"><span>Add-ons</span><strong>Lash Application</strong></div>
-            <div class="recap-row"><span>Address</span><strong>Jl. Raya Kuta No. 25, Bali</strong></div>
-            <div class="recap-row" style="border-top:1.5px solid var(--border);margin-top:8px;padding-top:12px"><span style="font-weight:700;color:var(--dark)">Total</span><strong style="color:var(--rose);font-size:15px">Rp 550.000</strong></div>
-        </div>
-
-        <!-- Payment Method -->
-        <div class="pay-box">
-            <h4>Down Payment (DP 50%)</h4>
-            <div class="pay-opt selected" onclick="selectPay(this)">
-                <div class="pay-opt-left">
-                    <div class="pay-icon"><span class="material-icons-round">account_balance</span></div>
-                    <div><strong>Bank Transfer</strong><br><small>BCA, Mandiri, BNI, BRI</small></div>
+<div class="min-h-screen bg-cream pt-[80px] lg:pt-[100px] pb-24">
+    <div class="max-w-6xl mx-auto px-4 md:px-8 lg:px-12">
+        
+        <!-- Header & Stepper -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('booking.select-date') }}" class="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center text-dark hover:border-brand hover:text-brand transition-all shrink-0">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </a>
+                <div>
+                    <h1 class="font-serif text-[28px] lg:text-[36px] font-bold text-dark leading-tight">Booking Summary</h1>
                 </div>
-                <div class="pay-radio"></div>
             </div>
-            <div class="pay-opt" onclick="selectPay(this)">
-                <div class="pay-opt-left">
-                    <div class="pay-icon"><span class="material-icons-round">credit_card</span></div>
-                    <div><strong>Credit / Debit Card</strong><br><small>Visa, Mastercard</small></div>
+
+            <!-- Stepper -->
+            <div class="flex items-center gap-2 lg:gap-4 overflow-x-auto pb-2 hide-scrollbar">
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white shadow-[0_4px_12px_rgba(199,155,132,0.3)] border-2 border-white">
+                        <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg>
+                    </div>
+                    <span class="text-[11px] font-bold text-brand uppercase tracking-wider">Booking</span>
                 </div>
-                <div class="pay-radio"></div>
-            </div>
-            <div class="pay-opt" onclick="selectPay(this)">
-                <div class="pay-opt-left">
-                    <div class="pay-icon"><span class="material-icons-round">account_balance_wallet</span></div>
-                    <div><strong>E-Wallet</strong><br><small>GoPay, OVO, Dana</small></div>
+                <div class="w-10 lg:w-16 h-0.5 bg-brand rounded-full mb-5"></div>
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white shadow-[0_4px_12px_rgba(199,155,132,0.3)] border-2 border-white">
+                        <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg>
+                    </div>
+                    <span class="text-[11px] font-bold text-brand uppercase tracking-wider">Time</span>
                 </div>
-                <div class="pay-radio"></div>
+                <div class="w-10 lg:w-16 h-0.5 bg-brand rounded-full mb-5"></div>
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white shadow-[0_4px_12px_rgba(199,155,132,0.3)] border-2 border-white ring-4 ring-brand/20">
+                        <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" class="hidden"><path d="M2 6l3 3 5-5"/></svg>
+                    </div>
+                    <span class="text-[11px] font-bold text-brand uppercase tracking-wider">Service</span>
+                </div>
             </div>
         </div>
 
-        <div class="info-row">
-            <span class="material-icons-round">info</span>
-            <p>Confirmation is automatic after payment verification. Your artist will be notified immediately.</p>
-        </div>
-    </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            <!-- Left Content: Status & Payment -->
+            <div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
+                
+                <div class="bg-white rounded-2xl border border-border shadow-sm p-6 lg:p-10 text-center lg:text-left flex flex-col lg:flex-row items-center gap-6">
+                    <div class="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
+                        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-700 text-[12px] font-bold uppercase tracking-wider mb-3">Pending Payment</div>
+                        <p class="text-[14.5px] text-muted leading-relaxed">Complete your down payment within 24 hours to secure your booking. Unpaid bookings are automatically cancelled.</p>
+                    </div>
+                </div>
 
-    <div class="mf">
-        <a href="{{ route('booking.confirmed') }}" class="btn btn-primary">
-            Confirm &amp; Pay <span class="material-icons-round" style="font-size:18px">arrow_forward</span>
-        </a>
+                <div class="bg-white rounded-2xl border border-border shadow-sm p-6 lg:p-10">
+                    <h3 class="font-serif text-[24px] font-bold text-dark mb-6">Down Payment (DP 50%)</h3>
+                    
+                    <div class="space-y-4 mb-8">
+                        <!-- Option 1 -->
+                        <div class="pay-opt group relative p-5 rounded-xl border-2 border-brand bg-brand/5 cursor-pointer flex items-center justify-between transition-all" onclick="selectPay(this)">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-white border border-border flex items-center justify-center text-brand group-hover:border-brand transition-colors">
+                                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                </div>
+                                <div>
+                                    <strong class="block text-[15px] font-bold text-dark mb-1">Bank Transfer</strong>
+                                    <span class="text-[13px] text-muted">BCA, Mandiri, BNI, BRI</span>
+                                </div>
+                            </div>
+                            <div class="pay-radio w-6 h-6 rounded-full border-2 border-brand bg-brand flex items-center justify-center transition-all">
+                                <div class="w-2.5 h-2.5 bg-white rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <!-- Option 2 -->
+                        <div class="pay-opt group relative p-5 rounded-xl border-2 border-border bg-white cursor-pointer hover:border-brand flex items-center justify-between transition-all" onclick="selectPay(this)">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-cream border border-border flex items-center justify-center text-muted group-hover:text-brand transition-colors">
+                                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                </div>
+                                <div>
+                                    <strong class="block text-[15px] font-bold text-dark mb-1">Credit / Debit Card</strong>
+                                    <span class="text-[13px] text-muted">Visa, Mastercard</span>
+                                </div>
+                            </div>
+                            <div class="pay-radio w-6 h-6 rounded-full border-2 border-border bg-white transition-all"></div>
+                        </div>
+
+                        <!-- Option 3 -->
+                        <div class="pay-opt group relative p-5 rounded-xl border-2 border-border bg-white cursor-pointer hover:border-brand flex items-center justify-between transition-all" onclick="selectPay(this)">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-cream border border-border flex items-center justify-center text-muted group-hover:text-brand transition-colors">
+                                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <div>
+                                    <strong class="block text-[15px] font-bold text-dark mb-1">E-Wallet</strong>
+                                    <span class="text-[13px] text-muted">GoPay, OVO, Dana</span>
+                                </div>
+                            </div>
+                            <div class="pay-radio w-6 h-6 rounded-full border-2 border-border bg-white transition-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-4 bg-brand/10 rounded-xl mb-8">
+                        <svg class="mt-0.5 text-brand shrink-0" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <p class="text-[13.5px] text-brand-dark leading-relaxed">Confirmation is automatic after payment verification. Your artist will be notified immediately.</p>
+                    </div>
+
+                    <a href="{{ route('booking.confirmed') }}" class="w-full inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
+                        Confirm &amp; Pay Rp 275.000
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Column Sidebar -->
+            <div class="lg:col-span-5 xl:col-span-4">
+                <div class="bg-white rounded-2xl border border-border p-6 lg:p-8 shadow-sm sticky top-24">
+                    
+                    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-border">
+                        <img src="{{ asset('image/model-mua.jpeg') }}" alt="MUA" class="w-16 h-16 rounded-full object-cover border-2 border-cream">
+                        <div>
+                            <h3 class="font-bold text-[18px] text-dark">Sarah Wijaya</h3>
+                            <p class="text-[13px] text-muted flex items-center gap-1 mt-1">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--color-amber-500)" stroke="var(--color-amber-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                <span class="font-bold text-dark">4.9</span> &middot; Bali
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <h4 class="text-[13px] font-bold text-muted uppercase tracking-wider mb-4">Service Details</h4>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Date</span>
+                            <strong class="text-[14px] text-dark text-right">Sat, 10 May 2026</strong>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Time</span>
+                            <strong class="text-[14px] text-dark text-right">09:00 – 11:00</strong>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Location</span>
+                            <strong class="text-[14px] text-dark text-right">Home Visit</strong>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Address</span>
+                            <strong class="text-[14px] text-dark text-right max-w-[180px]">Jl. Raya Kuta No. 25, Bali</strong>
+                        </div>
+                    </div>
+
+                    <h4 class="text-[13px] font-bold text-muted uppercase tracking-wider mb-4">Price Breakdown</h4>
+
+                    <div class="bg-cream rounded-xl p-5">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[14.5px] text-muted">Basic Beauty</span>
+                            <strong class="text-[14.5px] text-dark">Rp 500.000</strong>
+                        </div>
+                        <div class="flex justify-between items-center mb-5 pb-5 border-b border-border">
+                            <span class="text-[14.5px] text-muted">Lash Application</span>
+                            <strong class="text-[14.5px] text-dark">Rp 50.000</strong>
+                        </div>
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <span class="text-[12px] font-bold text-muted uppercase tracking-wider block mb-1">Total Amount</span>
+                                <strong class="text-[22px] font-bold text-dark block leading-none">Rp 550.000</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+@endpush
+
 @push('scripts')
 <script>
-function selectPay(el){document.querySelectorAll('.pay-opt').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');}
+function selectPay(el) {
+    // Reset all
+    document.querySelectorAll('.pay-opt').forEach(e => {
+        e.className = 'pay-opt group relative p-5 rounded-xl border-2 border-border bg-white cursor-pointer hover:border-brand flex items-center justify-between transition-all';
+        const radio = e.querySelector('.pay-radio');
+        radio.className = 'pay-radio w-6 h-6 rounded-full border-2 border-border bg-white transition-all';
+        radio.innerHTML = '';
+        
+        const iconDiv = e.querySelector('.w-12');
+        iconDiv.className = 'w-12 h-12 rounded-xl bg-cream border border-border flex items-center justify-center text-muted group-hover:text-brand transition-colors';
+    });
+    
+    // Select this one
+    el.className = 'pay-opt group relative p-5 rounded-xl border-2 border-brand bg-brand/5 cursor-pointer flex items-center justify-between transition-all';
+    const radio = el.querySelector('.pay-radio');
+    radio.className = 'pay-radio w-6 h-6 rounded-full border-2 border-brand bg-brand flex items-center justify-center transition-all';
+    radio.innerHTML = '<div class="w-2.5 h-2.5 bg-white rounded-full"></div>';
+    
+    const iconDiv = el.querySelector('.w-12');
+    iconDiv.className = 'w-12 h-12 rounded-xl bg-white border border-border flex items-center justify-center text-brand group-hover:border-brand transition-colors';
+}
 </script>
 @endpush

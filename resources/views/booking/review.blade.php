@@ -1,109 +1,70 @@
-@extends('layouts.mobile')
-@section('title','Rate Your Experience — Beautique')
-@section('flow_step','Step 9 · Review')
+@extends('layouts.app')
+@section('title', 'Rate Your Experience — Beautique')
 
 @section('content')
-<style>
-.mobile-card{width:100%;max-width:480px;min-height:calc(100vh - 80px);border-radius:var(--radius-xl);box-shadow:0 24px 80px rgba(0,0,0,.1);background:var(--white);display:flex;flex-direction:column;overflow:hidden;}
-.mh{padding:22px 24px 0;flex-shrink:0;}
-.mh-top{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
-.mh-top a{width:34px;height:34px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--dark);transition:var(--transition);}
-.mh-top a:hover{background:var(--rose-light);color:var(--rose-dark);}
-.mh-top h1{flex:1;text-align:center;font-size:16px;font-weight:700;color:var(--dark);}
-.sp{width:34px;}
-.flow-stepper{display:flex;align-items:center;justify-content:center;gap:0;padding:0 16px;margin-bottom:24px;}
-.fs-dot{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--white);box-shadow:var(--shadow-sm);}
-.fs-dot.done{background:var(--rose);}
-.fs-dot svg{width:11px;height:11px;display:none;}
-.fs-dot.done svg{display:block;}
-.fs-line{flex:1;height:2px;background:var(--border);}
-.fs-line.done{background:var(--rose);}
-.fs-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;}
-.fs-label{font-size:9.5px;font-weight:600;color:var(--muted);}
-.fs-wrap.done .fs-label{color:var(--rose-dark);}
-.mb{flex:1;overflow-y:auto;padding:0 24px 16px;}
-/* Artist card */
-.artist-review-card{display:flex;align-items:center;gap:14px;background:var(--cream);border-radius:var(--radius-md);padding:14px;margin-bottom:24px;}
-.artist-review-card img{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--rose-light);}
-.artist-review-card h4{font-size:14.5px;font-weight:700;color:var(--dark);}
-.artist-review-card p{font-size:12px;color:var(--muted);}
-/* Rating section */
-.rate-label{font-size:13px;font-weight:700;color:var(--dark);text-align:center;margin-bottom:6px;}
-.rate-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:18px;}
-.stars-row{display:flex;justify-content:center;gap:10px;margin-bottom:8px;}
-.star-btn{font-size:40px;cursor:pointer;color:var(--border);transition:color .2s,transform .15s;line-height:1;background:none;border:none;padding:2px;}
-.star-btn.lit{color:#F59E0B;}
-.star-btn:hover{transform:scale(1.2);}
-.rating-text{text-align:center;font-size:12px;font-weight:600;color:var(--rose);min-height:18px;margin-bottom:22px;}
-/* Quick tags */
-.tags-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
-.quick-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
-.q-tag{padding:7px 14px;border-radius:var(--radius-pill);border:1.5px solid var(--border);font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:var(--transition);}
-.q-tag.selected,.q-tag:hover{border-color:var(--rose);color:var(--rose);background:var(--rose-light);}
-/* Textarea */
-.feedback-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
-textarea.form-control{resize:none;height:120px;}
-.mf{padding:16px 24px 28px;border-top:1px solid var(--border);flex-shrink:0;}
-.mf .btn{width:100%;justify-content:center;border-radius:var(--radius-sm);padding:15px;font-size:15px;}
-</style>
-
-<div class="mobile-card">
-    <div class="mh">
-        <div class="mh-top">
-            <a href="{{ route('booking.payment') }}">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </a>
-            <h1>Rating &amp; Review</h1>
-            <div class="sp"></div>
-        </div>
-        <div class="flow-stepper">
-            <div class="fs-wrap done"><div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div><span class="fs-label">Booking</span></div>
-            <div class="fs-line done"></div>
-            <div class="fs-wrap done"><div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div><span class="fs-label">Appointment</span></div>
-            <div class="fs-line done"></div>
-            <div class="fs-wrap done"><div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div><span class="fs-label">Service</span></div>
-        </div>
-    </div>
-
-    <div class="mb">
-        <div class="artist-review-card">
-            <img src="{{ asset('image/model-mua.jpeg') }}" alt="Sarah">
-            <div>
-                <h4>Sarah Wijaya</h4>
-                <p>10 May 2026 · Basic Beauty Package</p>
+<div class="min-h-screen bg-cream pt-[80px] lg:pt-[100px] pb-24 flex flex-col items-center justify-center">
+    <div class="max-w-2xl mx-auto px-4 w-full">
+        
+        <div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden p-8 lg:p-12 text-center">
+            
+            <h1 class="font-serif text-[32px] lg:text-[40px] font-bold text-dark leading-tight mb-2">Rate Your Experience</h1>
+            <p class="text-[15px] text-muted mb-8">How did Sarah do? Your feedback helps other clients find the right artist.</p>
+            
+            <div class="bg-cream rounded-2xl p-5 mb-10 flex items-center gap-4 text-left border border-border">
+                <img src="{{ asset('image/model-mua.jpeg') }}" alt="Sarah" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm">
+                <div>
+                    <h4 class="font-bold text-[15px] text-dark mb-0.5">Sarah Wijaya</h4>
+                    <p class="text-[13px] text-muted">10 May 2026 &middot; Basic Beauty Package</p>
+                </div>
             </div>
+
+            <!-- Stars -->
+            <div class="mb-2">
+                <span class="text-[14px] font-bold text-dark">Tap the stars to rate</span>
+            </div>
+            
+            <div class="flex justify-center gap-2 sm:gap-4 mb-2" id="star-row">
+                <button class="star-btn text-[40px] sm:text-[56px] text-border hover:scale-110 transition-all leading-none focus:outline-none" data-val="1" onclick="setRating(1)">★</button>
+                <button class="star-btn text-[40px] sm:text-[56px] text-border hover:scale-110 transition-all leading-none focus:outline-none" data-val="2" onclick="setRating(2)">★</button>
+                <button class="star-btn text-[40px] sm:text-[56px] text-border hover:scale-110 transition-all leading-none focus:outline-none" data-val="3" onclick="setRating(3)">★</button>
+                <button class="star-btn text-[40px] sm:text-[56px] text-border hover:scale-110 transition-all leading-none focus:outline-none" data-val="4" onclick="setRating(4)">★</button>
+                <button class="star-btn text-[40px] sm:text-[56px] text-border hover:scale-110 transition-all leading-none focus:outline-none" data-val="5" onclick="setRating(5)">★</button>
+            </div>
+            
+            <div class="h-6 mb-8">
+                <span class="text-[14px] font-bold text-brand transition-all" id="rating-text"></span>
+            </div>
+
+            <!-- Tags -->
+            <div class="text-left mb-8">
+                <label class="block text-[12px] font-bold text-muted uppercase tracking-wider mb-4">What did you love?</label>
+                <div class="flex flex-wrap justify-center sm:justify-start gap-3">
+                    <button class="q-tag px-4 py-2 rounded-full border border-border bg-white text-[13px] font-semibold text-muted hover:border-brand hover:text-brand transition-colors focus:outline-none" onclick="toggleTag(this)">Punctual</button>
+                    <button class="q-tag px-4 py-2 rounded-full border border-border bg-white text-[13px] font-semibold text-muted hover:border-brand hover:text-brand transition-colors focus:outline-none" onclick="toggleTag(this)">Professional</button>
+                    <button class="q-tag px-4 py-2 rounded-full border border-border bg-white text-[13px] font-semibold text-muted hover:border-brand hover:text-brand transition-colors focus:outline-none" onclick="toggleTag(this)">Long-lasting</button>
+                    <button class="q-tag px-4 py-2 rounded-full border border-border bg-white text-[13px] font-semibold text-muted hover:border-brand hover:text-brand transition-colors focus:outline-none" onclick="toggleTag(this)">Natural Look</button>
+                    <button class="q-tag px-4 py-2 rounded-full border border-border bg-white text-[13px] font-semibold text-muted hover:border-brand hover:text-brand transition-colors focus:outline-none" onclick="toggleTag(this)">Great Vibe</button>
+                    <button class="q-tag px-4 py-2 rounded-full border border-border bg-white text-[13px] font-semibold text-muted hover:border-brand hover:text-brand transition-colors focus:outline-none" onclick="toggleTag(this)">Exceeded Expectations</button>
+                </div>
+            </div>
+
+            <!-- Feedback Box -->
+            <div class="text-left mb-10">
+                <label class="block text-[13.5px] font-bold text-dark mb-3">Write a review (optional)</label>
+                <textarea rows="4" class="w-full px-4 py-3 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark placeholder:text-muted/60 resize-none" placeholder="Share your experience..."></textarea>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="{{ route('booking.completion') }}" class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    Submit Review
+                </a>
+                <a href="{{ route('booking.completion') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-xl border border-border bg-white text-[15px] font-bold text-muted hover:border-brand hover:text-brand transition-colors">
+                    Skip
+                </a>
+            </div>
+
         </div>
-
-        <div class="rate-label">How was your experience?</div>
-        <div class="rate-sub">Tap the stars to rate Sarah</div>
-
-        <div class="stars-row" id="star-row">
-            <button class="star-btn" data-val="1" onclick="setRating(1)">★</button>
-            <button class="star-btn" data-val="2" onclick="setRating(2)">★</button>
-            <button class="star-btn" data-val="3" onclick="setRating(3)">★</button>
-            <button class="star-btn" data-val="4" onclick="setRating(4)">★</button>
-            <button class="star-btn" data-val="5" onclick="setRating(5)">★</button>
-        </div>
-        <div class="rating-text" id="rating-text"></div>
-
-        <div class="tags-label">What did you love?</div>
-        <div class="quick-tags">
-            <div class="q-tag" onclick="toggleTag(this)">Punctual</div>
-            <div class="q-tag" onclick="toggleTag(this)">Professional</div>
-            <div class="q-tag" onclick="toggleTag(this)">Long-lasting</div>
-            <div class="q-tag" onclick="toggleTag(this)">Natural Look</div>
-            <div class="q-tag" onclick="toggleTag(this)">Great Vibe</div>
-            <div class="q-tag" onclick="toggleTag(this)">Exceeded Expectations</div>
-        </div>
-
-        <div class="feedback-label">Write a review (optional)</div>
-        <textarea class="form-control" id="feedback-text" placeholder="Share your experience — it helps other clients find the right artist..."></textarea>
-    </div>
-
-    <div class="mf">
-        <a href="{{ route('booking.completion') }}" class="btn btn-primary">
-            Submit Review <span class="material-icons-round" style="font-size:18px">send</span>
-        </a>
     </div>
 </div>
 @endsection
@@ -112,11 +73,30 @@ textarea.form-control{resize:none;height:120px;}
 <script>
 const labels = ['','Terrible 😞','Could be better 😐','Good 🙂','Really good 😊','Amazing! 🤩'];
 let currentRating = 0;
-function setRating(n){
+
+function setRating(n) {
     currentRating = n;
-    document.querySelectorAll('.star-btn').forEach((s,i)=>s.classList.toggle('lit', i<n));
+    const stars = document.querySelectorAll('.star-btn');
+    stars.forEach((s, i) => {
+        if(i < n) {
+            s.classList.replace('text-border', 'text-amber-500');
+        } else {
+            s.classList.replace('text-amber-500', 'text-border');
+        }
+    });
     document.getElementById('rating-text').textContent = labels[n];
 }
-function toggleTag(el){el.classList.toggle('selected');}
+
+function toggleTag(el) {
+    if(el.classList.contains('border-border')) {
+        el.classList.replace('border-border', 'border-brand');
+        el.classList.replace('text-muted', 'text-brand');
+        el.classList.replace('bg-white', 'bg-brand/10');
+    } else {
+        el.classList.replace('border-brand', 'border-border');
+        el.classList.replace('text-brand', 'text-muted');
+        el.classList.replace('bg-brand/10', 'bg-white');
+    }
+}
 </script>
 @endpush

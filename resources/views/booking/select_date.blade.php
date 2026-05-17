@@ -1,255 +1,314 @@
-@extends('layouts.mobile')
+@extends('layouts.app')
 @section('title', 'Select Date & Time — Beautique')
-@section('flow_step', 'Step 2 · Schedule')
 
 @section('content')
-<style>
-.mobile-card { width:100%; max-width:480px; min-height:calc(100vh - 80px); border-radius:var(--radius-xl); box-shadow:0 24px 80px rgba(0,0,0,.1); background:var(--white); display:flex; flex-direction:column; overflow:hidden; }
-.mh { padding:22px 24px 0; flex-shrink:0; }
-.mh-top { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
-.mh-top a { width:34px; height:34px; border-radius:50%; background:var(--cream); display:flex; align-items:center; justify-content:center; color:var(--dark); transition:var(--transition); flex-shrink:0; }
-.mh-top a:hover { background:var(--rose-light); color:var(--rose-dark); }
-.mh-top h1 { flex:1; text-align:center; font-size:16px; font-weight:700; color:var(--dark); }
-.mh-top .spacer { width:34px; flex-shrink:0; }
-.flow-stepper { display:flex; align-items:center; justify-content:center; gap:0; padding:0 16px; margin-bottom:24px; }
-.fs-dot { width:26px; height:26px; border-radius:50%; background:var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; border:2px solid var(--white); box-shadow:var(--shadow-sm); }
-.fs-dot.done { background:var(--rose); }
-.fs-dot.active { background:var(--rose); box-shadow:0 0 0 4px rgba(198,147,126,.2); }
-.fs-dot svg { width:11px; height:11px; display:none; }
-.fs-dot.done svg { display:block; }
-.fs-line { flex:1; height:2px; background:var(--border); }
-.fs-line.done { background:var(--rose); }
-.fs-wrap { display:flex; flex-direction:column; align-items:center; gap:5px; }
-.fs-label { font-size:9.5px; font-weight:600; color:var(--muted); }
-.fs-wrap.done .fs-label, .fs-wrap.active .fs-label { color:var(--rose-dark); }
-/* Steps content */
-.step-body { flex:1; overflow-y:auto; padding:0 24px 24px; }
-.step-section { display:none; }
-.step-section.visible { display:block; }
-/* Calendar */
-.cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
-.cal-header span { font-size:14px; font-weight:700; color:var(--dark); }
-.cal-nav { width:30px; height:30px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:var(--transition); }
-.cal-nav:hover { border-color:var(--rose); color:var(--rose); }
-.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center; }
-.cal-day-name { font-size:10px; font-weight:700; color:var(--muted); padding:4px 0; }
-.cal-day { font-size:12px; font-weight:500; color:var(--dark); padding:8px 4px; border-radius:8px; cursor:pointer; transition:var(--transition); }
-.cal-day:hover { background:var(--rose-light); color:var(--rose-dark); }
-.cal-day.selected { background:var(--rose); color:#fff; }
-.cal-day.disabled { color:var(--border); cursor:default; }
-.cal-day.today { border:1.5px solid var(--rose); }
-/* Time slots */
-.slot-label { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin:18px 0 10px; }
-.slot-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-.slot { padding:10px 6px; border:1.5px solid var(--border); border-radius:10px; text-align:center; font-size:12px; font-weight:600; color:var(--muted); cursor:pointer; transition:var(--transition); }
-.slot:hover { border-color:var(--rose); color:var(--rose); }
-.slot.selected { background:var(--rose); border-color:var(--rose); color:#fff; }
-.slot.unavailable { background:var(--cream); color:var(--border); cursor:default; text-decoration:line-through; }
-/* Service type toggle */
-.type-toggle { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:20px; }
-.type-opt { padding:14px; border:1.5px solid var(--border); border-radius:var(--radius-md); text-align:center; cursor:pointer; transition:var(--transition); }
-.type-opt:hover { border-color:var(--rose); }
-.type-opt.selected { border-color:var(--rose); background:var(--rose-light); }
-.type-opt .material-icons-round { font-size:22px; color:var(--muted); display:block; margin-bottom:6px; }
-.type-opt.selected .material-icons-round { color:var(--rose); }
-.type-opt strong { font-size:13px; font-weight:700; color:var(--dark); display:block; }
-.type-opt span { font-size:11px; color:var(--muted); }
-/* Detail cards */
-.detail-card { background:var(--cream); border-radius:var(--radius-md); padding:20px; margin-bottom:20px; }
-.detail-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; }
-.detail-row:last-child { border-bottom:none; }
-.detail-row span:first-child { color:var(--muted); }
-.detail-row strong { color:var(--dark); font-weight:700; }
-/* Address fields */
-.addr-map { background:var(--cream-dark); border-radius:var(--radius-md); height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; position:relative; overflow:hidden; }
-.addr-map-dot { width:14px; height:14px; border-radius:50%; background:var(--rose); box-shadow:0 0 0 5px rgba(198,147,126,.3); z-index:1; }
-/* Footer */
-.mf { padding:16px 24px 28px; border-top:1px solid var(--border); flex-shrink:0; }
-.mf .btn { width:100%; justify-content:center; border-radius:var(--radius-sm); padding:15px; font-size:15px; }
-</style>
-
-<div class="mobile-card">
-    <div class="mh">
-        <div class="mh-top">
-            <a href="{{ route('booking.choose-mua') }}" id="back-btn" aria-label="Back">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </a>
-            <h1 id="page-title">Select Date &amp; Time</h1>
-            <div class="spacer"></div>
-        </div>
-        <div class="flow-stepper">
-            <div class="fs-wrap done">
-                <div class="fs-dot done"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div>
-                <span class="fs-label">Booking</span>
-            </div>
-            <div class="fs-line done"></div>
-            <div class="fs-wrap active">
-                <div class="fs-dot active"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div>
-                <span class="fs-label">Appointment</span>
-            </div>
-            <div class="fs-line" id="line-3"></div>
-            <div class="fs-wrap" id="step3-wrap">
-                <div class="fs-dot" id="dot-3"></div>
-                <span class="fs-label">Service</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="step-body">
-        <!-- STEP 1: Date & Time -->
-        <div class="step-section visible" id="step-1">
-            <!-- Calendar -->
-            <div class="cal-header">
-                <button class="cal-nav" onclick="prevMonth()">‹</button>
-                <span id="cal-month">May 2026</span>
-                <button class="cal-nav" onclick="nextMonth()">›</button>
-            </div>
-            <div class="cal-grid" id="cal-grid"></div>
-
-            <!-- Time Slots -->
-            <div class="slot-label">Morning</div>
-            <div class="slot-grid">
-                <div class="slot" onclick="selectSlot(this)">08:00</div>
-                <div class="slot" onclick="selectSlot(this)">09:00</div>
-                <div class="slot unavailable">10:00</div>
-                <div class="slot" onclick="selectSlot(this)">11:00</div>
-            </div>
-            <div class="slot-label">Afternoon</div>
-            <div class="slot-grid">
-                <div class="slot" onclick="selectSlot(this)">13:00</div>
-                <div class="slot unavailable">14:00</div>
-                <div class="slot" onclick="selectSlot(this)">15:00</div>
-                <div class="slot" onclick="selectSlot(this)">16:00</div>
-            </div>
-            <div class="slot-label">Evening</div>
-            <div class="slot-grid">
-                <div class="slot" onclick="selectSlot(this)">18:00</div>
-                <div class="slot" onclick="selectSlot(this)">19:00</div>
-                <div class="slot unavailable">20:00</div>
-            </div>
-
-            <!-- Service Type -->
-            <div class="slot-label" style="margin-top:22px">Service Type</div>
-            <div class="type-toggle">
-                <div class="type-opt selected" onclick="selectType(this,'home')" id="type-home">
-                    <span class="material-icons-round">home</span>
-                    <strong>Home Service</strong>
-                    <span>Artist comes to you</span>
+<div class="min-h-screen bg-cream pt-[80px] lg:pt-[100px] pb-24">
+    <div class="max-w-6xl mx-auto px-4 md:px-8 lg:px-12">
+        
+        <!-- Header & Stepper -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('booking.choose-mua') }}" class="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center text-dark hover:border-brand hover:text-brand transition-all shrink-0">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </a>
+                <div>
+                    <h1 class="font-serif text-[28px] lg:text-[36px] font-bold text-dark leading-tight" id="page-title">Select Date &amp; Time</h1>
                 </div>
-                <div class="type-opt" onclick="selectType(this,'studio')" id="type-studio">
-                    <span class="material-icons-round">storefront</span>
-                    <strong>Studio Visit</strong>
-                    <span>Visit the MUA studio</span>
+            </div>
+
+            <!-- Stepper -->
+            <div class="flex items-center gap-2 lg:gap-4 overflow-x-auto pb-2 hide-scrollbar">
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white shadow-[0_4px_12px_rgba(199,155,132,0.3)] border-2 border-white">
+                        <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg>
+                    </div>
+                    <span class="text-[11px] font-bold text-brand uppercase tracking-wider">Booking</span>
+                </div>
+                <div class="w-10 lg:w-16 h-0.5 bg-brand rounded-full mb-5"></div>
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white shadow-[0_4px_12px_rgba(199,155,132,0.3)] border-2 border-white ring-4 ring-brand/20" id="dot-2">
+                        <svg id="icon-2" width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" class="hidden"><path d="M2 6l3 3 5-5"/></svg>
+                    </div>
+                    <span class="text-[11px] font-bold text-brand uppercase tracking-wider">Time</span>
+                </div>
+                <div class="w-10 lg:w-16 h-0.5 bg-border rounded-full mb-5" id="line-3"></div>
+                <div class="flex flex-col items-center gap-2 opacity-50" id="step3-wrap">
+                    <div class="w-8 h-8 rounded-full bg-border flex items-center justify-center border-2 border-white" id="dot-3">
+                        <span class="w-2 h-2 rounded-full bg-muted" id="inner-dot-3"></span>
+                        <svg id="icon-3" width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" class="hidden"><path d="M2 6l3 3 5-5"/></svg>
+                    </div>
+                    <span class="text-[11px] font-bold text-muted uppercase tracking-wider">Service</span>
                 </div>
             </div>
         </div>
 
-        <!-- STEP 2A: Home Service Address -->
-        <div class="step-section" id="step-2-home">
-            <div class="addr-map">
-                <div class="addr-map-dot"></div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Street Address</label>
-                <div class="input-icon-wrap">
-                    <span class="icon material-icons-round">location_on</span>
-                    <input type="text" class="form-control" placeholder="Jl. Raya Kuta No. 25">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            <!-- Main Content Area -->
+            <div class="lg:col-span-7 xl:col-span-8 bg-white rounded-2xl border border-border shadow-sm overflow-hidden p-6 lg:p-10">
+                
+                <!-- STEP 1: Date & Time -->
+                <div id="step-1" class="block">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <!-- Calendar -->
+                        <div>
+                            <div class="flex justify-between items-center mb-6">
+                                <button class="w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted hover:border-brand hover:text-brand transition-colors" onclick="prevMonth()">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+                                </button>
+                                <span class="font-bold text-[16px] text-dark" id="cal-month">May 2026</span>
+                                <button class="w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted hover:border-brand hover:text-brand transition-colors" onclick="nextMonth()">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                                <div class="text-[11px] font-bold text-muted py-2">Mo</div>
+                                <div class="text-[11px] font-bold text-muted py-2">Tu</div>
+                                <div class="text-[11px] font-bold text-muted py-2">We</div>
+                                <div class="text-[11px] font-bold text-muted py-2">Th</div>
+                                <div class="text-[11px] font-bold text-muted py-2">Fr</div>
+                                <div class="text-[11px] font-bold text-muted py-2">Sa</div>
+                                <div class="text-[11px] font-bold text-muted py-2">Su</div>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1 text-center" id="cal-grid"></div>
+                        </div>
+
+                        <!-- Time Slots -->
+                        <div>
+                            <h3 class="text-[13px] font-bold text-muted uppercase tracking-wider mb-4">Morning</h3>
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all" onclick="selectSlot(this)">08:00</div>
+                                <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all" onclick="selectSlot(this)">09:00</div>
+                                <div class="slot unavailable px-2 py-2.5 border border-transparent bg-cream rounded-xl text-center text-[13.5px] font-bold text-muted/40 cursor-not-allowed line-through">10:00</div>
+                                <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all" onclick="selectSlot(this)">11:00</div>
+                            </div>
+                            <h3 class="text-[13px] font-bold text-muted uppercase tracking-wider mb-4">Afternoon</h3>
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all" onclick="selectSlot(this)">13:00</div>
+                                <div class="slot unavailable px-2 py-2.5 border border-transparent bg-cream rounded-xl text-center text-[13.5px] font-bold text-muted/40 cursor-not-allowed line-through">14:00</div>
+                                <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all" onclick="selectSlot(this)">15:00</div>
+                                <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all" onclick="selectSlot(this)">16:00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-border my-8">
+
+                    <!-- Service Type -->
+                    <h3 class="text-[13px] font-bold text-muted uppercase tracking-wider mb-4">Service Type</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <div class="type-opt selected border-2 border-brand bg-brand/5 rounded-xl p-5 text-center cursor-pointer transition-all" onclick="selectType(this,'home')" id="type-home">
+                            <svg class="w-6 h-6 mx-auto mb-2 text-brand" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            <strong class="block text-[15px] font-bold text-dark mb-1">Home Service</strong>
+                            <span class="text-[13px] text-muted">Artist comes to you</span>
+                        </div>
+                        <div class="type-opt border-2 border-border bg-white rounded-xl p-5 text-center cursor-pointer hover:border-brand transition-all group" onclick="selectType(this,'studio')" id="type-studio">
+                            <svg class="w-6 h-6 mx-auto mb-2 text-muted group-hover:text-brand" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <strong class="block text-[15px] font-bold text-dark mb-1">Studio Visit</strong>
+                            <span class="text-[13px] text-muted">Visit the MUA studio</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2A: Home Service Address -->
+                <div id="step-2-home" class="hidden">
+                    <div class="w-full h-40 bg-cream-dark rounded-xl mb-6 flex items-center justify-center relative overflow-hidden">
+                        <!-- Mock Map -->
+                        <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(var(--color-brand) 1px, transparent 1px); background-size: 20px 20px;"></div>
+                        <div class="w-4 h-4 rounded-full bg-brand shadow-[0_0_0_8px_rgba(199,155,132,0.3)] z-10"></div>
+                    </div>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-[13.5px] font-bold text-dark mb-2">Street Address</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                </div>
+                                <input type="text" class="w-full pl-11 pr-4 py-3 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark placeholder:text-muted/60" placeholder="Jl. Raya Kuta No. 25">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-[13.5px] font-bold text-dark mb-2">District / Gang</label>
+                                <input type="text" class="w-full px-4 py-3 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark placeholder:text-muted/60" placeholder="Kuta">
+                            </div>
+                            <div>
+                                <label class="block text-[13.5px] font-bold text-dark mb-2">City</label>
+                                <input type="text" class="w-full px-4 py-3 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark placeholder:text-muted/60" placeholder="Badung">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[13.5px] font-bold text-dark mb-2">Notes for Artist</label>
+                            <textarea rows="3" class="w-full px-4 py-3 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark placeholder:text-muted/60 resize-none" placeholder="e.g. oily skin, prefer natural look…"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2B: Studio Service -->
+                <div id="step-2-studio" class="hidden">
+                    <div class="rounded-xl overflow-hidden mb-6 h-48 lg:h-64">
+                        <img src="{{ asset('image/about-mua.jpeg') }}" alt="Studio" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="text-[20px] font-bold text-dark mb-2">Sarah Wijaya Studio</h4>
+                    <p class="text-[14px] text-muted flex items-center gap-1.5 mb-2">
+                        <svg width="16" height="16" fill="none" stroke="var(--color-brand)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        Jl. Raya Seminyak 88, Bali
+                    </p>
+                    <p class="text-[14px] text-muted mb-8">⭐ 4.9 &middot; Studio visit available</p>
+                    
+                    <div class="bg-cream rounded-xl p-6">
+                        <div class="flex justify-between items-center py-3 border-b border-border">
+                            <span class="text-[14px] text-muted">Your Slot</span>
+                            <strong class="text-[14px] text-dark" id="selected-slot-display-studio">Not selected</strong>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b border-border">
+                            <span class="text-[14px] text-muted">Duration</span>
+                            <strong class="text-[14px] text-dark">~ 2 hours</strong>
+                        </div>
+                        <div class="flex justify-between items-center py-3">
+                            <span class="text-[14px] text-muted">Type</span>
+                            <strong class="text-[14px] text-dark">Studio Visit</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Order Configuration -->
+                <div id="step-3" class="hidden">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-[13.5px] font-bold text-dark mb-2">Package</label>
+                            <select class="w-full px-4 py-3.5 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark">
+                                <option>Basic Beauty (Rp 500.000)</option>
+                                <option>Creative Glam (Rp 2.500.000)</option>
+                                <option>Signature Bridal (Rp 7.000.000)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[13.5px] font-bold text-dark mb-2">Makeup Style</label>
+                            <select class="w-full px-4 py-3.5 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark">
+                                <option>Natural</option>
+                                <option>Korean Dewy</option>
+                                <option>Soft Glam</option>
+                                <option>Full Glam</option>
+                                <option>Bold / Latina</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[13.5px] font-bold text-dark mb-3">Add-on Services</label>
+                            <div class="space-y-3">
+                                <label class="flex items-center justify-between p-4 bg-white border border-border rounded-xl cursor-pointer hover:border-brand transition-colors">
+                                    <div class="flex items-center gap-3">
+                                        <input type="checkbox" checked class="w-4 h-4 rounded border-border text-brand focus:ring-brand bg-cream">
+                                        <span class="text-[14.5px] font-semibold text-dark">Lash Application</span>
+                                    </div>
+                                    <span class="text-[13px] font-bold text-brand">+Rp 50k</span>
+                                </label>
+                                <label class="flex items-center justify-between p-4 bg-white border border-border rounded-xl cursor-pointer hover:border-brand transition-colors">
+                                    <div class="flex items-center gap-3">
+                                        <input type="checkbox" class="w-4 h-4 rounded border-border text-brand focus:ring-brand bg-cream">
+                                        <span class="text-[14.5px] font-semibold text-dark">Hair Styling</span>
+                                    </div>
+                                    <span class="text-[13px] font-bold text-brand">+Rp 150k</span>
+                                </label>
+                                <label class="flex items-center justify-between p-4 bg-white border border-border rounded-xl cursor-pointer hover:border-brand transition-colors">
+                                    <div class="flex items-center gap-3">
+                                        <input type="checkbox" class="w-4 h-4 rounded border-border text-brand focus:ring-brand bg-cream">
+                                        <span class="text-[14.5px] font-semibold text-dark">Touch-up Kit</span>
+                                    </div>
+                                    <span class="text-[13px] font-bold text-brand">+Rp 100k</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-border flex justify-end">
+                    <button id="main-btn" class="w-full sm:w-auto px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-xl font-bold text-[14.5px] transition-all flex items-center justify-center gap-2 hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5" onclick="nextStep()">
+                        Check Availability
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                    </button>
                 </div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                <div class="form-group">
-                    <label class="form-label">District / Gang</label>
-                    <input type="text" class="form-control" placeholder="Kuta">
+
+            <!-- Right Column Sidebar -->
+            <div class="lg:col-span-5 xl:col-span-4">
+                <div class="bg-white rounded-2xl border border-border p-6 shadow-sm sticky top-24">
+                    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-border">
+                        <img src="{{ asset('image/model-mua.jpeg') }}" alt="MUA" class="w-16 h-16 rounded-full object-cover">
+                        <div>
+                            <h3 class="font-bold text-[16px] text-dark">Sarah Wijaya</h3>
+                            <p class="text-[13px] text-muted">Professional Artist</p>
+                        </div>
+                    </div>
+                    
+                    <h4 class="text-[13px] font-bold text-muted uppercase tracking-wider mb-4">Booking Summary</h4>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Date</span>
+                            <strong class="text-[14px] text-dark text-right" id="summary-date">May 15, 2026</strong>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Time</span>
+                            <strong class="text-[14px] text-dark text-right" id="summary-time">Not selected</strong>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[14px] text-muted">Location</span>
+                            <strong class="text-[14px] text-dark text-right" id="summary-location">Home Service</strong>
+                        </div>
+                    </div>
+
+                    <div class="bg-cream rounded-xl p-4 hidden" id="pricing-summary">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[14px] text-muted">Package</span>
+                            <strong class="text-[14px] text-dark">Rp 500.000</strong>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[14px] text-muted">Add-ons</span>
+                            <strong class="text-[14px] text-dark">Rp 50.000</strong>
+                        </div>
+                        <div class="flex justify-between items-center mb-4 pb-4 border-b border-border">
+                            <span class="text-[14px] text-muted">Service Fee</span>
+                            <strong class="text-[14px] text-dark">Rp 50.000</strong>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[16px] font-bold text-dark">Total</span>
+                            <strong class="text-[18px] font-bold text-brand">Rp 600.000</strong>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">City</label>
-                    <input type="text" class="form-control" placeholder="Badung">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Notes for Artist</label>
-                <textarea class="form-control" rows="3" placeholder="e.g. oily skin, prefer natural look…" style="resize:none"></textarea>
             </div>
         </div>
 
-        <!-- STEP 2B: Studio Service -->
-        <div class="step-section" id="step-2-studio">
-            <div style="overflow:hidden;border-radius:var(--radius-md);margin-bottom:16px;">
-                <img src="{{ asset('image/about-mua.jpeg') }}" alt="Studio" style="width:100%;height:160px;object-fit:cover;">
-            </div>
-            <h4 style="font-size:15px;font-weight:700;color:var(--dark);margin-bottom:4px;">Sarah Wijaya Studio</h4>
-            <p style="font-size:12.5px;color:var(--muted);margin-bottom:4px;display:flex;align-items:center;gap:4px;"><span class="material-icons-round" style="font-size:14px;color:var(--rose)">location_on</span> Jl. Raya Seminyak 88, Bali</p>
-            <p style="font-size:12.5px;color:var(--muted);margin-bottom:16px;">⭐ 4.9 · Studio visit available</p>
-            <div class="detail-card">
-                <div class="detail-row"><span>Your Slot</span><strong id="selected-slot-display">Not selected</strong></div>
-                <div class="detail-row"><span>Duration</span><strong>~ 2 hours</strong></div>
-                <div class="detail-row"><span>Type</span><strong>Studio Visit</strong></div>
-            </div>
-        </div>
-
-        <!-- STEP 3: Order Configuration -->
-        <div class="step-section" id="step-3">
-            <div class="slot-label" style="margin-top:0">Your Order Details</div>
-            <div class="form-group">
-                <label class="form-label">Package</label>
-                <select class="form-control">
-                    <option>Basic Beauty (Rp 500.000)</option>
-                    <option>Creative Glam (Rp 2.500.000)</option>
-                    <option>Signature Bridal (Rp 7.000.000)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Makeup Style</label>
-                <select class="form-control">
-                    <option>Natural</option>
-                    <option>Korean Dewy</option>
-                    <option>Soft Glam</option>
-                    <option>Full Glam</option>
-                    <option>Bold / Latina</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Add-on Services</label>
-                <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0;">
-                    <label class="form-check"><input type="checkbox" checked> Lash Application <span style="color:var(--rose);font-size:12px;margin-left:auto">+Rp 50k</span></label>
-                    <label class="form-check"><input type="checkbox"> Hair Styling <span style="color:var(--rose);font-size:12px;margin-left:auto">+Rp 150k</span></label>
-                    <label class="form-check"><input type="checkbox"> Touch-up Kit <span style="color:var(--rose);font-size:12px;margin-left:auto">+Rp 100k</span></label>
-                </div>
-            </div>
-            <div class="detail-card">
-                <div class="detail-row"><span>Package</span><strong>Basic Beauty</strong></div>
-                <div class="detail-row"><span>Add-ons</span><strong>Lash Application</strong></div>
-                <div class="detail-row"><span>Service Fee</span><strong>Rp 500.000</strong></div>
-                <div class="detail-row"><span>Home Service Fee</span><strong>Rp 50.000</strong></div>
-                <div class="detail-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:12px"><span style="font-weight:700;color:var(--dark)">Total</span><strong style="color:var(--rose);font-size:15px">Rp 550.000</strong></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="mf">
-        <button id="main-btn" class="btn btn-primary" onclick="nextStep()">
-            Check Availability <span class="material-icons-round" style="font-size:18px">arrow_forward</span>
-        </button>
     </div>
 </div>
 
 <!-- Availability Modal -->
-<div id="avail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:24px;" hidden>
-    <div style="background:var(--white);border-radius:var(--radius-xl);padding:32px;max-width:340px;width:100%;text-align:center;">
-        <div style="width:60px;height:60px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-            <span class="material-icons-round" style="font-size:28px;color:var(--muted)">schedule</span>
+<div id="avail-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-8 text-center shadow-2xl transform scale-100 transition-transform">
+        <div class="w-16 h-16 rounded-full border-2 border-border flex items-center justify-center mx-auto mb-5 text-muted">
+            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </div>
-        <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin-bottom:8px;">Schedule Taken</h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">That time slot is already booked. Please select another time or choose from available artists.</p>
-        <button onclick="closeModal()" style="width:100%;background:var(--rose);color:#fff;padding:14px;border-radius:10px;font-weight:700;font-size:14px;border:none;cursor:pointer;margin-bottom:10px;">Select Another Time</button>
-        <button onclick="bookAnyway()" style="width:100%;border:1.5px solid var(--border);color:var(--muted);padding:13px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;background:none;">Continue with Any Available Artist</button>
+        <h3 class="text-[20px] font-bold text-dark mb-3">Schedule Taken</h3>
+        <p class="text-[14.5px] text-muted mb-8 leading-relaxed">That time slot is already booked. Please select another time or choose from available artists.</p>
+        <div class="space-y-3">
+            <button onclick="closeModal()" class="w-full bg-brand hover:bg-brand-dark text-white py-3.5 rounded-xl font-bold text-[14px] transition-colors">Select Another Time</button>
+            <button onclick="bookAnyway()" class="w-full border border-border hover:border-brand text-muted hover:text-brand bg-white py-3.5 rounded-xl font-bold text-[14px] transition-colors">Continue with Any Artist</button>
+        </div>
     </div>
 </div>
 @endsection
 
+@push('styles')
+<style>
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+@endpush
+
 @push('scripts')
 <script>
-let currentStep = 1, serviceType = 'home', selectedDay = null, selectedSlotEl = null;
+let currentStep = 1, serviceType = 'home', selectedDay = 15, selectedSlotEl = null;
 const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 let viewDate = new Date(2026, 4, 1);
 
@@ -258,66 +317,145 @@ function renderCal() {
     const y = viewDate.getFullYear(), m = viewDate.getMonth();
     document.getElementById('cal-month').textContent = monthNames[m] + ' ' + y;
     grid.innerHTML = '';
-    ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach(d => {
-        const el = document.createElement('div');
-        el.className = 'cal-day-name'; el.textContent = d; grid.appendChild(el);
-    });
+    
     const firstDay = (new Date(y, m, 1).getDay() + 6) % 7;
-    for(let i=0;i<firstDay;i++){ const e=document.createElement('div'); grid.appendChild(e); }
+    for(let i=0; i<firstDay; i++) { 
+        const e=document.createElement('div'); grid.appendChild(e); 
+    }
+    
     const days = new Date(y, m+1, 0).getDate();
     const today = new Date();
-    for(let d=1;d<=days;d++) {
+    
+    for(let d=1; d<=days; d++) {
         const el = document.createElement('div');
-        el.className = 'cal-day';
+        el.className = 'text-[13px] font-medium py-2 rounded-xl cursor-pointer transition-all flex items-center justify-center';
         el.textContent = d;
         const date = new Date(y,m,d);
-        if(date < new Date(today.getFullYear(),today.getMonth(),today.getDate())) el.classList.add('disabled');
-        else { el.onclick = ()=>selectDay(el,d); }
-        if(d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear()) el.classList.add('today');
-        if(d===selectedDay) el.classList.add('selected');
+        
+        if(date < new Date(today.getFullYear(),today.getMonth(),today.getDate())) {
+            el.classList.add('text-border', 'cursor-not-allowed');
+        } else { 
+            el.onclick = ()=>selectDay(el,d);
+            if(d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear()) {
+                el.classList.add('border', 'border-brand', 'text-brand');
+            } else {
+                el.classList.add('text-dark', 'hover:bg-cream');
+            }
+        }
+        
+        if(d===selectedDay && m===4 && y===2026) {
+            el.className = 'text-[13px] font-bold py-2 rounded-xl cursor-pointer transition-all flex items-center justify-center bg-brand text-white shadow-sm';
+            el.dataset.selected = "true";
+        }
+        
         grid.appendChild(el);
     }
 }
+
 function prevMonth(){ viewDate.setMonth(viewDate.getMonth()-1); renderCal(); }
 function nextMonth(){ viewDate.setMonth(viewDate.getMonth()+1); renderCal(); }
-function selectDay(el,d){ document.querySelectorAll('.cal-day.selected').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); selectedDay=d; }
-function selectSlot(el){ if(el.classList.contains('unavailable'))return; document.querySelectorAll('.slot.selected').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); selectedSlotEl=el; document.getElementById('selected-slot-display').textContent=el.textContent; }
-function selectType(el, type) {
-    document.querySelectorAll('.type-opt').forEach(e=>e.classList.remove('selected'));
-    el.classList.add('selected'); serviceType = type;
+
+function selectDay(el, d) { 
+    document.querySelectorAll('#cal-grid div[data-selected="true"]').forEach(e => {
+        e.className = 'text-[13px] font-medium py-2 rounded-xl cursor-pointer transition-all flex items-center justify-center text-dark hover:bg-cream';
+        delete e.dataset.selected;
+    });
+    el.className = 'text-[13px] font-bold py-2 rounded-xl cursor-pointer transition-all flex items-center justify-center bg-brand text-white shadow-sm';
+    el.dataset.selected = "true";
+    selectedDay = d; 
+    document.getElementById('summary-date').textContent = monthNames[viewDate.getMonth()] + ' ' + d + ', ' + viewDate.getFullYear();
 }
+
+function selectSlot(el) { 
+    if(el.classList.contains('unavailable')) return; 
+    document.querySelectorAll('.slot').forEach(e => {
+        if(!e.classList.contains('unavailable')) {
+            e.className = 'slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all';
+        }
+    }); 
+    el.className = 'slot px-2 py-2.5 border-2 border-brand bg-brand rounded-xl text-center text-[13.5px] font-bold text-white shadow-sm transition-all';
+    el.dataset.selected = "true";
+    selectedSlotEl = el; 
+    
+    const time = el.textContent;
+    document.getElementById('summary-time').textContent = time;
+    document.getElementById('selected-slot-display-studio').textContent = time;
+}
+
+function selectType(el, type) {
+    document.querySelectorAll('.type-opt').forEach(e => {
+        e.className = 'type-opt border-2 border-border bg-white rounded-xl p-5 text-center cursor-pointer hover:border-brand transition-all group';
+        e.querySelector('svg').className.baseVal = 'w-6 h-6 mx-auto mb-2 text-muted group-hover:text-brand';
+    });
+    
+    el.className = 'type-opt selected border-2 border-brand bg-brand/5 rounded-xl p-5 text-center cursor-pointer transition-all';
+    el.querySelector('svg').className.baseVal = 'w-6 h-6 mx-auto mb-2 text-brand';
+    
+    serviceType = type;
+    document.getElementById('summary-location').textContent = type === 'home' ? 'Home Service' : 'Studio Visit';
+}
+
 function nextStep() {
-    if(currentStep===1) {
+    if(currentStep === 1) {
         if(!selectedDay){ alert('Please select a date.'); return; }
-        if(!selectedSlotEl){ document.getElementById('avail-modal').removeAttribute('hidden'); return; }
+        if(!selectedSlotEl){ 
+            document.getElementById('avail-modal').classList.remove('hidden'); 
+            return; 
+        }
         showStep(2);
-    } else if(currentStep===2) {
+    } else if(currentStep === 2) {
         showStep(3);
-    } else if(currentStep===3) {
+    } else if(currentStep === 3) {
         window.location.href = '{{ route("booking.summary") }}';
     }
 }
+
 function showStep(step) {
-    currentStep=step;
-    document.querySelectorAll('.step-section').forEach(s=>s.classList.remove('visible'));
+    currentStep = step;
+    document.getElementById('step-1').classList.add('hidden');
+    document.getElementById('step-2-home').classList.add('hidden');
+    document.getElementById('step-2-studio').classList.add('hidden');
+    document.getElementById('step-3').classList.add('hidden');
+    
     const btn = document.getElementById('main-btn');
     const title = document.getElementById('page-title');
-    if(step===2) {
-        document.getElementById(`step-2-${serviceType}`).classList.add('visible');
-        title.textContent = serviceType==='home' ? 'Your Location' : 'Studio Details';
-        btn.innerHTML = 'Continue <span class="material-icons-round" style="font-size:18px">arrow_forward</span>';
-    } else if(step===3) {
-        document.getElementById('step-3').classList.add('visible');
+    
+    if(step === 2) {
+        document.getElementById(`step-2-${serviceType}`).classList.remove('hidden');
+        title.textContent = serviceType === 'home' ? 'Your Location' : 'Studio Details';
+        btn.innerHTML = 'Continue <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>';
+        
+        // Update stepper
+        document.getElementById('icon-2').classList.remove('hidden');
+        document.getElementById('dot-2').classList.remove('ring-4', 'ring-brand/20');
+        
+        document.getElementById('line-3').classList.replace('bg-border', 'bg-brand');
+        
+        document.getElementById('step3-wrap').classList.remove('opacity-50');
+        const dot3 = document.getElementById('dot-3');
+        dot3.classList.replace('bg-border', 'bg-brand');
+        dot3.classList.replace('border-white', 'border-white');
+        dot3.classList.add('ring-4', 'ring-brand/20');
+        document.getElementById('inner-dot-3').classList.add('hidden');
+        document.getElementById('step3-wrap').querySelector('span').classList.replace('text-muted', 'text-brand');
+        
+    } else if(step === 3) {
+        document.getElementById('step-3').classList.remove('hidden');
         title.textContent = 'Order Configuration';
-        document.getElementById('line-3').classList.add('done');
-        document.getElementById('dot-3').classList.add('done');
-        document.getElementById('dot-3').innerHTML = '<svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg>';
-        document.getElementById('step3-wrap').classList.add('done');
-        btn.innerHTML = 'Confirm Booking <span class="material-icons-round" style="font-size:18px">arrow_forward</span>';
+        btn.innerHTML = 'Confirm Booking <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>';
+        
+        document.getElementById('pricing-summary').classList.remove('hidden');
+        
+        // Update stepper
+        const dot3 = document.getElementById('dot-3');
+        dot3.classList.remove('ring-4', 'ring-brand/20');
+        document.getElementById('icon-3').classList.remove('hidden');
     }
 }
-function closeModal(){ document.getElementById('avail-modal').setAttribute('hidden',''); }
+
+function closeModal(){ document.getElementById('avail-modal').classList.add('hidden'); }
 function bookAnyway(){ closeModal(); showStep(2); }
+
 renderCal();
 </script>
 @endpush
