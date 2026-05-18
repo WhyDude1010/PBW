@@ -53,6 +53,8 @@ Route::prefix('booking')->name('booking.')->group(function () {
 // Admin Panel Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::get('/profile', fn() => view('admin.profile'))->name('profile');
+    Route::get('/settings', fn() => view('admin.settings'))->name('settings');
     
     // Bookings
     Route::get('/bookings', fn() => view('admin.bookings.index'))->name('bookings.index');

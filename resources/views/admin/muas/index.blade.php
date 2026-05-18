@@ -47,8 +47,8 @@
                     </div>
                 </div>
 
-                <div class="p-5 pt-0 relative">
-                    <div class="flex items-end gap-3 mb-4 -mt-6">
+                <div class="p-5 pt-2 relative">
+                    <div class="flex items-end gap-3 mb-4 -mt-5">
                         <img src="{{ asset('image/' . $m[5]) }}" alt="{{ $m[0] }}" class="w-16 h-16 rounded-full object-cover border-4 border-white shadow-sm relative z-10 shrink-0">
                         <div class="pb-1">
                             <div class="font-bold text-[16px] text-dark leading-tight mb-1">{{ $m[0] }}</div>
