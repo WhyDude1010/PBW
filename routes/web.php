@@ -69,3 +69,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Reviews
     Route::get('/reviews', fn() => view('admin.reviews.index'))->name('reviews.index');
 });
+
+// MUA Artist Panel Routes
+Route::prefix('mua')->name('mua.')->group(function () {
+    Route::get('/', fn() => view('mua.dashboard'))->name('dashboard');
+    Route::get('/bookings', fn() => view('mua.bookings.index'))->name('bookings');
+    Route::get('/profile', fn() => view('mua.profile'))->name('profile');
+    Route::get('/reviews', fn() => view('mua.reviews'))->name('reviews');
+    Route::get('/schedule', fn() => view('mua.schedule'))->name('schedule');
+});
