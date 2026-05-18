@@ -4,6 +4,8 @@
 @section('page_meta','Moderate client reviews')
 
 @section('content')
+<div x-data="reviewsPage()" x-cloak>
+
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
     <div class="bg-white rounded-2xl p-6 border border-border shadow-sm flex items-start gap-4">
         <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
@@ -21,7 +23,7 @@
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </div>
         <div>
-            <div class="text-[28px] font-serif font-bold text-dark leading-none mb-1">8</div>
+            <div class="text-[28px] font-serif font-bold text-dark leading-none mb-1" id="pending-count">8</div>
             <div class="text-[13px] font-bold text-muted">Pending Approval</div>
         </div>
     </div>
@@ -40,13 +42,12 @@
 <div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
     <div class="px-6 py-5 border-b border-border bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h4 class="font-bold text-[16px] text-dark">All Reviews</h4>
-        
         <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
             <div class="relative">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 <input type="text" placeholder="Search reviews…" oninput="filterReviews(this.value)" class="pl-9 pr-4 py-2 w-full sm:w-64 rounded-xl border border-border bg-cream/50 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark placeholder:text-muted">
             </div>
-            <select onchange="filterByStatus(this.value)" class="px-4 py-2 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
+            <select id="review-status-filter" onchange="filterByStatus(this.value)" class="px-4 py-2 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
                 <option value="">All Reviews</option>
                 <option value="approved">Approved</option>
                 <option value="pending">Pending</option>
@@ -54,7 +55,7 @@
         </div>
     </div>
     
-    <div class="divide-y divide-border">
+    <div class="divide-y divide-border" id="reviews-container">
         @php
         $reviews = [
             ['Rina Maharani','Sarah Wijaya',5,'Absolutely stunning work for my wedding! Everyone kept complimenting my look.','10 May 2026','approved'],
@@ -64,14 +65,11 @@
             ['Sari Indah','Mia Rahardjo',5,'Warm, professional, and made me feel so comfortable!','14 May 2026','pending'],
         ];
         @endphp
-        @foreach($reviews as $r)
-        <div class="review-row hover:bg-cream/30 transition-colors p-6 flex gap-4 md:gap-6 items-start" data-text="{{ strtolower($r[2]) }}" data-status="{{ $r[5] }}">
-            <!-- Avatar -->
+        @foreach($reviews as $idx => $r)
+        <div class="review-row hover:bg-cream/30 transition-colors p-6 flex gap-4 md:gap-6 items-start" data-text="{{ strtolower($r[2]) }}" data-status="{{ $r[5] }}" id="review-row-{{ $idx }}">
             <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-[15px] font-bold text-brand shrink-0">
                 {{ substr($r[0],0,1) }}
             </div>
-            
-            <!-- Content -->
             <div class="flex-1 min-w-0">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                     <div class="flex flex-wrap items-center gap-2">
@@ -81,15 +79,10 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="text-[12px] text-muted">{{ $r[4] }}</span>
-                        @if($r[5] === 'approved')
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 uppercase tracking-wider">Approved</span>
-                        @else
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 uppercase tracking-wider">Pending</span>
-                        @endif
+                        <span id="review-badge-{{ $idx }}" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $r[5] === 'approved' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-600' }}">{{ ucfirst($r[5]) }}</span>
                     </div>
                 </div>
                 
-                <!-- Stars -->
                 <div class="flex items-center gap-1 mb-3">
                     @for($i=1;$i<=5;$i++)
                         @if($i <= $r[2])
@@ -103,15 +96,14 @@
                 
                 <p class="text-[14px] text-muted leading-relaxed mb-4">"{{ $r[3] }}"</p>
                 
-                <!-- Actions -->
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2" id="review-actions-{{ $idx }}">
                     @if($r[5] === 'pending')
-                    <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white font-bold text-[12px] transition-colors">
+                    <button @click="approveReview({{ $idx }}, '{{ $r[0] }}')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white font-bold text-[12px] transition-colors">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                         Approve
                     </button>
                     @endif
-                    <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white font-bold text-[12px] transition-colors">
+                    <button @click="confirmDelete({{ $idx }}, '{{ $r[0] }}')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white font-bold text-[12px] transition-colors">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Delete
                     </button>
@@ -120,6 +112,30 @@
         </div>
         @endforeach
     </div>
+</div>
+
+<div x-show="deleteModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none">
+    <div class="absolute inset-0 bg-dark/40 backdrop-blur-sm" @click="deleteModal = false"></div>
+    <div x-show="deleteModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="relative bg-white rounded-2xl border border-border shadow-xl w-full max-w-sm overflow-hidden">
+        <div class="p-6 text-center">
+            <div class="w-14 h-14 rounded-full bg-red-500/10 text-red-500 mx-auto mb-4 flex items-center justify-center">
+                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </div>
+            <h4 class="font-bold text-[16px] text-dark mb-2">Delete Review?</h4>
+            <p class="text-[13px] text-muted mb-6">This will permanently remove the review by <span class="font-bold text-dark" x-text="deleting.name"></span>. This action cannot be undone.</p>
+            <div class="flex gap-3">
+                <button @click="deleteModal = false" class="flex-1 py-2.5 rounded-xl border border-border text-[13px] font-bold text-muted hover:text-dark hover:border-dark/30 transition-colors">Cancel</button>
+                <button @click="executeDelete()" class="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-[13px] font-bold hover:bg-red-600 transition-colors">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div x-show="toast" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-dark text-white px-5 py-3.5 rounded-xl shadow-lg" style="display:none">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <span class="text-[13px] font-bold" x-text="toastMsg"></span>
+</div>
+
 </div>
 @endsection
 
@@ -131,10 +147,58 @@ function filterReviews(q){
         r.style.display = r.dataset.text.includes(q) || r.textContent.toLowerCase().includes(q) ? '' : 'none';
     }); 
 }
+
 function filterByStatus(s){ 
     document.querySelectorAll('.review-row').forEach(r => {
         r.style.display = (!s || r.dataset.status === s) ? '' : 'none';
     }); 
+}
+
+function reviewsPage() {
+    return {
+        deleteModal: false,
+        toast: false,
+        toastMsg: '',
+        deleting: { idx: 0, name: '' },
+
+        approveReview(idx, name) {
+            const badge = document.getElementById('review-badge-' + idx);
+            const actions = document.getElementById('review-actions-' + idx);
+            const row = document.getElementById('review-row-' + idx);
+
+            badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-500';
+            badge.textContent = 'Approved';
+            row.dataset.status = 'approved';
+
+            const approveBtn = actions.querySelector('button:first-child');
+            if (approveBtn && approveBtn.textContent.trim().includes('Approve')) {
+                approveBtn.remove();
+            }
+
+            this.showToast('Review by ' + name + ' approved');
+        },
+
+        confirmDelete(idx, name) {
+            this.deleting = { idx, name };
+            this.deleteModal = true;
+        },
+
+        executeDelete() {
+            const row = document.getElementById('review-row-' + this.deleting.idx);
+            row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            row.style.opacity = '0';
+            row.style.transform = 'translateX(20px)';
+            setTimeout(() => { row.remove(); }, 300);
+            this.deleteModal = false;
+            this.showToast('Review by ' + this.deleting.name + ' deleted');
+        },
+
+        showToast(msg) {
+            this.toastMsg = msg;
+            this.toast = true;
+            setTimeout(() => { this.toast = false; }, 2500);
+        }
+    }
 }
 </script>
 @endpush

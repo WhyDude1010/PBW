@@ -110,10 +110,34 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-3 px-3 py-1.5 rounded-full border border-border hover:border-brand cursor-pointer transition-colors bg-cream/50">
-                <div class="w-8 h-8 rounded-full bg-dark text-white flex items-center justify-center font-bold text-[13px]">A</div>
-                <span class="text-[13.5px] font-bold text-dark hidden sm:block">Admin</span>
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-muted"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+            <div class="relative" x-data="{ profileOpen: false }">
+                <button @click="profileOpen = !profileOpen" class="flex items-center gap-3 px-3 py-1.5 rounded-full border border-border hover:border-brand cursor-pointer transition-colors bg-cream/50">
+                    <div class="w-8 h-8 rounded-full bg-dark text-white flex items-center justify-center font-bold text-[13px]">A</div>
+                    <span class="text-[13.5px] font-bold text-dark hidden sm:block">Admin</span>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-muted transition-transform" :class="profileOpen ? 'rotate-180' : ''"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div x-show="profileOpen" @click.away="profileOpen = false" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95 -translate-y-1" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 scale-95" class="absolute right-0 mt-2 w-56 bg-white rounded-xl border border-border shadow-lg overflow-hidden z-50" style="display:none">
+                    <div class="px-4 py-3 border-b border-border">
+                        <div class="text-[13px] font-bold text-dark">Administrator</div>
+                        <div class="text-[12px] text-muted">admin@beautique.com</div>
+                    </div>
+                    <div class="py-1">
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-muted hover:bg-cream hover:text-dark transition-colors">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            Profile
+                        </a>
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-muted hover:bg-cream hover:text-dark transition-colors">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            Settings
+                        </a>
+                    </div>
+                    <div class="border-t border-border py-1">
+                        <a href="{{ route('landing') }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-red-500 hover:bg-red-500/5 transition-colors">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
             </div>
         </header>
 
