@@ -337,7 +337,7 @@
                         <div class="space-y-3 mb-6">
                             <div class="flex justify-between items-start">
                                 <span class="text-[14px] text-muted">Date</span>
-                                <strong class="text-[14px] text-dark text-right" id="summary-date">May 15, 2026</strong>
+                                <strong class="text-[14px] text-dark text-right" id="summary-date">Not selected</strong>
                             </div>
                             <div class="flex justify-between items-start">
                                 <span class="text-[14px] text-muted">Time</span>
@@ -375,7 +375,7 @@
     </div>
 
     <!-- Availability Modal -->
-    <div id="avail-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="avail-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div
             class="bg-white rounded-2xl max-w-sm w-full p-8 text-center shadow-2xl transform scale-100 transition-transform">
             <div
@@ -415,9 +415,36 @@
 
 @push('scripts')
     <script>
-        let currentStep = 1, serviceType = 'home', selectedDay = 15, selectedSlotEl = null;
+        let currentStep = 1, serviceType = 'home', selectedDay = null, selectedSlotEl = null;
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         let viewDate = new Date(2026, 4, 1);
+
+        const allTimeSlots = ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00'];
+
+        const bookedSlots = {
+            '2026-05-10': ['09:00'],
+            '2026-05-11': ['14:00'],
+            '2026-05-12': ['10:00'],
+            '2026-05-13': ['08:00'],
+            '2026-05-14': ['11:00'],
+            '2026-05-15': ['13:00'],
+            '2026-05-22': ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00'],
+            '2026-05-25': ['09:00','10:00','14:00'],
+            '2026-05-28': ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00'],
+        };
+
+        function getDateKey(y, m, d) {
+            return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        }
+
+        function getBookedForDate(y, m, d) {
+            return bookedSlots[getDateKey(y, m, d)] || [];
+        }
+
+        function isDateFullyBooked(y, m, d) {
+            var booked = getBookedForDate(y, m, d);
+            return booked.length >= allTimeSlots.length;
+        }
 
         function renderCal() {
             const grid = document.getElementById('cal-grid');
@@ -435,13 +462,17 @@
 
             for (let d = 1; d <= days; d++) {
                 const el = document.createElement('div');
-                el.className = 'text-[13px] font-medium py-2 rounded-xl cursor-pointer transition-all flex items-center justify-center';
                 el.textContent = d;
                 const date = new Date(y, m, d);
+                var fullyBooked = isDateFullyBooked(y, m, d);
 
                 if (date < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
-                    el.classList.add('text-border', 'cursor-not-allowed');
+                    el.className = 'text-[13px] font-medium py-2 rounded-xl transition-all flex items-center justify-center text-border cursor-not-allowed';
+                } else if (fullyBooked) {
+                    el.className = 'text-[13px] font-medium py-2 rounded-xl transition-all flex items-center justify-center bg-red-50 text-red-300 cursor-not-allowed line-through';
+                    el.title = 'Fully booked';
                 } else {
+                    el.className = 'text-[13px] font-medium py-2 rounded-xl cursor-pointer transition-all flex items-center justify-center';
                     el.onclick = () => selectDay(el, d);
                     if (d === today.getDate() && m === today.getMonth() && y === today.getFullYear()) {
                         el.classList.add('border', 'border-brand', 'text-brand');
@@ -450,47 +481,81 @@
                     }
                 }
 
-                if (d === selectedDay && m === 4 && y === 2026) {
+                if (selectedDay === d && m === viewDate.getMonth() && !fullyBooked && date >= new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
                     el.className = 'text-[13px] font-bold py-2 rounded-xl cursor-pointer transition-all flex items-center justify-center bg-brand text-white shadow-sm';
                     el.dataset.selected = "true";
+                    el.onclick = () => selectDay(el, d);
                 }
 
                 grid.appendChild(el);
             }
         }
 
-        function prevMonth() { viewDate.setMonth(viewDate.getMonth() - 1); renderCal(); }
-        function nextMonth() { viewDate.setMonth(viewDate.getMonth() + 1); renderCal(); }
+        function updateTimeSlots() {
+            var y = viewDate.getFullYear(), m = viewDate.getMonth();
+            var booked = getBookedForDate(y, m, selectedDay);
+
+            document.querySelectorAll('.slot').forEach(function(slot) {
+                var time = slot.textContent.trim();
+                var isTaken = booked.indexOf(time) !== -1;
+
+                if (isTaken) {
+                    slot.className = 'slot unavailable px-2 py-2.5 border border-transparent bg-cream rounded-xl text-center text-[13.5px] font-bold text-muted/40 cursor-not-allowed line-through';
+                    slot.onclick = null;
+                    delete slot.dataset.selected;
+                } else {
+                    slot.className = 'slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all';
+                    slot.onclick = function() { selectSlot(slot); };
+                }
+            });
+
+            if (selectedSlotEl) {
+                var selectedTime = selectedSlotEl.textContent.trim();
+                if (booked.indexOf(selectedTime) !== -1) {
+                    selectedSlotEl = null;
+                    document.getElementById('summary-time').textContent = 'Not selected';
+                    document.getElementById('selected-slot-display-studio').textContent = 'Not selected';
+                }
+            }
+        }
+
+        function prevMonth() { viewDate.setMonth(viewDate.getMonth() - 1); selectedDay = null; selectedSlotEl = null; document.getElementById('summary-time').textContent = 'Not selected'; renderCal(); updateTimeSlots(); }
+        function nextMonth() { viewDate.setMonth(viewDate.getMonth() + 1); selectedDay = null; selectedSlotEl = null; document.getElementById('summary-time').textContent = 'Not selected'; renderCal(); updateTimeSlots(); }
 
         function selectDay(el, d) {
-            document.querySelectorAll('#cal-grid div[data-selected="true"]').forEach(e => {
+            document.querySelectorAll('#cal-grid div[data-selected="true"]').forEach(function(e) {
                 e.className = 'text-[13px] font-medium py-2 rounded-xl cursor-pointer transition-all flex items-center justify-center text-dark hover:bg-cream';
                 delete e.dataset.selected;
             });
             el.className = 'text-[13px] font-bold py-2 rounded-xl cursor-pointer transition-all flex items-center justify-center bg-brand text-white shadow-sm';
             el.dataset.selected = "true";
             selectedDay = d;
+            selectedSlotEl = null;
             document.getElementById('summary-date').textContent = monthNames[viewDate.getMonth()] + ' ' + d + ', ' + viewDate.getFullYear();
+            document.getElementById('summary-time').textContent = 'Not selected';
+            document.getElementById('selected-slot-display-studio').textContent = 'Not selected';
+            updateTimeSlots();
         }
 
         function selectSlot(el) {
             if (el.classList.contains('unavailable')) return;
-            document.querySelectorAll('.slot').forEach(e => {
+            document.querySelectorAll('.slot').forEach(function(e) {
                 if (!e.classList.contains('unavailable')) {
                     e.className = 'slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all';
+                    e.onclick = function() { selectSlot(e); };
                 }
             });
             el.className = 'slot px-2 py-2.5 border-2 border-brand bg-brand rounded-xl text-center text-[13.5px] font-bold text-white shadow-sm transition-all';
             el.dataset.selected = "true";
             selectedSlotEl = el;
 
-            const time = el.textContent;
+            var time = el.textContent.trim();
             document.getElementById('summary-time').textContent = time;
             document.getElementById('selected-slot-display-studio').textContent = time;
         }
 
         function selectType(el, type) {
-            document.querySelectorAll('.type-opt').forEach(e => {
+            document.querySelectorAll('.type-opt').forEach(function(e) {
                 e.className = 'type-opt border-2 border-border bg-white rounded-xl p-5 text-center cursor-pointer hover:border-brand transition-all group';
                 e.querySelector('svg').className.baseVal = 'w-6 h-6 mx-auto mb-2 text-muted group-hover:text-brand';
             });
@@ -509,6 +574,16 @@
                     document.getElementById('avail-modal').classList.remove('hidden');
                     return;
                 }
+
+                var y = viewDate.getFullYear(), m = viewDate.getMonth();
+                var booked = getBookedForDate(y, m, selectedDay);
+                var chosenTime = selectedSlotEl.textContent.trim();
+
+                if (booked.indexOf(chosenTime) !== -1) {
+                    document.getElementById('avail-modal').classList.remove('hidden');
+                    return;
+                }
+
                 showStep(2);
             } else if (currentStep === 2) {
                 showStep(3);
@@ -524,22 +599,21 @@
             document.getElementById('step-2-studio').classList.add('hidden');
             document.getElementById('step-3').classList.add('hidden');
 
-            const btn = document.getElementById('main-btn');
-            const title = document.getElementById('page-title');
+            var btn = document.getElementById('main-btn');
+            var title = document.getElementById('page-title');
 
             if (step === 2) {
-                document.getElementById(`step-2-${serviceType}`).classList.remove('hidden');
+                document.getElementById('step-2-' + serviceType).classList.remove('hidden');
                 title.textContent = serviceType === 'home' ? 'Your Location' : 'Studio Details';
                 btn.innerHTML = 'Continue <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>';
 
-                // Update stepper
                 document.getElementById('icon-2').classList.remove('hidden');
                 document.getElementById('dot-2').classList.remove('ring-4', 'ring-brand/20');
 
                 document.getElementById('line-3').classList.replace('bg-border', 'bg-brand');
 
                 document.getElementById('step3-wrap').classList.remove('opacity-50');
-                const dot3 = document.getElementById('dot-3');
+                var dot3 = document.getElementById('dot-3');
                 dot3.classList.replace('bg-border', 'bg-brand');
                 dot3.classList.replace('border-white', 'border-white');
                 dot3.classList.add('ring-4', 'ring-brand/20');
@@ -553,8 +627,7 @@
 
                 document.getElementById('pricing-summary').classList.remove('hidden');
 
-                // Update stepper
-                const dot3 = document.getElementById('dot-3');
+                var dot3 = document.getElementById('dot-3');
                 dot3.classList.remove('ring-4', 'ring-brand/20');
                 document.getElementById('icon-3').classList.remove('hidden');
             }
@@ -564,5 +637,6 @@
         function bookAnyway() { closeModal(); showStep(2); }
 
         renderCal();
+        updateTimeSlots();
     </script>
 @endpush
