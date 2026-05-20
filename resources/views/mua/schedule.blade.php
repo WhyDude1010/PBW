@@ -119,7 +119,6 @@
 
     <!-- Modals -->
     <!-- detailModal -->
-    <!-- detailModal -->
 <div x-show="detailModal"
     class="fixed inset-0 z-40 flex items-center justify-center p-4"
     style="display:none">
@@ -130,8 +129,9 @@
         x-transition.opacity>
     </div>
 
-    <!-- Modal -->
-    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md h-[90vh] overflow-hidden flex flex-col"
+    <!-- Modal - New redesigned structure -->
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md flex flex-col"
+        style="max-height: calc(100vh - 2rem); height: auto;"
         x-show="detailModal"
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 scale-95"
@@ -140,15 +140,15 @@
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95">
 
-        <!-- Header -->
-        <div class="px-6 py-5 border-b border-border bg-cream/30 flex items-center justify-between">
+        <!-- Header - Fixed -->
+        <div class="shrink-0 px-6 py-5 border-b border-border bg-cream/30 flex items-center justify-between rounded-t-2xl">
             <h4 class="font-bold text-[16px] text-dark"
                 x-text="selectedDateLabel">
             </h4>
 
             <button type="button"
                 @click="detailModal = false"
-                class="text-muted hover:text-dark transition-colors">
+                class="text-muted hover:text-dark transition-colors flex-shrink-0">
                 <svg width="20"
                     height="20"
                     fill="none"
@@ -164,7 +164,7 @@
         </div>
 
         <!-- Scrollable Content -->
-        <div class="flex-1 min-h-0 overflow-y-auto p-6 space-y-6 max-h-[70vh]">
+        <div class="overflow-y-auto flex-1 p-6 space-y-6">
 
             <!-- Working hours settings for this day -->
             <div>
@@ -181,7 +181,7 @@
 
                         <button type="button"
                             @click.stop="toggleSelectedDayStatus()"
-                            class="w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-200 focus:outline-none border-0"
+                            class="w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-200 focus:outline-none border-0 flex-shrink-0"
                             :class="!selectedDayBlocked ? 'bg-brand' : 'bg-border'">
 
                             <div class="bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-200"
@@ -217,16 +217,16 @@
 
             <!-- Bookings -->
             <div>
-                <h5 class="text-[12px] font-bold text-muted uppercase tracking-wider mb-3 shrink-0">
+                <h5 class="text-[12px] font-bold text-muted uppercase tracking-wider mb-3">
                     Bookings (
                     <span x-text="selectedDayBookings.length"></span>
                     )
                 </h5>
 
-                <div class="space-y-3 pb-4">
+                <div class="space-y-3">
 
                     <template x-if="selectedDayBookings.length === 0">
-                        <div class="text-center py-6 border-2 border-dashed border-border rounded-xl shrink-0">
+                        <div class="text-center py-6 border-2 border-dashed border-border rounded-xl">
                             <p class="text-[13px] text-muted font-medium">
                                 No bookings on this day.
                             </p>
@@ -243,7 +243,7 @@
                                     x-text="bk.client">
                                 </span>
 
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0"
                                     :class="{
                                         'bg-emerald-500/10 text-emerald-500': bk.status === 'confirmed',
                                         'bg-amber-500/10 text-amber-600': bk.status === 'pending',
@@ -254,7 +254,7 @@
                             </div>
 
                             <div class="flex items-center gap-3 text-[12px] text-muted font-medium">
-                                <div class="flex items-center gap-1.5 text-dark font-bold">
+                                <div class="flex items-center gap-1.5 text-dark font-bold flex-shrink-0">
                                     <svg width="14"
                                         height="14"
                                         fill="none"
@@ -324,8 +324,8 @@
 
         </div>
 
-        <!-- Footer -->
-        <div class="p-5 border-t border-border bg-cream/30">
+        <!-- Footer - Fixed -->
+        <div class="shrink-0 p-5 border-t border-border bg-cream/30 rounded-b-2xl">
             <button type="button"
                 @click="detailModal = false"
                 class="w-full bg-brand hover:bg-brand-dark text-white py-3 rounded-xl font-bold text-[14px] transition-colors">
