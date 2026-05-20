@@ -5,196 +5,456 @@
 
 @section('content')
 <div x-data="schedulePage()" x-cloak>
-
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-
-    <div class="xl:col-span-2 bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
-        <div class="px-6 py-5 border-b border-border flex items-center justify-between">
-            <h4 class="font-bold text-[16px] text-dark">Weekly Availability</h4>
-            <span class="px-3 py-1 rounded-full bg-brand/10 text-brand text-[11px] font-bold uppercase tracking-wider">This Week</span>
-        </div>
-        <div class="divide-y divide-border">
-            @php
-            $days = [
-                ['Monday', '09:00 – 18:00', true, 2],
-                ['Tuesday', '09:00 – 18:00', true, 1],
-                ['Wednesday', '10:00 – 17:00', true, 3],
-                ['Thursday', '09:00 – 18:00', true, 0],
-                ['Friday', '09:00 – 20:00', true, 2],
-                ['Saturday', '08:00 – 20:00', true, 4],
-                ['Sunday', 'Day Off', false, 0],
-            ];
-            @endphp
-            @foreach($days as $idx => $d)
-            <div class="px-6 py-4 flex items-center justify-between hover:bg-cream/30 transition-colors" id="day-row-{{ $idx }}">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-bold shrink-0 {{ $d[2] ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500' }}" id="day-icon-{{ $idx }}">
-                        {{ substr($d[0], 0, 2) }}
-                    </div>
-                    <div>
-                        <div class="font-bold text-[14px] text-dark">{{ $d[0] }}</div>
-                        <div class="text-[12px] text-muted" id="day-hours-{{ $idx }}">{{ $d[1] }}</div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    @if($d[3] > 0)
-                    <span class="px-2.5 py-1 rounded-full bg-brand/10 text-brand text-[11px] font-bold">{{ $d[3] }} bookings</span>
-                    @endif
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" class="sr-only peer" {{ $d[2] ? 'checked' : '' }} onchange="toggleDay({{ $idx }}, this.checked)">
-                        <div class="w-11 h-6 bg-border rounded-full peer-checked:bg-emerald-500 transition-colors"></div>
-                        <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-sm peer-checked:translate-x-5 transition-transform"></div>
-                    </label>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-
-    <div class="space-y-8">
-
-        <div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
-            <div class="px-6 py-5 border-b border-border">
-                <h4 class="font-bold text-[16px] text-dark">Blocked Dates</h4>
-            </div>
-            <div class="p-5 space-y-3" id="blocked-dates-list">
-                @php
-                $blocked = [
-                    ['25 May 2026', 'Personal Day'],
-                    ['1 Jun 2026', 'Holiday'],
-                    ['15 Jun 2026', 'Training Workshop'],
-                ];
-                @endphp
-                @foreach($blocked as $bidx => $bl)
-                <div class="flex items-center justify-between p-3 bg-cream/50 rounded-xl border border-border/50" id="blocked-{{ $bidx }}">
-                    <div>
-                        <div class="text-[13px] font-bold text-dark">{{ $bl[0] }}</div>
-                        <div class="text-[11px] text-muted">{{ $bl[1] }}</div>
-                    </div>
-                    <button onclick="removeBlocked({{ $bidx }})" class="w-7 h-7 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors" title="Remove">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div class="xl:col-span-2 space-y-8">
+            <div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-border flex items-center justify-between">
+                    <button type="button" @click="prevMonth()" class="w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted hover:border-brand hover:text-brand transition-colors">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <h4 class="font-bold text-[16px] text-dark min-w-[160px] text-center" x-text="monthLabel"></h4>
+                    <button type="button" @click="nextMonth()" class="w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted hover:border-brand hover:text-brand transition-colors">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
-                @endforeach
-            </div>
-            <div class="px-5 pb-5">
-                <button @click="addBlockModal = true" class="w-full py-2.5 rounded-xl border-2 border-dashed border-border text-[13px] font-bold text-muted hover:border-brand hover:text-brand transition-colors flex items-center justify-center gap-2">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
-                    Add Blocked Date
-                </button>
+                
+                <div class="grid grid-cols-7 gap-2 px-3 pt-3 bg-white text-center">
+                    <template x-for="day in weekDays" :key="day">
+                        <div class="py-2 text-[11px] font-bold text-muted uppercase tracking-wider" x-text="day"></div>
+                    </template>
+                </div>
+
+                <div class="grid grid-cols-7 gap-2 p-3 bg-white border-t border-border">
+                    <template x-for="cell in calendarCells" :key="cell.dateKey">
+                        <div @click="selectDate(cell)"
+                            class="min-h-[90px] sm:min-h-[110px] p-2.5 rounded-xl flex flex-col justify-between transition-all cursor-pointer border"
+                            :class="{
+                                'bg-white border-border hover:border-brand hover:shadow-sm': cell.day && !cell.blocked && !cell.isToday,
+                                'bg-cream/30 border-border/60 hover:bg-cream/40': cell.day && cell.blocked && !cell.isToday,
+                                'border-brand bg-brand/5 shadow-sm': cell.isToday,
+                                'border-transparent bg-transparent pointer-events-none opacity-20': !cell.day
+                            }">
+                            <span class="text-[12px] sm:text-[13px] font-bold self-start"
+                                :class="{
+                                    'opacity-30': !cell.current,
+                                    'text-dark': !cell.blocked,
+                                    'text-muted': cell.blocked
+                                }"
+                                x-text="cell.day">
+                            </span>
+                            <div class="text-center w-full mt-auto">
+                                <template x-if="cell.day && cell.bookings.length > 0 && !cell.blocked">
+                                    <span class="font-serif italic text-brand text-[12px] sm:text-[14px] block truncate max-w-full px-1"
+                                        x-text="cell.bookings.length + ' ' + (cell.bookings.length === 1 ? 'booking' : 'bookings')"></span>
+                                </template>
+                                <template x-if="cell.blocked && cell.day">
+                                    <span class="font-serif italic text-red-400 text-[12px] sm:text-[14px] mt-1">Off</span>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
-            <div class="px-6 py-5 border-b border-border">
-                <h4 class="font-bold text-[16px] text-dark">Working Hours</h4>
-            </div>
-            <div class="p-5 space-y-4">
-                <div>
-                    <label class="block text-[13px] font-bold text-dark mb-2">Default Start Time</label>
-                    <input type="time" value="09:00" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark cursor-pointer">
+        <div class="space-y-8">
+            <div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-border">
+                    <h4 class="font-bold text-[16px] text-dark">Blocked Dates</h4>
                 </div>
-                <div>
-                    <label class="block text-[13px] font-bold text-dark mb-2">Default End Time</label>
-                    <input type="time" value="18:00" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark cursor-pointer">
+                <div class="p-5 space-y-3">
+                    <template x-if="blockedDates.length === 0">
+                        <p class="text-[13px] text-muted text-center py-4">No custom blocked dates.</p>
+                    </template>
+                    <template x-for="(bl, bidx) in blockedDates" :key="bidx">
+                        <div class="flex items-center justify-between p-3 bg-cream/50 rounded-xl border border-border/50">
+                            <div>
+                                <div class="text-[13px] font-bold text-dark" x-text="bl.label"></div>
+                                <div class="text-[11px] text-muted" x-text="bl.reason"></div>
+                            </div>
+                            <button type="button" @click="removeBlocked(bidx)" class="w-7 h-7 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    </template>
                 </div>
-                <div>
-                    <label class="block text-[13px] font-bold text-dark mb-2">Max Bookings Per Day</label>
-                    <select class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark cursor-pointer">
-                        <option>2 bookings</option>
-                        <option selected>3 bookings</option>
-                        <option>4 bookings</option>
-                        <option>5 bookings</option>
-                    </select>
+                <div class="px-5 pb-5">
+                    <button type="button" @click="addBlockModal = true" class="w-full py-2.5 rounded-xl border-2 border-dashed border-border text-[13px] font-bold text-muted hover:border-brand hover:text-brand transition-colors flex items-center justify-center gap-2">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                        Add Blocked Date
+                    </button>
                 </div>
-                <button @click="saveSchedule()" class="w-full inline-flex items-center justify-center gap-2 bg-dark hover:bg-black text-white py-3 rounded-xl font-bold text-[14px] transition-all hover:-translate-y-0.5">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                    Save Settings
-                </button>
             </div>
         </div>
-
     </div>
 
-</div>
+    <!-- Modals -->
+    <!-- detailModal -->
+    <div x-show="detailModal" class="fixed inset-0 z-40 flex items-center justify-center p-4" style="display:none">
+        <div class="absolute inset-0 bg-dark/40 backdrop-blur-sm" @click="detailModal = false" x-transition.opacity></div>
+        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]"
+            x-show="detailModal"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95">
+            
+            <!-- Header -->
+            <div class="px-6 py-5 border-b border-border bg-cream/30 flex items-center justify-between shrink-0">
+                <h4 class="font-bold text-[16px] text-dark" x-text="selectedDateLabel"></h4>
+                <button type="button" @click="detailModal = false" class="text-muted hover:text-dark transition-colors">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
 
-<div x-show="addBlockModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none">
-    <div class="absolute inset-0 bg-dark/40 backdrop-blur-sm" @click="addBlockModal = false"></div>
-    <div x-show="addBlockModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="relative bg-white rounded-2xl border border-border shadow-xl w-full max-w-sm overflow-hidden">
-        <div class="px-6 py-5 border-b border-border bg-cream/30">
-            <h4 class="font-bold text-[16px] text-dark">Block a Date</h4>
-        </div>
-        <div class="p-6 space-y-5">
-            <div>
-                <label class="block text-[13px] font-bold text-dark mb-2">Date</label>
-                <input type="date" x-model="newBlock.date" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark cursor-pointer">
+            <div class="overflow-y-auto flex-1 p-6 space-y-6">
+                <!-- Working hours settings for this day -->
+                <div>
+                    <h5 class="text-[12px] font-bold text-muted uppercase tracking-wider mb-3">Day Schedule</h5>
+                    <div class="p-4 bg-cream/30 border border-border/50 rounded-xl space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[14px] font-bold text-dark">Available</span>
+                            <button type="button" @click.stop="toggleSelectedDayStatus()" 
+                                class="w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-200 focus:outline-none border-0" 
+                                :class="!selectedDayBlocked ? 'bg-brand' : 'bg-border'">
+                                <div class="bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-200" 
+                                     :style="!selectedDayBlocked ? 'transform: translateX(16px);' : 'transform: translateX(0px);'"></div>
+                            </button>
+                        </div>
+                        
+                        <div x-show="!selectedDayBlocked" x-transition class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 pt-2">
+                            <input type="text" x-model="selectedDayStart" @change="updateDaySchedule()" placeholder="09:00" maxlength="5" class="w-full min-w-0 py-2.5 px-3 text-center rounded-lg border border-border bg-white text-[13.5px] font-bold text-dark focus:ring-1 focus:ring-brand focus:border-brand outline-none transition-colors">
+                            <span class="text-[12px] text-muted font-bold">to</span>
+                            <input type="text" x-model="selectedDayEnd" @change="updateDaySchedule()" placeholder="18:00" maxlength="5" class="w-full min-w-0 py-2.5 px-3 text-center rounded-lg border border-border bg-white text-[13.5px] font-bold text-dark focus:ring-1 focus:ring-brand focus:border-brand outline-none transition-colors">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookings -->
+                <div>
+                    <h5 class="text-[12px] font-bold text-muted uppercase tracking-wider mb-3">Bookings (<span x-text="selectedDayBookings.length"></span>)</h5>
+                    <div class="space-y-3">
+                        <template x-if="selectedDayBookings.length === 0">
+                            <div class="text-center py-6 border-2 border-dashed border-border rounded-xl">
+                                <p class="text-[13px] text-muted font-medium">No bookings on this day.</p>
+                            </div>
+                        </template>
+                        <template x-for="(bk, i) in selectedDayBookings" :key="i">
+                            <div class="p-4 border border-border rounded-xl hover:border-brand/30 transition-colors">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-bold text-[14px] text-dark" x-text="bk.client"></span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                        :class="{
+                                            'bg-emerald-500/10 text-emerald-500': bk.status === 'confirmed',
+                                            'bg-amber-500/10 text-amber-600': bk.status === 'pending',
+                                            'bg-brand/10 text-brand': bk.status === 'done'
+                                        }" x-text="bk.status"></span>
+                                </div>
+                                <div class="flex items-center gap-3 text-[12px] text-muted font-medium">
+                                    <div class="flex items-center gap-1.5 text-dark font-bold">
+                                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <span x-text="bk.time"></span>
+                                    </div>
+                                    <span>•</span>
+                                    <span x-text="bk.package"></span>
+                                    <span>•</span>
+                                    <span x-text="bk.type"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
             </div>
-            <div>
-                <label class="block text-[13px] font-bold text-dark mb-2">Reason</label>
-                <input type="text" x-model="newBlock.reason" placeholder="e.g. Personal Day, Holiday…" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark placeholder:text-muted">
+            
+            <div class="p-5 border-t border-border bg-cream/30">
+                <button type="button" @click="detailModal = false" class="w-full bg-brand hover:bg-brand-dark text-white py-3 rounded-xl font-bold text-[14px] transition-colors">Done</button>
             </div>
-        </div>
-        <div class="px-6 py-4 border-t border-border bg-cream/30 flex items-center justify-end gap-3">
-            <button @click="addBlockModal = false" class="px-5 py-2.5 rounded-xl text-[13px] font-bold text-muted hover:text-dark transition-colors">Cancel</button>
-            <button @click="addBlocked()" class="px-5 py-2.5 rounded-xl bg-brand text-white text-[13px] font-bold hover:bg-brand-dark transition-colors">Block Date</button>
         </div>
     </div>
-</div>
 
-<div x-show="toast" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-dark text-white px-5 py-3.5 rounded-xl shadow-lg" style="display:none">
-    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-    <span class="text-[13px] font-bold" x-text="toastMsg"></span>
-</div>
+
+
+    <!-- Add Blocked Date Modal -->
+    <div x-show="addBlockModal" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none">
+        <div class="absolute inset-0 bg-dark/40 backdrop-blur-sm" @click="addBlockModal = false"></div>
+        <div class="relative bg-white rounded-2xl border border-border shadow-xl w-full max-w-sm overflow-hidden" x-transition>
+            <div class="px-6 py-5 border-b border-border bg-cream/30">
+                <h4 class="font-bold text-[16px] text-dark">Block a Date</h4>
+            </div>
+            <div class="p-6 space-y-5">
+                <div>
+                    <label class="block text-[13px] font-bold text-dark mb-2">Date</label>
+                    <input type="date" x-model="newBlock.date" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark cursor-pointer">
+                </div>
+                <div>
+                    <label class="block text-[13px] font-bold text-dark mb-2">Reason</label>
+                    <input type="text" x-model="newBlock.reason" placeholder="e.g. Personal Day, Holiday…" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark placeholder:text-muted">
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-border bg-cream/30 flex items-center justify-end gap-3">
+                <button type="button" @click="addBlockModal = false" class="px-5 py-2.5 rounded-xl text-[13px] font-bold text-muted hover:text-dark transition-colors">Cancel</button>
+                <button type="button" @click="addBlocked()" class="px-5 py-2.5 rounded-xl bg-brand text-white text-[13px] font-bold hover:bg-brand-dark transition-colors">Block Date</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div x-show="toast" x-transition.opacity class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-dark text-white px-5 py-3.5 rounded-xl shadow-lg" style="display:none">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span class="text-[13px] font-bold" x-text="toastMsg"></span>
+    </div>
 
 </div>
 @endsection
 
 @push('scripts')
 <script>
-function toggleDay(idx, checked) {
-    const icon = document.getElementById('day-icon-' + idx);
-    const hours = document.getElementById('day-hours-' + idx);
-    if (checked) {
-        icon.className = 'w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-bold shrink-0 bg-emerald-500/10 text-emerald-500';
-        hours.textContent = '09:00 – 18:00';
-    } else {
-        icon.className = 'w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-bold shrink-0 bg-red-500/10 text-red-500';
-        hours.textContent = 'Day Off';
-    }
-}
-
-function removeBlocked(idx) {
-    const el = document.getElementById('blocked-' + idx);
-    if (el) {
-        el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        el.style.opacity = '0';
-        el.style.transform = 'translateX(10px)';
-        setTimeout(() => el.remove(), 300);
-    }
-}
-
 function schedulePage() {
+    var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    var bookingsData = {
+        '2026-05-10': [{ time: '09:00', client: 'Rina Maharani', package: 'Basic Beauty', type: 'Home Service', status: 'confirmed' }],
+        '2026-05-11': [{ time: '14:00', client: 'Delia Santoso', package: 'Creative Glam', type: 'Studio Visit', status: 'pending' }],
+        '2026-05-12': [{ time: '10:00', client: 'Citra Dewi', package: 'Editorial', type: 'Home Service', status: 'confirmed' }],
+        '2026-05-13': [{ time: '08:00', client: 'Ayu Pratiwi', package: 'Signature Bridal', type: 'Home Service', status: 'pending' }],
+        '2026-05-14': [{ time: '11:00', client: 'Sari Indah', package: 'Basic Beauty', type: 'Studio Visit', status: 'done' }],
+        '2026-05-15': [{ time: '13:00', client: 'Mega Putri', package: 'Party Glam', type: 'Home Service', status: 'confirmed' }],
+        '2026-05-20': [
+            { time: '09:00', client: 'Lina Kusuma', package: 'Creative Glam', type: 'Studio Visit', status: 'confirmed' },
+            { time: '14:00', client: 'Dewi Anggraini', package: 'Basic Beauty', type: 'Home Service', status: 'pending' }
+        ],
+        '2026-05-22': [
+            { time: '08:00', client: 'Fitri Handayani', package: 'Signature Bridal', type: 'Home Service', status: 'confirmed' },
+            { time: '10:00', client: 'Ratna Sari', package: 'Party Glam', type: 'Studio Visit', status: 'confirmed' },
+            { time: '14:00', client: 'Wulan Putri', package: 'Creative Glam', type: 'Home Service', status: 'pending' }
+        ],
+        '2026-05-27': [{ time: '10:00', client: 'Anisa Rahman', package: 'Basic Beauty', type: 'Studio Visit', status: 'pending' }],
+        '2026-06-02': [{ time: '09:00', client: 'Maya Putri', package: 'Creative Glam', type: 'Home Service', status: 'pending' }],
+        '2026-06-05': [{ time: '11:00', client: 'Bella Kartika', package: 'Signature Bridal', type: 'Studio Visit', status: 'confirmed' }],
+    };
+
+
+
     return {
+        currentYear: 2026,
+        currentMonth: 4,
+        monthLabel: '',
+        calendarCells: [],
+        weekDays: ['Mo','Tu','We','Th','Fr','Sa','Su'],
+        
+        detailModal: false,
+        selectedDateKey: null,
+        selectedDateLabel: '',
+        selectedDayBookings: [],
+        selectedDayBlocked: false,
+        selectedDayStart: '09:00',
+        selectedDayEnd: '18:00',
+        
+        daySchedules: {}, 
+
         addBlockModal: false,
+        newBlock: { date: '', reason: '' },
+        blockedDates: [
+            { date: '2026-05-25', label: '25 May 2026', reason: 'Personal Day' },
+            { date: '2026-06-01', label: '1 Jun 2026', reason: 'Holiday' },
+            { date: '2026-06-15', label: '15 Jun 2026', reason: 'Training Workshop' },
+        ],
+
         toast: false,
         toastMsg: '',
-        newBlock: { date: '', reason: '' },
+
+        init() {
+            this.buildCalendar();
+        },
+
+        buildCalendar() {
+            this.monthLabel = monthNames[this.currentMonth] + ' ' + this.currentYear;
+            var cells = [];
+            var firstDay = (new Date(this.currentYear, this.currentMonth, 1).getDay() + 6) % 7;
+            var daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+            var prevMonthDays = new Date(this.currentYear, this.currentMonth, 0).getDate();
+            var today = new Date();
+            var todayKey = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+            for (var i = firstDay - 1; i >= 0; i--) {
+                var pDay = prevMonthDays - i;
+                cells.push({ day: pDay, current: false, dateKey: '' });
+            }
+
+            for (var d = 1; d <= daysInMonth; d++) {
+                var key = this.currentYear + '-' + String(this.currentMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+                
+                var isBlocked = false;
+                for(var b=0; b<this.blockedDates.length; b++){
+                    if(this.blockedDates[b].date === key) { isBlocked = true; break; }
+                }
+
+                if (this.daySchedules[key]) {
+                    if (this.daySchedules[key].blocked) isBlocked = true;
+                } else {
+                    var dayOfWeek = new Date(this.currentYear, this.currentMonth, d).getDay();
+                    if (dayOfWeek === 0) isBlocked = true;
+                }
+
+                cells.push({
+                    day: d,
+                    dateKey: key,
+                    current: true,
+                    isToday: (key === todayKey),
+                    bookings: bookingsData[key] || [],
+                    blocked: isBlocked
+                });
+            }
+
+            while(cells.length % 7 !== 0) {
+                cells.push({ day: (cells.length % 7) + 1, current: false, dateKey: '' });
+            }
+
+            this.calendarCells = cells;
+        },
+
+        prevMonth() {
+            this.currentMonth--;
+            if (this.currentMonth < 0) { this.currentMonth = 11; this.currentYear--; }
+            this.buildCalendar();
+        },
+
+        nextMonth() {
+            this.currentMonth++;
+            if (this.currentMonth > 11) { this.currentMonth = 0; this.currentYear++; }
+            this.buildCalendar();
+        },
+
+        selectDate(cell) {
+            if (!cell.current) return;
+            this.selectedDateKey = cell.dateKey;
+            
+            var parts = cell.dateKey.split('-');
+            var m = parseInt(parts[1]) - 1;
+            var d = parseInt(parts[2]);
+            var y = parseInt(parts[0]);
+            
+            this.selectedDateLabel = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date(y, m, d).getDay()] + ', ' + d + ' ' + monthNames[m] + ' ' + y;
+            this.selectedDayBookings = cell.bookings || [];
+            this.selectedDayBlocked = cell.blocked;
+            
+            if (this.daySchedules[cell.dateKey]) {
+                this.selectedDayStart = this.daySchedules[cell.dateKey].start;
+                this.selectedDayEnd = this.daySchedules[cell.dateKey].end;
+            } else {
+                this.selectedDayStart = '09:00';
+                this.selectedDayEnd = '18:00';
+            }
+
+            this.detailModal = true;
+        },
+
+        toggleSelectedDayStatus() {
+            this.selectedDayBlocked = !this.selectedDayBlocked;
+            
+            var currentOverride = this.daySchedules[this.selectedDateKey] || { blocked: this.selectedDayBlocked, start: this.selectedDayStart, end: this.selectedDayEnd };
+            currentOverride.blocked = this.selectedDayBlocked;
+
+            this.daySchedules = Object.assign({}, this.daySchedules, {
+                [this.selectedDateKey]: currentOverride
+            });
+
+            if (this.selectedDayBlocked) {
+                var exists = false;
+                for (var i = 0; i < this.blockedDates.length; i++) {
+                    if (this.blockedDates[i].date === this.selectedDateKey) { exists = true; break; }
+                }
+                if (!exists) {
+                    var parts = this.selectedDateKey.split('-');
+                    var mNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                    var lbl = parseInt(parts[2]) + ' ' + mNames[parseInt(parts[1])-1] + ' ' + parts[0];
+                    this.blockedDates.push({ date: this.selectedDateKey, label: lbl, reason: 'Custom Block' });
+                }
+            } else {
+                var newBlocked = [];
+                for (var i = 0; i < this.blockedDates.length; i++) {
+                    if (this.blockedDates[i].date !== this.selectedDateKey) {
+                        newBlocked.push(this.blockedDates[i]);
+                    }
+                }
+                this.blockedDates = newBlocked;
+            }
+
+            this.buildCalendar();
+        },
+
+        updateDaySchedule() {
+            var formatTime = function(t) {
+                t = String(t).replace(/[^\d:]/g, '');
+                if (!t) return '00:00';
+                
+                if (t.indexOf(':') === -1) {
+                    if (t.length === 1 || t.length === 2) t = t + ':00';
+                    else if (t.length === 3) t = '0' + t.substring(0,1) + ':' + t.substring(1);
+                    else t = t.substring(0,2) + ':' + t.substring(2,4);
+                }
+                var parts = t.split(':');
+                var h = parseInt(parts[0]) || 0;
+                var m = parseInt(parts[1] || '0') || 0;
+                if (h > 23) h = 23;
+                if (m > 59) m = 59;
+                return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+            };
+
+            this.selectedDayStart = formatTime(this.selectedDayStart);
+            this.selectedDayEnd = formatTime(this.selectedDayEnd);
+
+            var currentOverride = this.daySchedules[this.selectedDateKey] || { blocked: this.selectedDayBlocked, start: this.selectedDayStart, end: this.selectedDayEnd };
+            currentOverride.start = this.selectedDayStart;
+            currentOverride.end = this.selectedDayEnd;
+
+            this.daySchedules = Object.assign({}, this.daySchedules, {
+                [this.selectedDateKey]: currentOverride
+            });
+
+            this.showToast('Time updated');
+        },
 
         addBlocked() {
             if (!this.newBlock.date) return;
-            const list = document.getElementById('blocked-dates-list');
-            const dateStr = new Date(this.newBlock.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-            const reason = this.newBlock.reason || 'Blocked';
-            const id = 'blocked-' + Date.now();
-            const html = '<div class="flex items-center justify-between p-3 bg-cream/50 rounded-xl border border-border/50" id="' + id + '"><div><div class="text-[13px] font-bold text-dark">' + dateStr + '</div><div class="text-[11px] text-muted">' + reason + '</div></div><button onclick="document.getElementById(\'' + id + '\').remove()" class="w-7 h-7 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>';
-            list.insertAdjacentHTML('beforeend', html);
+            var parts = this.newBlock.date.split('-');
+            var y = parseInt(parts[0]), m = parseInt(parts[1])-1, d = parseInt(parts[2]);
+            var label = d + ' ' + monthNames[m].substring(0, 3) + ' ' + y;
+            
+            this.blockedDates.push({
+                date: this.newBlock.date,
+                label: label,
+                reason: this.newBlock.reason || 'Blocked'
+            });
+
+            var currentOverride = this.daySchedules[this.newBlock.date] || { blocked: true, start: '09:00', end: '18:00' };
+            currentOverride.blocked = true;
+            this.daySchedules = Object.assign({}, this.daySchedules, {
+                [this.newBlock.date]: currentOverride
+            });
+
             this.addBlockModal = false;
             this.newBlock = { date: '', reason: '' };
+            this.buildCalendar();
             this.showToast('Date blocked successfully');
         },
 
-        saveSchedule() {
-            this.showToast('Schedule settings saved');
+        removeBlocked(idx) {
+            var dateStr = this.blockedDates[idx].date;
+            this.blockedDates.splice(idx, 1);
+            
+            if (this.daySchedules[dateStr]) {
+                var currentOverride = this.daySchedules[dateStr];
+                currentOverride.blocked = false;
+                this.daySchedules = Object.assign({}, this.daySchedules, {
+                    [dateStr]: currentOverride
+                });
+            }
+
+            this.buildCalendar();
+            this.showToast('Blocked date removed');
         },
 
         showToast(msg) {
