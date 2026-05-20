@@ -109,7 +109,7 @@
                         <p class="text-[13.5px] text-brand-dark leading-relaxed">Confirmation is automatic after payment verification. Your artist will be notified immediately.</p>
                     </div>
 
-                    <a href="{{ route('booking.confirmed') }}" class="w-full inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
+                    <a href="{{ route('booking.confirmed') }}" id="confirm-btn" class="w-full inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
                         Confirm &amp; Pay Rp 275.000
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
                     </a>
@@ -136,19 +136,19 @@
                     <div class="space-y-4 mb-8">
                         <div class="flex justify-between items-start">
                             <span class="text-[14px] text-muted">Date</span>
-                            <strong class="text-[14px] text-dark text-right">Sat, 10 May 2026</strong>
+                            <strong class="text-[14px] text-dark text-right" id="sum-date">Sat, 10 May 2026</strong>
                         </div>
                         <div class="flex justify-between items-start">
                             <span class="text-[14px] text-muted">Time</span>
-                            <strong class="text-[14px] text-dark text-right">09:00 – 11:00</strong>
+                            <strong class="text-[14px] text-dark text-right" id="sum-time">09:00 – 11:00</strong>
                         </div>
                         <div class="flex justify-between items-start">
                             <span class="text-[14px] text-muted">Location</span>
-                            <strong class="text-[14px] text-dark text-right">Home Visit</strong>
+                            <strong class="text-[14px] text-dark text-right" id="sum-location">Home Visit</strong>
                         </div>
                         <div class="flex justify-between items-start">
                             <span class="text-[14px] text-muted">Address</span>
-                            <strong class="text-[14px] text-dark text-right max-w-[180px]">Jl. Raya Kuta No. 25, Bali</strong>
+                            <strong class="text-[14px] text-dark text-right max-w-[180px]" id="sum-address">Jl. Raya Kuta No. 25, Bali</strong>
                         </div>
                     </div>
 
@@ -156,17 +156,23 @@
 
                     <div class="bg-cream rounded-xl p-5">
                         <div class="flex justify-between items-center mb-3">
-                            <span class="text-[14.5px] text-muted">Basic Beauty</span>
-                            <strong class="text-[14.5px] text-dark">Rp 500.000</strong>
+                            <span class="text-[14.5px] text-muted" id="sum-pkg-name">Basic Beauty</span>
+                            <strong class="text-[14.5px] text-dark" id="sum-pkg-price">Rp 500.000</strong>
+                        </div>
+                        <div id="sum-addons-container">
+                            <div class="flex justify-between items-center mb-5 pb-5 border-b border-border">
+                                <span class="text-[14.5px] text-muted">Lash Application</span>
+                                <strong class="text-[14.5px] text-dark">Rp 50.000</strong>
+                            </div>
                         </div>
                         <div class="flex justify-between items-center mb-5 pb-5 border-b border-border">
-                            <span class="text-[14.5px] text-muted">Lash Application</span>
-                            <strong class="text-[14.5px] text-dark">Rp 50.000</strong>
+                            <span class="text-[14.5px] text-muted">Service Fee</span>
+                            <strong class="text-[14.5px] text-dark" id="sum-fee">Rp 50.000</strong>
                         </div>
                         <div class="flex justify-between items-end">
                             <div>
                                 <span class="text-[12px] font-bold text-muted uppercase tracking-wider block mb-1">Total Amount</span>
-                                <strong class="text-[22px] font-bold text-dark block leading-none">Rp 550.000</strong>
+                                <strong class="text-[22px] font-bold text-dark block leading-none" id="sum-total">Rp 550.000</strong>
                             </div>
                         </div>
                     </div>
@@ -208,5 +214,40 @@ function selectPay(el) {
     const iconDiv = el.querySelector('.w-12');
     iconDiv.className = 'w-12 h-12 rounded-xl bg-white border border-border flex items-center justify-center text-brand group-hover:border-brand transition-colors';
 }
+
+function formatRupiah(amount) {
+    return 'Rp ' + parseInt(amount).toLocaleString('id-ID').replace(/,/g, '.');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        var data = JSON.parse(localStorage.getItem('current_booking'));
+        if (data) {
+            document.getElementById('sum-date').textContent = data.date;
+            
+            var timeStart = data.time;
+            if(timeStart.includes(':')) {
+                var parts = timeStart.split(':');
+                var endHour = (parseInt(parts[0]) + 2).toString().padStart(2, '0');
+                document.getElementById('sum-time').textContent = timeStart + ' - ' + endHour + ':00';
+            }
+            
+            document.getElementById('sum-location').textContent = data.location;
+            
+            document.getElementById('sum-pkg-name').textContent = data.pkgName;
+            document.getElementById('sum-pkg-price').textContent = formatRupiah(data.pkgPrice);
+            
+            var addonsHTML = '';
+            if (data.addonsPrice > 0) {
+                addonsHTML = '<div class="flex justify-between items-center mb-5 pb-5 border-b border-border"><span class="text-[14.5px] text-muted">Add-ons (' + data.addonsList.join(', ') + ')</span><strong class="text-[14.5px] text-dark">' + formatRupiah(data.addonsPrice) + '</strong></div>';
+            }
+            document.getElementById('sum-addons-container').innerHTML = addonsHTML;
+            document.getElementById('sum-fee').textContent = formatRupiah(data.serviceFee);
+            document.getElementById('sum-total').textContent = formatRupiah(data.total);
+            
+            document.getElementById('confirm-btn').innerHTML = 'Confirm &amp; Pay ' + formatRupiah(data.dp) + ' <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>';
+        }
+    } catch(e) {}
+});
 </script>
 @endpush

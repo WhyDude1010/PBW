@@ -54,8 +54,22 @@
         <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
             <div class="relative">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                <input type="text" placeholder="Search client, MUA…" id="search-input" oninput="filterTable()" class="pl-9 pr-4 py-2 w-full sm:w-64 rounded-xl border border-border bg-cream/50 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark placeholder:text-muted">
+                <input type="text" placeholder="Search client…" id="search-input" oninput="filterTable()" class="pl-9 pr-4 py-2 w-full sm:w-64 rounded-xl border border-border bg-cream/50 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark placeholder:text-muted">
             </div>
+            <select id="mua-filter" onchange="filterTable()" class="px-4 py-2 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
+                <option value="">All MUAs</option>
+                <option value="Sarah Wijaya">Sarah Wijaya</option>
+                <option value="Mia Rahardjo">Mia Rahardjo</option>
+                <option value="Dera Sanjaya">Dera Sanjaya</option>
+            </select>
+            <select id="category-filter" onchange="filterTable()" class="px-4 py-2 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
+                <option value="">All Categories</option>
+                <option value="Basic Beauty">Basic Beauty</option>
+                <option value="Creative Glam">Creative Glam</option>
+                <option value="Editorial">Editorial</option>
+                <option value="Signature Bridal">Signature Bridal</option>
+                <option value="Party Glam">Party Glam</option>
+            </select>
             <select id="status-filter" onchange="filterTable()" class="px-4 py-2 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
                 <option value="">All Status</option>
                 <option value="pending">Pending</option>
@@ -221,10 +235,20 @@
 function filterTable() {
     const q = document.getElementById('search-input').value.toLowerCase();
     const s = document.getElementById('status-filter').value;
+    const m = document.getElementById('mua-filter').value.toLowerCase();
+    const c = document.getElementById('category-filter').value.toLowerCase();
     document.querySelectorAll('#bookings-table tbody tr').forEach(row => {
-        const text = row.textContent.toLowerCase();
+        const clientText = row.children[1].textContent.toLowerCase();
+        const muaText = row.children[2].textContent.toLowerCase();
+        const categoryText = row.children[4].textContent.toLowerCase();
         const status = row.dataset.status;
-        row.style.display = (text.includes(q) && (!s || status === s)) ? '' : 'none';
+        
+        const matchQ = clientText.includes(q);
+        const matchS = !s || status === s;
+        const matchM = !m || muaText.includes(m);
+        const matchC = !c || categoryText.includes(c);
+        
+        row.style.display = (matchQ && matchS && matchM && matchC) ? '' : 'none';
     });
 }
 

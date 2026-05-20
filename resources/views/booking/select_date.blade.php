@@ -254,11 +254,11 @@
                         <div class="space-y-6">
                             <div>
                                 <label class="block text-[13.5px] font-bold text-dark mb-2">Package</label>
-                                <select
+                                <select id="package-select" onchange="updateSummary()"
                                     class="w-full px-4 py-3.5 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark">
-                                    <option>Basic Beauty (Rp 500.000)</option>
-                                    <option>Creative Glam (Rp 2.500.000)</option>
-                                    <option>Signature Bridal (Rp 7.000.000)</option>
+                                    <option value="500000" data-name="Basic Beauty">Basic Beauty (Rp 500.000)</option>
+                                    <option value="2500000" data-name="Creative Glam">Creative Glam (Rp 2.500.000)</option>
+                                    <option value="7000000" data-name="Signature Bridal">Signature Bridal (Rp 7.000.000)</option>
                                 </select>
                             </div>
                             <div>
@@ -272,36 +272,10 @@
                                     <option>Bold / Latina</option>
                                 </select>
                             </div>
-                            <div>
+                            <div id="addons-section">
                                 <label class="block text-[13.5px] font-bold text-dark mb-3">Add-on Services</label>
-                                <div class="space-y-3">
-                                    <label
-                                        class="flex items-center justify-between p-4 bg-white border border-border rounded-xl cursor-pointer hover:border-brand transition-colors">
-                                        <div class="flex items-center gap-3">
-                                            <input type="checkbox" checked
-                                                class="w-4 h-4 rounded border-border text-brand focus:ring-brand bg-cream">
-                                            <span class="text-[14.5px] font-semibold text-dark">Lash Application</span>
-                                        </div>
-                                        <span class="text-[13px] font-bold text-brand">+Rp 50k</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center justify-between p-4 bg-white border border-border rounded-xl cursor-pointer hover:border-brand transition-colors">
-                                        <div class="flex items-center gap-3">
-                                            <input type="checkbox"
-                                                class="w-4 h-4 rounded border-border text-brand focus:ring-brand bg-cream">
-                                            <span class="text-[14.5px] font-semibold text-dark">Hair Styling</span>
-                                        </div>
-                                        <span class="text-[13px] font-bold text-brand">+Rp 150k</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center justify-between p-4 bg-white border border-border rounded-xl cursor-pointer hover:border-brand transition-colors">
-                                        <div class="flex items-center gap-3">
-                                            <input type="checkbox"
-                                                class="w-4 h-4 rounded border-border text-brand focus:ring-brand bg-cream">
-                                            <span class="text-[14.5px] font-semibold text-dark">Touch-up Kit</span>
-                                        </div>
-                                        <span class="text-[13px] font-bold text-brand">+Rp 100k</span>
-                                    </label>
+                                <div class="space-y-3" id="addons-container">
+                                    <!-- Dynamic content here -->
                                 </div>
                             </div>
                         </div>
@@ -351,20 +325,20 @@
 
                         <div class="bg-cream rounded-xl p-4 hidden" id="pricing-summary">
                             <div class="flex justify-between items-center mb-2">
-                                <span class="text-[14px] text-muted">Package</span>
-                                <strong class="text-[14px] text-dark">Rp 500.000</strong>
+                                <span class="text-[14px] text-muted" id="summary-package-name">Package</span>
+                                <strong class="text-[14px] text-dark" id="summary-package-price">Rp 500.000</strong>
                             </div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-[14px] text-muted">Add-ons</span>
-                                <strong class="text-[14px] text-dark">Rp 50.000</strong>
+                                <strong class="text-[14px] text-dark" id="summary-addons-price">Rp 50.000</strong>
                             </div>
                             <div class="flex justify-between items-center mb-4 pb-4 border-b border-border">
                                 <span class="text-[14px] text-muted">Service Fee</span>
-                                <strong class="text-[14px] text-dark">Rp 50.000</strong>
+                                <strong class="text-[14px] text-dark" id="summary-service-fee">Rp 50.000</strong>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-[16px] font-bold text-dark">Total</span>
-                                <strong class="text-[18px] font-bold text-brand">Rp 600.000</strong>
+                                <strong class="text-[18px] font-bold text-brand" id="summary-total">Rp 600.000</strong>
                             </div>
                         </div>
                     </div>
@@ -555,9 +529,13 @@
         }
 
         function selectType(el, type) {
+            if (el.classList.contains('disabled-opt')) return;
+
             document.querySelectorAll('.type-opt').forEach(function(e) {
-                e.className = 'type-opt border-2 border-border bg-white rounded-xl p-5 text-center cursor-pointer hover:border-brand transition-all group';
-                e.querySelector('svg').className.baseVal = 'w-6 h-6 mx-auto mb-2 text-muted group-hover:text-brand';
+                if (!e.classList.contains('disabled-opt')) {
+                    e.className = 'type-opt border-2 border-border bg-white rounded-xl p-5 text-center cursor-pointer hover:border-brand transition-all group';
+                    e.querySelector('svg').className.baseVal = 'w-6 h-6 mx-auto mb-2 text-muted group-hover:text-brand';
+                }
             });
 
             el.className = 'type-opt selected border-2 border-brand bg-brand/5 rounded-xl p-5 text-center cursor-pointer transition-all';
@@ -588,6 +566,31 @@
             } else if (currentStep === 2) {
                 showStep(3);
             } else if (currentStep === 3) {
+                var select = document.getElementById('package-select');
+                var opt = select.options[select.selectedIndex];
+                var pkgPrice = parseInt(opt.value) || 0;
+                var pkgName = opt.dataset.name || 'Package';
+                
+                var addonsList = [];
+                var addonsPrice = 0;
+                document.querySelectorAll('.addon-checkbox:checked').forEach(function(cb) {
+                    addonsPrice += parseInt(cb.value) || 0;
+                    addonsList.push(cb.closest('label').querySelector('.text-\\[14\\.5px\\]').textContent.trim());
+                });
+
+                var bookingData = {
+                    date: document.getElementById('summary-date').textContent,
+                    time: document.getElementById('summary-time').textContent,
+                    location: document.getElementById('summary-location').textContent,
+                    pkgName: pkgName,
+                    pkgPrice: pkgPrice,
+                    addonsPrice: addonsPrice,
+                    addonsList: addonsList,
+                    serviceFee: 50000,
+                    total: pkgPrice + addonsPrice + 50000,
+                    dp: (pkgPrice + addonsPrice + 50000) / 2
+                };
+                localStorage.setItem('current_booking', JSON.stringify(bookingData));
                 window.location.href = '{{ route("booking.summary") }}';
             }
         }
@@ -630,13 +633,113 @@
                 var dot3 = document.getElementById('dot-3');
                 dot3.classList.remove('ring-4', 'ring-brand/20');
                 document.getElementById('icon-3').classList.remove('hidden');
+
+                loadServices();
+                updateSummary();
             }
+        }
+
+        function formatRupiah(amount) {
+            return 'Rp ' + parseInt(amount).toLocaleString('id-ID').replace(/,/g, '.');
+        }
+
+        function loadServices() {
+            var select = document.getElementById('package-select');
+            try {
+                var savedPkgs = JSON.parse(localStorage.getItem('mua_packages'));
+                if (savedPkgs && savedPkgs.length > 0) {
+                    select.innerHTML = '';
+                    savedPkgs.forEach(function(pkg) {
+                        var opt = document.createElement('option');
+                        opt.value = pkg.price;
+                        opt.dataset.name = pkg.name;
+                        opt.textContent = pkg.name + ' (' + formatRupiah(pkg.price) + ')';
+                        select.appendChild(opt);
+                    });
+                }
+            } catch(e) {}
+
+            var container = document.getElementById('addons-container');
+            var addonsSection = document.getElementById('addons-section');
+            try {
+                var savedAddons = JSON.parse(localStorage.getItem('mua_addons'));
+                if (savedAddons && savedAddons.length > 0) {
+                    addonsSection.classList.remove('hidden');
+                    container.innerHTML = '';
+                    savedAddons.forEach(function(addon) {
+                        var label = document.createElement('label');
+                        label.className = 'flex items-center justify-between p-4 bg-white border border-border rounded-xl cursor-pointer hover:border-brand transition-colors';
+                        label.innerHTML = `
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" value="${addon.price}" onchange="updateSummary()"
+                                    class="addon-checkbox w-4 h-4 rounded border-border text-brand focus:ring-brand bg-cream">
+                                <span class="text-[14.5px] font-semibold text-dark">${addon.name}</span>
+                            </div>
+                            <span class="text-[13px] font-bold text-brand">+${formatRupiah(addon.price)}</span>
+                        `;
+                        container.appendChild(label);
+                    });
+                } else {
+                    addonsSection.classList.add('hidden');
+                    container.innerHTML = '';
+                }
+            } catch(e) {}
+        }
+
+        function updateSummary() {
+            var select = document.getElementById('package-select');
+            var opt = select.options[select.selectedIndex];
+            if(!opt) return;
+
+            var pkgPrice = parseInt(opt.value) || 0;
+            var pkgName = opt.dataset.name || 'Package';
+
+            var addonsPrice = 0;
+            document.querySelectorAll('.addon-checkbox:checked').forEach(function(cb) {
+                addonsPrice += parseInt(cb.value) || 0;
+            });
+
+            var serviceFee = 50000;
+            var total = pkgPrice + addonsPrice + serviceFee;
+
+            document.getElementById('summary-package-name').textContent = pkgName;
+            document.getElementById('summary-package-price').textContent = formatRupiah(pkgPrice);
+            document.getElementById('summary-addons-price').textContent = formatRupiah(addonsPrice);
+            document.getElementById('summary-service-fee').textContent = formatRupiah(serviceFee);
+            document.getElementById('summary-total').textContent = formatRupiah(total);
         }
 
         function closeModal() { document.getElementById('avail-modal').classList.add('hidden'); }
         function bookAnyway() { closeModal(); showStep(2); }
 
+        function loadServicePref() {
+            var pref = 'both';
+            try {
+                pref = localStorage.getItem('mua_service_pref') || 'both';
+            } catch(e) {}
+
+            var homeEl = document.getElementById('type-home');
+            var studioEl = document.getElementById('type-studio');
+
+            if (pref === 'home') {
+                studioEl.classList.add('disabled-opt');
+                studioEl.className = 'type-opt disabled-opt border-2 border-transparent bg-cream rounded-xl p-5 text-center cursor-not-allowed opacity-50';
+                studioEl.querySelector('svg').className.baseVal = 'w-6 h-6 mx-auto mb-2 text-muted';
+                studioEl.onclick = null;
+                
+                selectType(homeEl, 'home');
+            } else if (pref === 'studio') {
+                homeEl.classList.add('disabled-opt');
+                homeEl.className = 'type-opt disabled-opt border-2 border-transparent bg-cream rounded-xl p-5 text-center cursor-not-allowed opacity-50';
+                homeEl.querySelector('svg').className.baseVal = 'w-6 h-6 mx-auto mb-2 text-muted';
+                homeEl.onclick = null;
+                
+                selectType(studioEl, 'studio');
+            }
+        }
+
         renderCal();
         updateTimeSlots();
+        loadServicePref();
     </script>
 @endpush

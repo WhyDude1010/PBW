@@ -53,6 +53,15 @@
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 <input type="text" placeholder="Search client…" id="mua-search" oninput="filterMuaBookings()" class="pl-9 pr-4 py-2 w-full sm:w-64 rounded-xl border border-border bg-cream/50 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark placeholder:text-muted">
             </div>
+            <select id="category-filter" onchange="filterMuaBookings()" class="px-4 py-2 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
+                <option value="">All Categories</option>
+                <option value="Basic Beauty">Basic Beauty</option>
+                <option value="Creative Glam">Creative Glam</option>
+                <option value="Editorial">Editorial</option>
+                <option value="Signature Bridal">Signature Bridal</option>
+                <option value="Party Glam">Party Glam</option>
+                <option value="Natural">Natural</option>
+            </select>
             <select id="mua-status-filter" onchange="filterMuaBookings()" class="px-4 py-2 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
                 <option value="">All Status</option>
                 <option value="pending">Pending</option>
@@ -157,6 +166,18 @@
                 <span class="text-[13px] font-bold text-muted">Status</span>
                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider" :class="statusClass(selected.status)" x-text="selected.status"></span>
             </div>
+
+            <template x-if="selected.status === 'confirmed'">
+                <div class="mt-6 pt-6 border-t border-border">
+                    <h5 class="text-[13px] font-bold text-dark mb-4">Live Tracking Status</h5>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" @click="updateTracking('Preparing')" class="py-2.5 rounded-xl border border-border text-[13px] font-bold hover:border-brand hover:text-brand transition-colors" :class="{'bg-brand/10 border-brand text-brand': currentTracking === 'Preparing'}">Preparing</button>
+                        <button type="button" @click="updateTracking('On the Way')" class="py-2.5 rounded-xl border border-border text-[13px] font-bold hover:border-brand hover:text-brand transition-colors" :class="{'bg-brand/10 border-brand text-brand': currentTracking === 'On the Way'}">On the Way</button>
+                        <button type="button" @click="updateTracking('Arrived')" class="py-2.5 rounded-xl border border-border text-[13px] font-bold hover:border-brand hover:text-brand transition-colors" :class="{'bg-brand/10 border-brand text-brand': currentTracking === 'Arrived'}">Arrived</button>
+                        <button type="button" @click="updateTracking('Service In Progress')" class="py-2.5 rounded-xl border border-border text-[13px] font-bold hover:border-brand hover:text-brand transition-colors" :class="{'bg-brand/10 border-brand text-brand': currentTracking === 'Service In Progress'}">In Progress</button>
+                    </div>
+                </div>
+            </template>
         </div>
         <div class="px-6 py-4 border-t border-border bg-cream/30 flex justify-end">
             <button @click="viewModal = false" class="px-5 py-2.5 rounded-xl bg-dark text-white text-[13px] font-bold hover:bg-black transition-colors">Close</button>
@@ -177,10 +198,17 @@
 function filterMuaBookings() {
     const q = document.getElementById('mua-search').value.toLowerCase();
     const s = document.getElementById('mua-status-filter').value;
+    const c = document.getElementById('category-filter').value.toLowerCase();
     document.querySelectorAll('#mua-bookings-table tbody tr').forEach(row => {
-        const text = row.textContent.toLowerCase();
+        const clientText = row.children[0].textContent.toLowerCase();
+        const categoryText = row.children[2].textContent.toLowerCase();
         const status = row.dataset.status;
-        row.style.display = (text.includes(q) && (!s || status === s)) ? '' : 'none';
+        
+        const matchQ = clientText.includes(q);
+        const matchS = !s || status === s;
+        const matchC = !c || categoryText.includes(c);
+        
+        row.style.display = (matchQ && matchS && matchC) ? '' : 'none';
     });
 }
 
@@ -190,10 +218,18 @@ function muaBookings() {
         toast: false,
         toastMsg: '',
         selected: { client:'', date:'', pkg:'', location:'', amount:'', status:'' },
+        currentTracking: localStorage.getItem('mua_active_tracking') || 'Confirmed',
 
         viewBooking(idx, client, date, pkg, location, amount, status) {
             this.selected = { client, date, pkg, location, amount, status };
+            this.currentTracking = localStorage.getItem('mua_active_tracking') || 'Confirmed';
             this.viewModal = true;
+        },
+
+        updateTracking(status) {
+            this.currentTracking = status;
+            localStorage.setItem('mua_active_tracking', status);
+            this.showToast('Tracking updated to: ' + status);
         },
 
         statusClass(s) {

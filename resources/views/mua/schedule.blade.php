@@ -18,39 +18,68 @@
                     </button>
                 </div>
                 
-                <div class="grid grid-cols-7 gap-2 px-3 pt-3 bg-white text-center">
-                    <template x-for="day in weekDays" :key="day">
-                        <div class="py-2 text-[11px] font-bold text-muted uppercase tracking-wider" x-text="day"></div>
+                <!-- Days of Week Header -->
+                <div class="grid grid-cols-7 border-b border-border bg-white">
+                    <template x-for="(day, idx) in weekDays" :key="day">
+                        <div class="py-3 text-[12px] font-bold text-muted uppercase tracking-wider text-center border-r border-border last:border-r-0"
+                             :class="{'text-brand': idx === 5 || idx === 6}"
+                             x-text="day"></div>
                     </template>
                 </div>
 
-                <div class="grid grid-cols-7 gap-2 p-3 bg-white border-t border-border">
+                <!-- Calendar Grid -->
+                <div class="grid grid-cols-7 border-l border-t border-border">
                     <template x-for="cell in calendarCells" :key="cell.dateKey">
                         <div @click="selectDate(cell)"
-                            class="min-h-[90px] sm:min-h-[110px] p-2.5 rounded-xl flex flex-col justify-between transition-all cursor-pointer border"
+                            class="min-h-[110px] lg:min-h-[140px] p-1.5 flex flex-col transition-all cursor-pointer relative group border-b border-r border-border"
                             :class="{
-                                'bg-white border-border hover:border-brand hover:shadow-sm': cell.day && !cell.blocked && !cell.isToday,
-                                'bg-cream/30 border-border/60 hover:bg-cream/40': cell.day && cell.blocked && !cell.isToday,
-                                'border-brand bg-brand/5 shadow-sm': cell.isToday,
-                                'border-transparent bg-transparent pointer-events-none opacity-20': !cell.day
+                                'bg-white hover:bg-cream/30': cell.current && !cell.blocked,
+                                'bg-cream/40': cell.current && cell.blocked,
+                                'bg-white text-muted opacity-50 pointer-events-none': !cell.current
                             }">
-                            <span class="text-[12px] sm:text-[13px] font-bold self-start"
-                                :class="{
-                                    'opacity-30': !cell.current,
-                                    'text-dark': !cell.blocked,
-                                    'text-muted': cell.blocked
-                                }"
-                                x-text="cell.day">
-                            </span>
-                            <div class="text-center w-full mt-auto">
-                                <template x-if="cell.day && cell.bookings.length > 0 && !cell.blocked">
-                                    <span class="font-serif italic text-brand text-[12px] sm:text-[14px] block truncate max-w-full px-1"
-                                        x-text="cell.bookings.length + ' ' + (cell.bookings.length === 1 ? 'booking' : 'bookings')"></span>
-                                </template>
-                                <template x-if="cell.blocked && cell.day">
-                                    <span class="font-serif italic text-red-400 text-[12px] sm:text-[14px] mt-1">Off</span>
-                                </template>
-                            </div>
+                            <!-- Day Number -->
+                            <template x-if="cell.day">
+                                <div class="flex justify-center mb-1">
+                                    <span class="w-6 h-6 flex items-center justify-center text-[12px] font-bold rounded-full transition-colors mt-0.5"
+                                        :class="{
+                                            'bg-brand text-white shadow-sm': cell.isToday,
+                                            'text-dark group-hover:bg-cream group-hover:text-dark': !cell.isToday && cell.current && !cell.blocked,
+                                            'text-muted': cell.blocked || !cell.current
+                                        }"
+                                        x-text="cell.day">
+                                    </span>
+                                </div>
+                            </template>
+
+                            <!-- Bookings List -->
+                            <template x-if="cell.current && !cell.blocked">
+                                <div class="flex-1 overflow-hidden space-y-1 mt-1 w-full">
+                                    <template x-for="(bk, i) in cell.bookings.slice(0, 3)" :key="i">
+                                        <div class="px-1 py-0.5 text-[8px] leading-tight rounded font-medium truncate w-full text-center flex flex-col items-center justify-center"
+                                            :class="{
+                                                'bg-brand/10 text-brand': bk.status === 'confirmed',
+                                                'bg-amber-500/10 text-amber-700': bk.status === 'pending',
+                                                'bg-emerald-500/10 text-emerald-600': bk.status === 'done'
+                                            }"
+                                            :title="bk.time + ' - ' + bk.client">
+                                            <span class="font-bold opacity-75" x-text="bk.time"></span>
+                                            <span x-text="bk.client" class="truncate w-full"></span>
+                                        </div>
+                                    </template>
+                                    <template x-if="cell.bookings.length > 3">
+                                        <div class="px-1 text-[9.5px] font-bold text-dark hover:text-brand transition-colors mt-1 w-full text-center">
+                                            <span x-text="'+' + (cell.bookings.length - 3) + ' more'"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- Blocked State -->
+                            <template x-if="cell.current && cell.blocked">
+                                <div class="flex-1 flex items-center justify-center pointer-events-none w-full">
+                                    <span class="text-[10px] font-bold text-muted uppercase tracking-wider px-2 py-1 rounded">Unavailable</span>
+                                </div>
+                            </template>
                         </div>
                     </template>
                 </div>
@@ -90,89 +119,221 @@
 
     <!-- Modals -->
     <!-- detailModal -->
-    <div x-show="detailModal" class="fixed inset-0 z-40 flex items-center justify-center p-4" style="display:none">
-        <div class="absolute inset-0 bg-dark/40 backdrop-blur-sm" @click="detailModal = false" x-transition.opacity></div>
-        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]"
-            x-show="detailModal"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-95">
-            
-            <!-- Header -->
-            <div class="px-6 py-5 border-b border-border bg-cream/30 flex items-center justify-between shrink-0">
-                <h4 class="font-bold text-[16px] text-dark" x-text="selectedDateLabel"></h4>
-                <button type="button" @click="detailModal = false" class="text-muted hover:text-dark transition-colors">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
+    <!-- detailModal -->
+<div x-show="detailModal"
+    class="fixed inset-0 z-40 flex items-center justify-center p-4"
+    style="display:none">
 
-            <div class="overflow-y-auto flex-1 p-6 space-y-6">
-                <!-- Working hours settings for this day -->
-                <div>
-                    <h5 class="text-[12px] font-bold text-muted uppercase tracking-wider mb-3">Day Schedule</h5>
-                    <div class="p-4 bg-cream/30 border border-border/50 rounded-xl space-y-4">
-                        <div class="flex items-center justify-between">
-                            <span class="text-[14px] font-bold text-dark">Available</span>
-                            <button type="button" @click.stop="toggleSelectedDayStatus()" 
-                                class="w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-200 focus:outline-none border-0" 
-                                :class="!selectedDayBlocked ? 'bg-brand' : 'bg-border'">
-                                <div class="bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-200" 
-                                     :style="!selectedDayBlocked ? 'transform: translateX(16px);' : 'transform: translateX(0px);'"></div>
-                            </button>
-                        </div>
-                        
-                        <div x-show="!selectedDayBlocked" x-transition class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 pt-2">
-                            <input type="text" x-model="selectedDayStart" @change="updateDaySchedule()" placeholder="09:00" maxlength="5" class="w-full min-w-0 py-2.5 px-3 text-center rounded-lg border border-border bg-white text-[13.5px] font-bold text-dark focus:ring-1 focus:ring-brand focus:border-brand outline-none transition-colors">
-                            <span class="text-[12px] text-muted font-bold">to</span>
-                            <input type="text" x-model="selectedDayEnd" @change="updateDaySchedule()" placeholder="18:00" maxlength="5" class="w-full min-w-0 py-2.5 px-3 text-center rounded-lg border border-border bg-white text-[13.5px] font-bold text-dark focus:ring-1 focus:ring-brand focus:border-brand outline-none transition-colors">
-                        </div>
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-dark/40 backdrop-blur-sm"
+        @click="detailModal = false"
+        x-transition.opacity>
+    </div>
+
+    <!-- Modal -->
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md h-[90vh] overflow-hidden flex flex-col"
+        x-show="detailModal"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95">
+
+        <!-- Header -->
+        <div class="px-6 py-5 border-b border-border bg-cream/30 flex items-center justify-between">
+            <h4 class="font-bold text-[16px] text-dark"
+                x-text="selectedDateLabel">
+            </h4>
+
+            <button type="button"
+                @click="detailModal = false"
+                class="text-muted hover:text-dark transition-colors">
+                <svg width="20"
+                    height="20"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 min-h-0 overflow-y-auto p-6 space-y-6 max-h-[70vh]">
+
+            <!-- Working hours settings for this day -->
+            <div>
+                <h5 class="text-[12px] font-bold text-muted uppercase tracking-wider mb-3">
+                    Day Schedule
+                </h5>
+
+                <div class="p-4 bg-cream/30 border border-border/50 rounded-xl space-y-4">
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-[14px] font-bold text-dark">
+                            Available
+                        </span>
+
+                        <button type="button"
+                            @click.stop="toggleSelectedDayStatus()"
+                            class="w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-200 focus:outline-none border-0"
+                            :class="!selectedDayBlocked ? 'bg-brand' : 'bg-border'">
+
+                            <div class="bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-200"
+                                :style="!selectedDayBlocked ? 'transform: translateX(16px);' : 'transform: translateX(0px);'">
+                            </div>
+                        </button>
+                    </div>
+
+                    <div x-show="!selectedDayBlocked"
+                        x-transition
+                        class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 pt-2">
+
+                        <input type="text"
+                            x-model="selectedDayStart"
+                            @change="updateDaySchedule()"
+                            placeholder="09:00"
+                            maxlength="5"
+                            class="w-full min-w-0 py-2.5 px-3 text-center rounded-lg border border-border bg-white text-[13.5px] font-bold text-dark focus:ring-1 focus:ring-brand focus:border-brand outline-none transition-colors">
+
+                        <span class="text-[12px] text-muted font-bold">
+                            to
+                        </span>
+
+                        <input type="text"
+                            x-model="selectedDayEnd"
+                            @change="updateDaySchedule()"
+                            placeholder="18:00"
+                            maxlength="5"
+                            class="w-full min-w-0 py-2.5 px-3 text-center rounded-lg border border-border bg-white text-[13.5px] font-bold text-dark focus:ring-1 focus:ring-brand focus:border-brand outline-none transition-colors">
                     </div>
                 </div>
+            </div>
 
-                <!-- Bookings -->
-                <div>
-                    <h5 class="text-[12px] font-bold text-muted uppercase tracking-wider mb-3">Bookings (<span x-text="selectedDayBookings.length"></span>)</h5>
-                    <div class="space-y-3">
-                        <template x-if="selectedDayBookings.length === 0">
-                            <div class="text-center py-6 border-2 border-dashed border-border rounded-xl">
-                                <p class="text-[13px] text-muted font-medium">No bookings on this day.</p>
+            <!-- Bookings -->
+            <div>
+                <h5 class="text-[12px] font-bold text-muted uppercase tracking-wider mb-3 shrink-0">
+                    Bookings (
+                    <span x-text="selectedDayBookings.length"></span>
+                    )
+                </h5>
+
+                <div class="space-y-3 pb-4">
+
+                    <template x-if="selectedDayBookings.length === 0">
+                        <div class="text-center py-6 border-2 border-dashed border-border rounded-xl shrink-0">
+                            <p class="text-[13px] text-muted font-medium">
+                                No bookings on this day.
+                            </p>
+                        </div>
+                    </template>
+
+                    <template x-for="(bk, i) in selectedDayBookings"
+                        :key="i">
+
+                        <div class="p-4 border border-border rounded-xl hover:border-brand/30 transition-colors">
+
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold text-[14px] text-dark"
+                                    x-text="bk.client">
+                                </span>
+
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                    :class="{
+                                        'bg-emerald-500/10 text-emerald-500': bk.status === 'confirmed',
+                                        'bg-amber-500/10 text-amber-600': bk.status === 'pending',
+                                        'bg-brand/10 text-brand': bk.status === 'done'
+                                    }"
+                                    x-text="bk.status">
+                                </span>
                             </div>
-                        </template>
-                        <template x-for="(bk, i) in selectedDayBookings" :key="i">
-                            <div class="p-4 border border-border rounded-xl hover:border-brand/30 transition-colors">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="font-bold text-[14px] text-dark" x-text="bk.client"></span>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
-                                        :class="{
-                                            'bg-emerald-500/10 text-emerald-500': bk.status === 'confirmed',
-                                            'bg-amber-500/10 text-amber-600': bk.status === 'pending',
-                                            'bg-brand/10 text-brand': bk.status === 'done'
-                                        }" x-text="bk.status"></span>
+
+                            <div class="flex items-center gap-3 text-[12px] text-muted font-medium">
+                                <div class="flex items-center gap-1.5 text-dark font-bold">
+                                    <svg width="14"
+                                        height="14"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+
+                                    <span x-text="bk.time"></span>
                                 </div>
-                                <div class="flex items-center gap-3 text-[12px] text-muted font-medium">
-                                    <div class="flex items-center gap-1.5 text-dark font-bold">
-                                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span x-text="bk.time"></span>
+
+                                <span>•</span>
+                                <span x-text="bk.package"></span>
+
+                                <span>•</span>
+                                <span x-text="bk.type"></span>
+                            </div>
+
+                            <template x-if="bk.status === 'confirmed'">
+                                <div class="mt-4 pt-4 border-t border-border">
+
+                                    <div class="text-[11px] font-bold text-muted uppercase tracking-wider mb-2">
+                                        Live Tracking
                                     </div>
-                                    <span>•</span>
-                                    <span x-text="bk.package"></span>
-                                    <span>•</span>
-                                    <span x-text="bk.type"></span>
+
+                                    <div class="grid grid-cols-2 gap-2">
+
+                                        <button type="button"
+                                            @click.stop="updateTracking(bk, 'Preparing')"
+                                            class="py-1.5 rounded-lg border border-border text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
+                                            :class="{'bg-brand/10 border-brand text-brand': (bk.trackingStatus || 'Confirmed') === 'Preparing'}">
+                                            Preparing
+                                        </button>
+
+                                        <button type="button"
+                                            @click.stop="updateTracking(bk, 'On the Way')"
+                                            class="py-1.5 rounded-lg border border-border text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
+                                            :class="{'bg-brand/10 border-brand text-brand': (bk.trackingStatus || 'Confirmed') === 'On the Way'}">
+                                            On the Way
+                                        </button>
+
+                                        <button type="button"
+                                            @click.stop="updateTracking(bk, 'Arrived')"
+                                            class="py-1.5 rounded-lg border border-border text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
+                                            :class="{'bg-brand/10 border-brand text-brand': (bk.trackingStatus || 'Confirmed') === 'Arrived'}">
+                                            Arrived
+                                        </button>
+
+                                        <button type="button"
+                                            @click.stop="updateTracking(bk, 'Service In Progress')"
+                                            class="py-1.5 rounded-lg border border-border text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
+                                            :class="{'bg-brand/10 border-brand text-brand': (bk.trackingStatus || 'Confirmed') === 'Service In Progress'}">
+                                            In Progress
+                                        </button>
+
+                                    </div>
                                 </div>
-                            </div>
-                        </template>
-                    </div>
+                            </template>
+                        </div>
+                    </template>
                 </div>
             </div>
-            
-            <div class="p-5 border-t border-border bg-cream/30">
-                <button type="button" @click="detailModal = false" class="w-full bg-brand hover:bg-brand-dark text-white py-3 rounded-xl font-bold text-[14px] transition-colors">Done</button>
-            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="p-5 border-t border-border bg-cream/30">
+            <button type="button"
+                @click="detailModal = false"
+                class="w-full bg-brand hover:bg-brand-dark text-white py-3 rounded-xl font-bold text-[14px] transition-colors">
+                Done
+            </button>
         </div>
     </div>
+</div>
 
 
 
@@ -267,6 +428,12 @@ function schedulePage() {
 
         init() {
             this.buildCalendar();
+            this.$watch('detailModal', val => {
+                document.body.style.overflow = val ? 'hidden' : '';
+            });
+            this.$watch('addBlockModal', val => {
+                document.body.style.overflow = val ? 'hidden' : '';
+            });
         },
 
         buildCalendar() {
@@ -455,6 +622,13 @@ function schedulePage() {
 
             this.buildCalendar();
             this.showToast('Blocked date removed');
+        },
+
+        updateTracking(bk, status) {
+            bk.trackingStatus = status;
+            // Also save to global tracking for client simulation uniquely per client
+            localStorage.setItem('mua_active_tracking_' + bk.client.replace(/\s+/g, '_').toLowerCase(), status);
+            this.showToast('Tracking for ' + bk.client + ' updated to: ' + status);
         },
 
         showToast(msg) {

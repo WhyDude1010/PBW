@@ -13,8 +13,21 @@
         <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
             <div class="relative">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                <input type="text" placeholder="Search artist…" oninput="filterMua(this.value)" class="pl-9 pr-4 py-2.5 w-full sm:w-64 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark placeholder:text-muted">
+                <input type="text" placeholder="Search artist…" id="mua-search-input" oninput="filterMuaList()" class="pl-9 pr-4 py-2.5 w-full sm:w-64 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark placeholder:text-muted">
             </div>
+            <select id="mua-category-filter" onchange="filterMuaList()" class="px-4 py-2.5 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
+                <option value="">All Categories</option>
+                <option value="Bridal">Bridal</option>
+                <option value="Natural">Natural</option>
+                <option value="Korean Dewy">Korean Dewy</option>
+                <option value="Glam">Glam</option>
+                <option value="Soft Glam">Soft Glam</option>
+                <option value="Editorial">Editorial</option>
+                <option value="Bold">Bold</option>
+                <option value="Party">Party</option>
+                <option value="Traditional">Traditional</option>
+                <option value="Fashion">Fashion</option>
+            </select>
             <a href="{{ route('admin.muas.create') }}" class="inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all hover:shadow-[0_4px_12px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
                 Add New MUA
@@ -34,7 +47,7 @@
             ];
         @endphp
         @foreach($muas as $idx => $m)
-            <div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden group hover:border-brand transition-all mua-card-admin" data-name="{{ strtolower($m[0]) }}" id="mua-card-{{ $idx }}">
+            <div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden group hover:border-brand transition-all mua-card-admin" data-name="{{ strtolower($m[0]) }}" data-category="{{ strtolower($m[2]) }}" id="mua-card-{{ $idx }}">
                 <div class="h-32 relative overflow-hidden">
                     <img src="{{ asset('image/' . $m[5]) }}" alt="{{ $m[0] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute inset-0 bg-linear-to-t from-black/50 to-transparent"></div>
@@ -160,10 +173,13 @@
 
 @push('scripts')
 <script>
-function filterMua(q) {
-    q = q.toLowerCase();
-    document.querySelectorAll('.mua-card-admin').forEach(c => {
-        c.style.display = c.dataset.name.includes(q) ? '' : 'none';
+function filterMuaList() {
+    const q = document.getElementById('mua-search-input').value.toLowerCase();
+    const c = document.getElementById('mua-category-filter') ? document.getElementById('mua-category-filter').value.toLowerCase() : '';
+    document.querySelectorAll('.mua-card-admin').forEach(card => {
+        const matchQ = card.dataset.name.includes(q);
+        const matchC = !c || (card.dataset.category && card.dataset.category.includes(c));
+        card.style.display = (matchQ && matchC) ? '' : 'none';
     });
 }
 

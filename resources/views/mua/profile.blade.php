@@ -62,6 +62,24 @@
                         <input type="tel" value="+62 812-3456-7890" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
                     </div>
                 </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[13px] font-bold text-dark mb-2">Gender</label>
+                        <select class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark cursor-pointer">
+                            <option value="female" selected>Female</option>
+                            <option value="male">Male</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[13px] font-bold text-dark mb-2">Service Availability</label>
+                        <select x-model="servicePref" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark cursor-pointer">
+                            <option value="both">Both (Home Service & Studio Visit)</option>
+                            <option value="home">Home Service Only</option>
+                            <option value="studio">Studio Visit Only</option>
+                        </select>
+                    </div>
+                </div>
                 <div>
                     <label class="block text-[13px] font-bold text-dark mb-2">Bio</label>
                     <textarea rows="4" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark resize-y">Professional makeup artist based in Bali with 8+ years of experience specializing in bridal, natural, and Korean dewy looks. Passionate about making every client feel confident and beautiful on their special day.</textarea>
@@ -79,21 +97,52 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-[13px] font-bold text-dark mb-2">Price From (Rp)</label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold text-[14px]">Rp</span>
-                            <input type="number" value="500000" class="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
-                        </div>
+                <div>
+                    <label class="block text-[13px] font-bold text-dark mb-3">Service Packages & Pricing</label>
+                    <div class="space-y-4 mb-4">
+                        <template x-for="(pkg, index) in packages" :key="index">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-4 bg-cream/30 p-4 rounded-xl border border-border">
+                                <div class="flex-1">
+                                    <input type="text" x-model="pkg.name" placeholder="Package Name (e.g. Basic Beauty)" required class="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                                </div>
+                                <div class="flex-1 relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold text-[14px]">Rp</span>
+                                    <input type="number" x-model="pkg.price" placeholder="500000" required min="0" class="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                                </div>
+                                <button type="button" @click="removePackage(index)" class="w-11 h-11 shrink-0 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors" title="Remove Package">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </template>
                     </div>
-                    <div>
-                        <label class="block text-[13px] font-bold text-dark mb-2">Price Up To (Rp)</label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold text-[14px]">Rp</span>
-                            <input type="number" value="15000000" class="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
-                        </div>
+                    <button type="button" @click="addPackage()" class="inline-flex items-center gap-2 bg-cream border border-border hover:border-brand hover:text-brand text-dark px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                        Add New Package
+                    </button>
+                </div>
+
+                <div class="mt-8">
+                    <label class="block text-[13px] font-bold text-dark mb-3">Add-on Services (Optional)</label>
+                    <div class="space-y-4 mb-4">
+                        <template x-for="(addon, index) in addons" :key="index">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-4 bg-cream/30 p-4 rounded-xl border border-border">
+                                <div class="flex-1">
+                                    <input type="text" x-model="addon.name" placeholder="Add-on Name (e.g. Lash Application)" required class="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                                </div>
+                                <div class="flex-1 relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold text-[14px]">Rp</span>
+                                    <input type="number" x-model="addon.price" placeholder="50000" required min="0" class="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                                </div>
+                                <button type="button" @click="removeAddon(index)" class="w-11 h-11 shrink-0 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors" title="Remove Add-on">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </template>
                     </div>
+                    <button type="button" @click="addAddon()" class="inline-flex items-center gap-2 bg-cream border border-border hover:border-brand hover:text-brand text-dark px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                        Add New Add-on
+                    </button>
                 </div>
 
                 <div class="pt-4 border-t border-border">
@@ -164,11 +213,59 @@ document.querySelectorAll('.style-tag').forEach(el => {
 });
 
 function muaProfile() {
+    let savedPackages = [];
+    let savedAddons = [];
+    let savedPref = 'both';
+    try {
+        savedPackages = JSON.parse(localStorage.getItem('mua_packages'));
+        savedAddons = JSON.parse(localStorage.getItem('mua_addons'));
+        savedPref = localStorage.getItem('mua_service_pref') || 'both';
+    } catch(e) {}
+    
+    if (!savedPackages || !savedPackages.length) {
+        savedPackages = [
+            { name: 'Basic Beauty', price: '500000' },
+            { name: 'Creative Glam', price: '2500000' },
+            { name: 'Signature Bridal', price: '7000000' }
+        ];
+    }
+    
+    if (!savedAddons || !savedAddons.length) {
+        savedAddons = [
+            { name: 'Lash Application', price: '50000' },
+            { name: 'Hair Styling', price: '150000' },
+            { name: 'Touch-up Kit', price: '100000' }
+        ];
+    }
+
     return {
         toast: false,
         toastMsg: '',
+        packages: savedPackages,
+        addons: savedAddons,
+        servicePref: savedPref,
+        
+        addPackage() {
+            this.packages.push({ name: '', price: '' });
+        },
+        removePackage(index) {
+            if (this.packages.length > 1) {
+                this.packages.splice(index, 1);
+            } else {
+                this.showToast('You must have at least one package.');
+            }
+        },
+        addAddon() {
+            this.addons.push({ name: '', price: '' });
+        },
+        removeAddon(index) {
+            this.addons.splice(index, 1);
+        },
         saveProfile() {
-            this.showToast('Profile saved successfully');
+            localStorage.setItem('mua_packages', JSON.stringify(this.packages));
+            localStorage.setItem('mua_addons', JSON.stringify(this.addons));
+            localStorage.setItem('mua_service_pref', this.servicePref);
+            this.showToast('Profile and packages saved successfully');
         },
         showToast(msg) {
             this.toastMsg = msg;

@@ -63,132 +63,21 @@
                 <!-- Left Content: Map & Timeline -->
                 <div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-8">
 
-                    <!-- Map / Timer Card -->
-                    <div class="bg-white rounded-2xl border border-border shadow-sm overflow-hidden relative">
-                        <!-- Map Mockup Background -->
-                        <div class="h-64 lg:h-80 w-full bg-cream-dark relative">
-                            <div class="absolute inset-0 opacity-40"
-                                style="background-image: radial-gradient(var(--color-brand) 1px, transparent 1px); background-size: 20px 20px;">
-                            </div>
-
-                            <!-- Route Line -->
-                            <svg class="absolute inset-0 w-full h-full text-brand" preserveAspectRatio="none">
-                                <path d="M50 150 Q 200 100 400 200 T 800 100" stroke="currentColor" stroke-width="4"
-                                    stroke-dasharray="8 8" fill="none" class="animate-[dash_20s_linear_infinite]" />
-                            </svg>
-
-                            <!-- Artist Dot -->
-                            <div
-                                class="absolute top-[30%] left-[30%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10">
-                                <div class="bg-white px-2 py-1 rounded-md shadow-sm text-[10px] font-bold text-dark">Artist
-                                </div>
-                                <div class="w-4 h-4 rounded-full bg-dark shadow-[0_0_0_8px_rgba(26,16,16,0.2)]"></div>
-                            </div>
-
-                            <!-- Destination Dot -->
-                            <div
-                                class="absolute top-[60%] right-[30%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10">
-                                <div class="bg-white px-2 py-1 rounded-md shadow-sm text-[10px] font-bold text-brand">You
-                                </div>
-                                <div class="w-4 h-4 rounded-full bg-brand shadow-[0_0_0_8px_rgba(199,155,132,0.3)]"></div>
-                            </div>
+                    <!-- Live Status Banner -->
+                    <div class="bg-white rounded-2xl border border-border shadow-sm p-8 text-center">
+                        <div class="w-16 h-16 mx-auto bg-brand/10 text-brand rounded-full flex items-center justify-center mb-4" id="status-icon">
+                            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-
-                        <!-- Overlay Timer -->
-                        <div
-                            class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md px-8 py-4 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.1)] border border-white flex flex-col items-center text-center w-max">
-                            <span class="text-[11px] font-bold text-muted uppercase tracking-wider mb-1">Arriving In</span>
-                            <div class="font-serif text-[32px] font-bold text-dark tracking-widest tabular-nums leading-none"
-                                id="track-timer">10:00</div>
-                        </div>
+                        <h2 class="font-serif text-[28px] font-bold text-dark mb-2" id="live-status-text">Booking Confirmed</h2>
+                        <p class="text-[14px] text-muted" id="live-status-desc">Your artist will update their status shortly.</p>
                     </div>
 
                     <!-- Timeline -->
                     <div class="bg-white rounded-2xl border border-border shadow-sm p-6 lg:p-10">
                         <h3 class="font-serif text-[24px] font-bold text-dark mb-8">Service Progress</h3>
 
-                        <div
-                            class="space-y-0 relative before:absolute before:inset-0 before:ml-[1.4rem] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-brand before:via-border before:to-transparent">
-
-                            <!-- Item 1: Done -->
-                            <div
-                                class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active pb-8">
-                                <div
-                                    class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-white bg-brand text-white shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
-                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                </div>
-                                <div
-                                    class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-4 rounded-xl border border-border bg-cream/50">
-                                    <div class="flex items-center justify-between mb-1">
-                                        <strong class="text-[14.5px] text-dark">Booking Confirmed</strong>
-                                    </div>
-                                    <p class="text-[13px] text-muted">Payment received &amp; locked in.</p>
-                                </div>
-                            </div>
-
-                            <!-- Item 2: Done -->
-                            <div
-                                class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active pb-8">
-                                <div
-                                    class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-white bg-brand text-white shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
-                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                </div>
-                                <div
-                                    class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-4 rounded-xl border border-border bg-cream/50 text-right md:text-left md:group-even:text-right">
-                                    <div class="flex items-center justify-between md:justify-end mb-1">
-                                        <strong class="text-[14.5px] text-dark">Artist Assigned</strong>
-                                    </div>
-                                    <p class="text-[13px] text-muted">Sarah has accepted the booking.</p>
-                                </div>
-                            </div>
-
-                            <!-- Item 3: Current -->
-                            <div
-                                class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active pb-8">
-                                <div
-                                    class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-white bg-dark text-white shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-[0_0_0_4px_rgba(26,16,16,0.1)] z-10">
-                                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                                    </svg>
-                                </div>
-                                <div
-                                    class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-5 rounded-xl border-2 border-dark bg-white shadow-sm">
-                                    <div class="flex items-center justify-between mb-1">
-                                        <strong class="text-[15px] text-dark">Artist En Route</strong>
-                                    </div>
-                                    <p class="text-[13.5px] text-muted">Estimated arrival in 10 minutes.</p>
-                                </div>
-                            </div>
-
-                            <!-- Item 4: Pending -->
-                            <div
-                                class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group pb-2">
-                                <div
-                                    class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-white bg-border text-muted shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <div
-                                    class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-4 rounded-xl border border-transparent bg-transparent text-right md:text-left md:group-even:text-right opacity-60">
-                                    <div class="flex items-center justify-between md:justify-end mb-1">
-                                        <strong class="text-[14.5px] text-muted">Service In Progress</strong>
-                                    </div>
-                                    <p class="text-[13px] text-muted">Makeup session begins.</p>
-                                </div>
-                            </div>
-
+                        <div class="space-y-0 relative before:absolute before:inset-0 before:ml-[1.4rem] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-brand before:via-border before:to-transparent" id="timeline-container">
+                            <!-- JS will populate -->
                         </div>
                     </div>
 
@@ -201,7 +90,7 @@
                         <div
                             class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-700 text-[11px] font-bold uppercase tracking-wider mb-6">
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                            On the way
+                            <span id="sidebar-status">Confirmed</span>
                         </div>
 
                         <div class="flex items-center gap-4 mb-6 pb-6 border-b border-border">
@@ -289,22 +178,73 @@
 
 @push('scripts')
     <script>
-        let secs = 600;
-        const el = document.getElementById('track-timer');
-        function fmt(s) {
-            const m = Math.floor(s / 60);
-            const sec = s % 60;
-            return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+        const stages = [
+            { id: 'Confirmed', title: 'Booking Confirmed', desc: 'Payment received & locked in.', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>' },
+            { id: 'Preparing', title: 'Artist Preparing', desc: 'Sarah is preparing her makeup kit.', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>' },
+            { id: 'On the Way', title: 'Artist En Route', desc: 'Sarah is on her way to your location.', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>' },
+            { id: 'Arrived', title: 'Artist Arrived', desc: 'Sarah has arrived at your location.', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>' },
+            { id: 'Service In Progress', title: 'Service In Progress', desc: 'Makeup session has started.', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>' },
+            { id: 'Done', title: 'Service Completed', desc: 'Thank you for choosing Beautique!', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>' }
+        ];
+
+        function renderTimeline() {
+            var currentStatus = localStorage.getItem('mua_active_tracking') || 'Confirmed';
+            
+            var currentIndex = stages.findIndex(s => s.id === currentStatus);
+            if (currentIndex === -1) currentIndex = 0;
+
+            document.getElementById('live-status-text').textContent = stages[currentIndex].title;
+            document.getElementById('live-status-desc').textContent = stages[currentIndex].desc;
+            document.getElementById('status-icon').innerHTML = '<svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' + stages[currentIndex].icon + '</svg>';
+            
+            var sidebarStatus = document.getElementById('sidebar-status');
+            sidebarStatus.textContent = currentStatus;
+
+            var container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+
+            stages.forEach((stage, idx) => {
+                var isDone = idx < currentIndex;
+                var isCurrent = idx === currentIndex;
+                var isPending = idx > currentIndex;
+
+                var circleClass = '';
+                var textOpacity = '';
+                
+                if (isDone) {
+                    circleClass = 'border-4 border-white bg-brand text-white shadow-sm z-10';
+                    textOpacity = 'opacity-100';
+                } else if (isCurrent) {
+                    circleClass = 'border-4 border-white bg-dark text-white shadow-[0_0_0_4px_rgba(26,16,16,0.1)] z-10';
+                    textOpacity = 'opacity-100';
+                } else {
+                    circleClass = 'border-4 border-white bg-border text-muted z-10';
+                    textOpacity = 'opacity-50';
+                }
+
+                var html = `
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group pb-8">
+                        <div class="flex items-center justify-center w-12 h-12 rounded-full shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${circleClass}">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${stage.icon}</svg>
+                        </div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-4 md:p-5 rounded-xl border ${isCurrent ? 'border-dark bg-white shadow-sm' : 'border-border bg-cream/30'} text-right md:text-left md:group-even:text-right ${textOpacity}">
+                            <strong class="block text-[14.5px] text-dark mb-1">${stage.title}</strong>
+                            <p class="text-[13px] text-muted">${stage.desc}</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
         }
-        el.textContent = fmt(secs);
-        const t = setInterval(() => {
-            if (secs <= 0) {
-                clearInterval(t);
-                el.textContent = '00:00';
-                return;
+
+        renderTimeline();
+        
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'mua_active_tracking') {
+                renderTimeline();
             }
-            secs--;
-            el.textContent = fmt(secs);
-        }, 1000);
+        });
+        
+        setInterval(renderTimeline, 2000);
     </script>
 @endpush
