@@ -130,8 +130,8 @@
     </div>
 
     <!-- Modal - New redesigned structure -->
-    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md flex flex-col"
-        style="max-height: calc(100vh - 2rem); height: auto;"
+    <div class="relative bg-white rounded-2xl shadow-xl w-full mx-auto sm:max-w-md flex flex-col"
+        style="max-height: calc(100vh - 1rem); height: auto;"
         x-show="detailModal"
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 scale-95"
@@ -141,8 +141,8 @@
         x-transition:leave-end="opacity-0 scale-95">
 
         <!-- Header - Fixed -->
-        <div class="shrink-0 px-6 py-5 border-b border-border bg-cream/30 flex items-center justify-between rounded-t-2xl">
-            <h4 class="font-bold text-[16px] text-dark"
+        <div class="shrink-0 px-4 sm:px-6 py-4 sm:py-5 border-b border-border bg-cream/30 flex items-center justify-between rounded-t-2xl">
+            <h4 class="font-bold text-[14px] sm:text-[16px] text-dark"
                 x-text="selectedDateLabel">
             </h4>
 
@@ -164,18 +164,18 @@
         </div>
 
         <!-- Scrollable Content -->
-        <div class="overflow-y-auto flex-1 p-6 space-y-6">
+        <div class="overflow-y-auto flex-1 px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
 
             <!-- Working hours settings for this day -->
             <div>
-                <h5 class="text-[12px] font-bold text-muted uppercase tracking-wider mb-3">
+                <h5 class="text-[11px] sm:text-[12px] font-bold text-muted uppercase tracking-wider mb-3">
                     Day Schedule
                 </h5>
 
-                <div class="p-4 bg-cream/30 border border-border/50 rounded-xl space-y-4">
+                <div class="p-3 sm:p-4 bg-cream/30 border border-border/50 rounded-xl space-y-3 sm:space-y-4">
 
                     <div class="flex items-center justify-between">
-                        <span class="text-[14px] font-bold text-dark">
+                        <span class="text-[13px] sm:text-[14px] font-bold text-dark">
                             Available
                         </span>
 
@@ -192,16 +192,16 @@
 
                     <div x-show="!selectedDayBlocked"
                         x-transition
-                        class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 pt-2">
+                        class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-3 pt-2">
 
                         <input type="text"
                             x-model="selectedDayStart"
                             @change="updateDaySchedule()"
                             placeholder="09:00"
                             maxlength="5"
-                            class="w-full min-w-0 py-2.5 px-3 text-center rounded-lg border border-border bg-white text-[13.5px] font-bold text-dark focus:ring-1 focus:ring-brand focus:border-brand outline-none transition-colors">
+                            class="w-full min-w-0 py-2 sm:py-2.5 px-2 sm:px-3 text-center rounded-lg border border-border bg-white text-[12px] sm:text-[13.5px] font-bold text-dark focus:ring-1 focus:ring-brand focus:border-brand outline-none transition-colors">
 
-                        <span class="text-[12px] text-muted font-bold">
+                        <span class="text-[11px] sm:text-[12px] text-muted font-bold">
                             to
                         </span>
 
@@ -210,24 +210,24 @@
                             @change="updateDaySchedule()"
                             placeholder="18:00"
                             maxlength="5"
-                            class="w-full min-w-0 py-2.5 px-3 text-center rounded-lg border border-border bg-white text-[13.5px] font-bold text-dark focus:ring-1 focus:ring-brand focus:border-brand outline-none transition-colors">
+                            class="w-full min-w-0 py-2 sm:py-2.5 px-2 sm:px-3 text-center rounded-lg border border-border bg-white text-[12px] sm:text-[13.5px] font-bold text-dark focus:ring-1 focus:ring-brand focus:border-brand outline-none transition-colors">
                     </div>
                 </div>
             </div>
 
             <!-- Bookings -->
             <div>
-                <h5 class="text-[12px] font-bold text-muted uppercase tracking-wider mb-3">
+                <h5 class="text-[11px] sm:text-[12px] font-bold text-muted uppercase tracking-wider mb-3">
                     Bookings (
                     <span x-text="selectedDayBookings.length"></span>
                     )
                 </h5>
 
-                <div class="space-y-3">
+                <div class="space-y-2 sm:space-y-3">
 
                     <template x-if="selectedDayBookings.length === 0">
-                        <div class="text-center py-6 border-2 border-dashed border-border rounded-xl">
-                            <p class="text-[13px] text-muted font-medium">
+                        <div class="text-center py-4 sm:py-6 border-2 border-dashed border-border rounded-xl">
+                            <p class="text-[12px] sm:text-[13px] text-muted font-medium">
                                 No bookings on this day.
                             </p>
                         </div>
@@ -236,14 +236,14 @@
                     <template x-for="(bk, i) in selectedDayBookings"
                         :key="i">
 
-                        <div class="p-4 border border-border rounded-xl hover:border-brand/30 transition-colors">
+                        <div class="p-3 sm:p-4 border border-border rounded-xl hover:border-brand/30 transition-colors">
 
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold text-[14px] text-dark"
+                            <div class="flex items-center justify-between mb-2 gap-2">
+                                <span class="font-bold text-[13px] sm:text-[14px] text-dark truncate"
                                     x-text="bk.client">
                                 </span>
 
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0"
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider flex-shrink-0"
                                     :class="{
                                         'bg-emerald-500/10 text-emerald-500': bk.status === 'confirmed',
                                         'bg-amber-500/10 text-amber-600': bk.status === 'pending',
@@ -253,7 +253,7 @@
                                 </span>
                             </div>
 
-                            <div class="flex items-center gap-3 text-[12px] text-muted font-medium">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 text-[11px] sm:text-[12px] text-muted font-medium">
                                 <div class="flex items-center gap-1.5 text-dark font-bold flex-shrink-0">
                                     <svg width="14"
                                         height="14"
@@ -270,46 +270,46 @@
                                     <span x-text="bk.time"></span>
                                 </div>
 
-                                <span>•</span>
-                                <span x-text="bk.package"></span>
+                                <span class="hidden sm:inline">•</span>
+                                <span x-text="bk.package" class="truncate"></span>
 
-                                <span>•</span>
-                                <span x-text="bk.type"></span>
+                                <span class="hidden sm:inline">•</span>
+                                <span x-text="bk.type" class="truncate"></span>
                             </div>
 
                             <template x-if="bk.status === 'confirmed'">
-                                <div class="mt-4 pt-4 border-t border-border">
+                                <div class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-border">
 
-                                    <div class="text-[11px] font-bold text-muted uppercase tracking-wider mb-2">
+                                    <div class="text-[10px] sm:text-[11px] font-bold text-muted uppercase tracking-wider mb-2">
                                         Live Tracking
                                     </div>
 
-                                    <div class="grid grid-cols-2 gap-2">
+                                    <div class="grid grid-cols-2 gap-1.5 sm:gap-2">
 
                                         <button type="button"
                                             @click.stop="updateTracking(bk, 'Preparing')"
-                                            class="py-1.5 rounded-lg border border-border text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
+                                            class="py-1 sm:py-1.5 px-2 rounded-lg border border-border text-[11px] sm:text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
                                             :class="{'bg-brand/10 border-brand text-brand': (bk.trackingStatus || 'Confirmed') === 'Preparing'}">
                                             Preparing
                                         </button>
 
                                         <button type="button"
                                             @click.stop="updateTracking(bk, 'On the Way')"
-                                            class="py-1.5 rounded-lg border border-border text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
+                                            class="py-1 sm:py-1.5 px-2 rounded-lg border border-border text-[11px] sm:text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
                                             :class="{'bg-brand/10 border-brand text-brand': (bk.trackingStatus || 'Confirmed') === 'On the Way'}">
                                             On the Way
                                         </button>
 
                                         <button type="button"
                                             @click.stop="updateTracking(bk, 'Arrived')"
-                                            class="py-1.5 rounded-lg border border-border text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
+                                            class="py-1 sm:py-1.5 px-2 rounded-lg border border-border text-[11px] sm:text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
                                             :class="{'bg-brand/10 border-brand text-brand': (bk.trackingStatus || 'Confirmed') === 'Arrived'}">
                                             Arrived
                                         </button>
 
                                         <button type="button"
                                             @click.stop="updateTracking(bk, 'Service In Progress')"
-                                            class="py-1.5 rounded-lg border border-border text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
+                                            class="py-1 sm:py-1.5 px-2 rounded-lg border border-border text-[11px] sm:text-[12px] font-bold hover:border-brand hover:text-brand transition-colors"
                                             :class="{'bg-brand/10 border-brand text-brand': (bk.trackingStatus || 'Confirmed') === 'Service In Progress'}">
                                             In Progress
                                         </button>
@@ -325,10 +325,10 @@
         </div>
 
         <!-- Footer - Fixed -->
-        <div class="shrink-0 p-5 border-t border-border bg-cream/30 rounded-b-2xl">
+        <div class="shrink-0 p-3 sm:p-5 border-t border-border bg-cream/30 rounded-b-2xl">
             <button type="button"
                 @click="detailModal = false"
-                class="w-full bg-brand hover:bg-brand-dark text-white py-3 rounded-xl font-bold text-[14px] transition-colors">
+                class="w-full bg-brand hover:bg-brand-dark text-white py-2.5 sm:py-3 rounded-xl font-bold text-[13px] sm:text-[14px] transition-colors">
                 Done
             </button>
         </div>
