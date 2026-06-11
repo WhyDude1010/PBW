@@ -35,6 +35,14 @@
             <h3 class="font-serif text-[32px] font-bold text-dark mb-2">Create Account</h3>
             <p class="text-[14.5px] text-muted mb-10">Already have one? <a href="{{ route('login') }}" class="text-brand font-semibold hover:underline">Sign in</a></p>
 
+            @if($errors->any())
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-[13px] font-medium mb-6">
+                    @foreach($errors->all() as $error)
+                        <div>{{ $error }}</div>
+                    @endforeach
+                </div>
+            @endif
+
             <form action="{{ route('register') }}" method="POST" class="space-y-5">
                 @csrf
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">

@@ -15,7 +15,14 @@
         </div>
         
         <div class="p-6 md:p-8">
-            <form action="{{ route('admin.muas.index') }}" method="POST" enctype="multipart/form-data" class="space-y-6 md:space-y-8">
+            @if($errors->any())
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-[13px] font-medium mb-6">
+                    @foreach($errors->all() as $error)
+                        <div>{{ $error }}</div>
+                    @endforeach
+                </div>
+            @endif
+            <form action="{{ route('admin.muas.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6 md:space-y-8">
                 @csrf
                 
                 <!-- Photo Upload -->

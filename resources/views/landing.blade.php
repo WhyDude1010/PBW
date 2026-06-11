@@ -273,75 +273,36 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-center">
-                <!-- Package 1 -->
-                <div
-                    class="rounded-3xl border border-border bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2 reveal delay-1">
-                    <img src="{{ asset('image/makeup1.jpeg') }}" alt="Basic" class="w-full h-56 object-cover">
+                @foreach($packages as $pkg)
+                <div class="rounded-3xl {{ $pkg->is_featured ? 'border-2 border-brand shadow-[0_10px_40px_rgba(198,147,126,0.15)] relative z-10 lg:scale-105' : 'border border-border' }} bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2 reveal delay-{{ $loop->iteration }}">
+                    @if($pkg->is_featured)
+                        <div class="bg-brand text-white text-[11px] font-bold tracking-[2px] uppercase text-center py-2.5">★ Best Choice ★</div>
+                    @endif
+                    @if($pkg->image)
+                        <img src="{{ asset('storage/' . $pkg->image) }}" alt="{{ $pkg->name }}" class="w-full h-56 object-cover">
+                    @else
+                        <div class="w-full h-56 bg-gradient-to-br from-brand/10 to-cream"></div>
+                    @endif
                     <div class="p-8">
-                        <h3 class="text-xl font-bold text-dark mb-6 font-serif">Basic Beauty</h3>
+                        <h3 class="text-xl font-bold text-dark mb-6 font-serif">{{ $pkg->name }}</h3>
                         <ul class="space-y-4 mb-8">
-                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span> Makeup
-                                1x (party / event)</li>
-                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span> Hair
-                                styling / hijab styling</li>
-                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span> 1
-                                look, no changes</li>
+                            @foreach($pkg->features ?? [] as $feature)
+                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span> {{ $feature }}</li>
+                            @endforeach
                         </ul>
                         <div class="text-[12px] text-[#999] mb-1">Starting Price</div>
-                        <div class="text-lg font-bold text-brand mb-6">Rp 500.000+</div>
+                        <div class="text-{{ $pkg->is_featured ? 'xl' : 'lg' }} font-bold text-brand mb-6">Rp {{ number_format($pkg->price, 0, ',', '.') }}</div>
                         <a href="{{ route('booking.choose-mua') }}"
-                            class="block w-full text-center py-3.5 rounded-xl bg-brand-light text-brand font-bold text-sm transition-colors hover:bg-brand hover:text-white">Book
-                            This Package</a>
+                            class="block w-full text-center py-3.5 rounded-xl {{ $pkg->is_featured ? 'bg-brand text-white hover:bg-brand-dark' : 'bg-brand-light text-brand hover:bg-brand hover:text-white' }} font-bold text-sm transition-colors">Book This Package</a>
                     </div>
                 </div>
+                @endforeach
 
-                <!-- Package 2 (Featured) -->
-                <div
-                    class="rounded-3xl border-2 border-brand bg-white overflow-hidden shadow-[0_10px_40px_rgba(198,147,126,0.15)] relative z-10 lg:scale-105 transition-all duration-300 hover:-translate-y-2 reveal delay-2">
-                    <div class="bg-brand text-white text-[11px] font-bold tracking-[2px] uppercase text-center py-2.5">★
-                        Best Choice ★</div>
-                    <img src="{{ asset('image/model-mua.jpeg') }}" alt="Glam" class="w-full h-56 object-cover">
-                    <div class="p-8">
-                        <h3 class="text-xl font-bold text-dark mb-6 font-serif">Creative Glam</h3>
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span> Makeup
-                                + premium hairdo</li>
-                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span> 1–2
-                                looks with touch-up</li>
-                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span> Light
-                                touch-up during event</li>
-                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span>
-                                Photo-ready, long-lasting</li>
-                        </ul>
-                        <div class="text-[12px] text-[#999] mb-1">Starting Price</div>
-                        <div class="text-xl font-bold text-brand mb-6">Rp 2.500.000+</div>
-                        <a href="{{ route('booking.choose-mua') }}"
-                            class="block w-full text-center py-3.5 rounded-xl bg-brand text-white font-bold text-sm transition-colors hover:bg-brand-dark">Book
-                            This Package</a>
-                    </div>
+                @if($packages->isEmpty())
+                <div class="col-span-full text-center py-16">
+                    <p class="text-[15px] text-muted">Packages coming soon.</p>
                 </div>
-
-                <!-- Package 3 -->
-                <div
-                    class="rounded-3xl border border-border bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2 reveal delay-3">
-                    <img src="{{ asset('image/about-mua.jpeg') }}" alt="Bridal" class="w-full h-56 object-cover">
-                    <div class="p-8">
-                        <h3 class="text-xl font-bold text-dark mb-6 font-serif">Signature Bridal</h3>
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span> Makeup
-                                + premium bridal hairdo</li>
-                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span> Trial
-                                makeup before the day</li>
-                            <li class="flex gap-3 text-[13.5px] text-muted"><span class="text-brand">✦</span>
-                                Multiple looks & full touch-up</li>
-                        </ul>
-                        <div class="text-[12px] text-[#999] mb-1">Starting Price</div>
-                        <div class="text-lg font-bold text-brand mb-6">Rp 7.000.000+</div>
-                        <a href="{{ route('booking.choose-mua') }}"
-                            class="block w-full text-center py-3.5 rounded-xl bg-brand-light text-brand font-bold text-sm transition-colors hover:bg-brand hover:text-white">Book
-                            This Package</a>
-                    </div>
-                </div>
+                @endif
             </div>
         </div>
     </section>

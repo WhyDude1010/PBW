@@ -26,8 +26,16 @@
         </ul>
 
         <div class="hidden lg:flex items-center gap-3">
-            <a href="{{ route('login') }}" class="text-sm font-medium text-muted hover:text-brand transition-colors duration-200 px-3 py-2">Log In</a>
-            <a href="{{ route('register') }}" class="text-sm font-medium text-dark hover:text-brand transition-colors duration-200 px-3 py-2">Sign Up</a>
+            @auth
+                <span class="text-sm font-medium text-dark px-3 py-2">{{ auth()->user()->name }}</span>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="text-sm font-medium text-muted hover:text-brand transition-colors duration-200 px-3 py-2">Logout</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="text-sm font-medium text-muted hover:text-brand transition-colors duration-200 px-3 py-2">Log In</a>
+                <a href="{{ route('register') }}" class="text-sm font-medium text-dark hover:text-brand transition-colors duration-200 px-3 py-2">Sign Up</a>
+            @endauth
             <a href="{{ route('booking.choose-mua') }}" class="btn-primary text-sm ml-2">
                 Book Now
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -74,8 +82,15 @@
             <a href="{{ $isLandingMobile ? '#testimonials' : route('landing') . '#testimonials' }}" class="drawer-link py-3 text-base font-medium text-dark border-b border-border hover:text-brand transition-colors">Reviews</a>
         </div>
         <div class="p-6 flex flex-col gap-3">
-            <a href="{{ route('login') }}"                class="btn-outline w-full text-center justify-center">Log In</a>
-            <a href="{{ route('booking.choose-mua') }}"   class="btn-primary w-full text-center justify-center">Book Now</a>
+            @auth
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-outline w-full text-center justify-center">Logout</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="btn-outline w-full text-center justify-center">Log In</a>
+            @endauth
+            <a href="{{ route('booking.choose-mua') }}" class="btn-primary w-full text-center justify-center">Book Now</a>
         </div>
     </div>
 </div>

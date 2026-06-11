@@ -35,6 +35,13 @@
             <h3 class="font-serif text-[32px] font-bold text-dark mb-2">Sign In</h3>
             <p class="text-[14.5px] text-muted mb-10">No account? <a href="{{ route('register') }}" class="text-brand font-semibold hover:underline">Create one free</a></p>
 
+            @if(session('sukses'))
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-[13px] font-medium mb-6">{{ session('sukses') }}</div>
+            @endif
+            @if($errors->any())
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-[13px] font-medium mb-6">{{ $errors->first() }}</div>
+            @endif
+
             <form action="{{ route('login') }}" method="POST" class="space-y-5">
                 @csrf
                 <div>

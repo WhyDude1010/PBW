@@ -103,14 +103,14 @@
 
             <div class="relative" x-data="{ profileOpen: false }">
                 <button @click="profileOpen = !profileOpen" class="flex items-center gap-3 px-3 py-1.5 rounded-full border border-border hover:border-brand cursor-pointer transition-colors bg-cream/50">
-                    <img src="{{ asset('image/model-mua.jpeg') }}" alt="Sarah" class="w-8 h-8 rounded-full object-cover">
-                    <span class="text-[13.5px] font-bold text-dark hidden sm:block">Sarah W.</span>
+                    <div class="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center font-bold text-[13px]">{{ substr(auth()->user()->name, 0, 1) }}</div>
+                    <span class="text-[13.5px] font-bold text-dark hidden sm:block">{{ auth()->user()->name }}</span>
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-muted transition-transform" :class="profileOpen ? 'rotate-180' : ''"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <div x-show="profileOpen" @click.away="profileOpen = false" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95 -translate-y-1" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-100" class="absolute right-0 mt-2 w-56 bg-white rounded-xl border border-border shadow-lg overflow-hidden z-50" style="display:none">
                     <div class="px-4 py-3 border-b border-border">
-                        <div class="text-[13px] font-bold text-dark">Sarah Wijaya</div>
-                        <div class="text-[12px] text-muted">sarah@beautique.com</div>
+                        <div class="text-[13px] font-bold text-dark">{{ auth()->user()->name }}</div>
+                        <div class="text-[12px] text-muted">{{ auth()->user()->email }}</div>
                     </div>
                     <div class="py-1">
                         <a href="{{ route('mua.profile') }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-muted hover:bg-cream hover:text-dark transition-colors">
@@ -123,10 +123,13 @@
                         </a>
                     </div>
                     <div class="border-t border-border py-1">
-                        <a href="{{ route('landing') }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-red-500 hover:bg-red-500/5 transition-colors">
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                            Sign Out
-                        </a>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-red-500 hover:bg-red-500/5 transition-colors w-full">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                Sign Out
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
