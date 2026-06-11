@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 
 class BookingController extends Controller
 {
     public function index()
     {
-        return view('admin.bookings.index');
+        $bookings = Booking::with(['user', 'muaProfile.user'])->latest()->get();
+
+        return view('admin.bookings.index', compact('bookings'));
     }
 }
