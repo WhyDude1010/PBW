@@ -1,77 +1,69 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\MuaController as AdminMua;
+use App\Http\Controllers\Admin\PackageController as AdminPackage;
+use App\Http\Controllers\Admin\BookingController as AdminBooking;
+use App\Http\Controllers\Admin\ClientController as AdminClient;
+use App\Http\Controllers\Admin\ReviewController as AdminReview;
+use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-| Full user journey: Landing → Auth → Booking Flow → Completion
-*/
-
 // 1. Landing Page
-Route::get('/', fn() => view('landing'))->name('landing');
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
-// 2 & 3. Auth
-Route::get('/login', fn() => view('auth.login'))->name('login');
-Route::get('/register', fn() => view('auth.register'))->name('register');
+// 2. Auth (guest only)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'prosesLogin']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'prosesRegister']);
+});
 
-// Booking Flow (steps 4–17)
-Route::prefix('booking')->name('booking.')->group(function () {
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-    // Step 4: Choose MUA
+// Booking Flow (auth required)
+Route::prefix('booking')->name('booking.')->middleware('auth')->group(function () {
     Route::get('/choose-mua', fn() => view('booking.choose_mua'))->name('choose-mua');
-
-    // Step 5: Select Date & Time
     Route::get('/select-date', fn() => view('booking.select_date'))->name('select-date');
-
-    // Step 10: Booking Summary
     Route::get('/summary', fn() => view('booking.summary'))->name('summary');
-
-    // Step 11: Confirmed Booking
     Route::get('/confirmed', fn() => view('booking.confirmed'))->name('confirmed');
-
-    // Step 12: Booking Countdown
     Route::get('/countdown', fn() => view('booking.countdown'))->name('countdown');
-
-    // Step 13: Service Tracking
     Route::get('/tracking', fn() => view('booking.tracking'))->name('tracking');
-
-    // Step 14: Service Done
     Route::get('/done', fn() => view('booking.done'))->name('done');
-
-    // Step 15: Complete Payment
     Route::get('/payment', fn() => view('booking.payment'))->name('payment');
-
-    // Step 16: Rating & Review
     Route::get('/review', fn() => view('booking.review'))->name('review');
-
-    // Step 17: Completion
     Route::get('/completion', fn() => view('booking.completion'))->name('completion');
 });
 
-// Admin Panel Routes
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
+// Admin Panel
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
     Route::get('/profile', fn() => view('admin.profile'))->name('profile');
     Route::get('/settings', fn() => view('admin.settings'))->name('settings');
-    
-    // Bookings
-    Route::get('/bookings', fn() => view('admin.bookings.index'))->name('bookings.index');
-    
-    // MUAs
-    Route::get('/muas', fn() => view('admin.muas.index'))->name('muas.index');
-    Route::get('/muas/create', fn() => view('admin.muas.create'))->name('muas.create');
-    
-    // Clients
-    Route::get('/clients', fn() => view('admin.clients.index'))->name('clients.index');
-    
-    // Reviews
-    Route::get('/reviews', fn() => view('admin.reviews.index'))->name('reviews.index');
+
+    Route::get('/bookings', [AdminBooking::class, 'index'])->name('bookings.index');
+
+    Route::get('/muas', [AdminMua::class, 'index'])->name('muas.index');
+    Route::get('/muas/create', [AdminMua::class, 'create'])->name('muas.create');
+    Route::post('/muas', [AdminMua::class, 'store'])->name('muas.store');
+    Route::put('/muas/{muaProfile}', [AdminMua::class, 'update'])->name('muas.update');
+    Route::patch('/muas/{muaProfile}/toggle', [AdminMua::class, 'toggleAvailability'])->name('muas.toggle');
+
+    Route::get('/clients', [AdminClient::class, 'index'])->name('clients.index');
+    Route::get('/reviews', [AdminReview::class, 'index'])->name('reviews.index');
+
+    Route::get('/packages', [AdminPackage::class, 'index'])->name('packages.index');
+    Route::get('/packages/create', [AdminPackage::class, 'create'])->name('packages.create');
+    Route::post('/packages', [AdminPackage::class, 'store'])->name('packages.store');
+    Route::get('/packages/{package}/edit', [AdminPackage::class, 'edit'])->name('packages.edit');
+    Route::put('/packages/{package}', [AdminPackage::class, 'update'])->name('packages.update');
+    Route::delete('/packages/{package}', [AdminPackage::class, 'destroy'])->name('packages.destroy');
 });
 
-// MUA Artist Panel Routes
-Route::prefix('mua')->name('mua.')->group(function () {
+// MUA Panel
+Route::prefix('mua')->name('mua.')->middleware(['auth', 'role:mua'])->group(function () {
     Route::get('/', fn() => view('mua.dashboard'))->name('dashboard');
     Route::get('/bookings', fn() => view('mua.bookings.index'))->name('bookings');
     Route::get('/profile', fn() => view('mua.profile'))->name('profile');
