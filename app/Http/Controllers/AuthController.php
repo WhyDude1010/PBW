@@ -62,6 +62,60 @@ class AuthController extends Controller
         };
     }
 
+    public function showAdminLogin()
+    {
+        return view('auth.admin-login');
+    }
+
+    public function prosesAdminLogin(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (!Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+            return back()->withErrors(['email' => 'Wrong email or password!'])->withInput();
+        }
+
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            Auth::logout();
+            return back()->withErrors(['email' => 'This portal is for admin only.'])->withInput();
+        }
+
+        $request->session()->regenerate();
+        return redirect()->route('admin.dashboard');
+    }
+
+    public function showMuaLogin()
+    {
+        return view('auth.mua-login');
+    }
+
+    public function prosesMuaLogin(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (!Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+            return back()->withErrors(['email' => 'Wrong email or password!'])->withInput();
+        }
+
+        $user = Auth::user();
+
+        if ($user->role !== 'mua') {
+            Auth::logout();
+            return back()->withErrors(['email' => 'This portal is for MUA only.'])->withInput();
+        }
+
+        $request->session()->regenerate();
+        return redirect()->route('mua.dashboard');
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();

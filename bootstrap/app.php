@@ -15,6 +15,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => RoleMiddleware::class,
         ]);
+
+        $middleware->redirectGuestsTo(function ($request) {
+            if ($request->is('admin/*') || $request->is('admin')) {
+                return route('admin.login');
+            }
+            if ($request->is('mua/*') || $request->is('mua')) {
+                return route('mua.login');
+            }
+            return route('login');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

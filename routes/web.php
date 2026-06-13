@@ -37,6 +37,12 @@ Route::prefix('booking')->name('booking.')->middleware('auth')->group(function (
     Route::get('/completion', fn() => view('booking.completion'))->name('completion');
 });
 
+// Admin Login
+Route::middleware('guest')->group(function () {
+    Route::get('/admin/login', [AuthController::class, 'showAdminLogin'])->name('admin.login');
+    Route::post('/admin/login', [AuthController::class, 'prosesAdminLogin'])->name('admin.login.submit');
+});
+
 // Admin Panel
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
@@ -60,6 +66,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/packages/{package}/edit', [AdminPackage::class, 'edit'])->name('packages.edit');
     Route::put('/packages/{package}', [AdminPackage::class, 'update'])->name('packages.update');
     Route::delete('/packages/{package}', [AdminPackage::class, 'destroy'])->name('packages.destroy');
+});
+
+// MUA Login
+Route::middleware('guest')->group(function () {
+    Route::get('/mua/login', [AuthController::class, 'showMuaLogin'])->name('mua.login');
+    Route::post('/mua/login', [AuthController::class, 'prosesMuaLogin'])->name('mua.login.submit');
 });
 
 // MUA Panel
