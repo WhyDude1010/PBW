@@ -95,4 +95,22 @@ class MuaController extends Controller
 
         return back()->with('sukses', $muaProfile->user->name . ' ' . $status . '.');
     }
+
+    public function updateCredentials(Request $request, MuaProfile $muaProfile)
+    {
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $muaProfile->user->id,
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        $data = ['email' => $request->email];
+
+        if ($request->filled('password')) {
+            $data['password'] = $request->password;
+        }
+
+        $muaProfile->user->update($data);
+
+        return back()->with('sukses', $muaProfile->user->name . ' credentials updated.');
+    }
 }

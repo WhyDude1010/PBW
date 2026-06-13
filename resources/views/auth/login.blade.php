@@ -50,7 +50,7 @@
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
                             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         </div>
-                        <input id="email" name="email" type="email" class="w-full pl-11 pr-4 py-3.5 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 transition-all text-[14.5px] text-dark placeholder:text-muted/60" placeholder="hello@example.com" required autocomplete="email">
+                        <input id="email" name="email" type="email" class="w-full pl-11 pr-4 py-3.5 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 transition-all text-[14.5px] text-dark placeholder:text-muted/60" placeholder="Email" required autocomplete="email">
                     </div>
                 </div>
 
@@ -60,7 +60,7 @@
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
                             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                         </div>
-                        <input id="password" name="password" type="password" class="w-full pl-11 pr-12 py-3.5 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 transition-all text-[14.5px] text-dark placeholder:text-muted/60" placeholder="••••••••" required autocomplete="current-password">
+                        <input id="password" name="password" type="password" class="w-full pl-11 pr-12 py-3.5 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 transition-all text-[14.5px] text-dark placeholder:text-muted/60" placeholder="Password" required autocomplete="current-password">
                         <button type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center text-muted hover:text-brand focus:outline-none" onclick="togglePass()" id="show-pass-btn">
                             <svg id="pass-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
                         </button>

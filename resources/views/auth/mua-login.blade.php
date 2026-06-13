@@ -37,7 +37,7 @@
                     <label class="block text-[13px] font-semibold text-white/60 mb-2" for="mua-email">Email</label>
                     <input id="mua-email" name="email" type="email" value="{{ old('email') }}"
                         class="w-full px-4 py-3.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-[14px] text-white placeholder:text-white/20 focus:border-brand focus:ring-2 focus:ring-brand/20 focus:bg-white/[0.06] transition-all outline-none"
-                        placeholder="artist@beautique.com" required autocomplete="email">
+                        placeholder="Email" required autocomplete="email">
                 </div>
 
                 <div>
@@ -45,7 +45,7 @@
                     <div class="relative">
                         <input id="mua-password" name="password" type="password"
                             class="w-full px-4 py-3.5 pr-12 bg-white/[0.04] border border-white/[0.08] rounded-xl text-[14px] text-white placeholder:text-white/20 focus:border-brand focus:ring-2 focus:ring-brand/20 focus:bg-white/[0.06] transition-all outline-none"
-                            placeholder="••••••••" required autocomplete="current-password">
+                            placeholder="Password" required autocomplete="current-password">
                         <button type="button" onclick="togglePass()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-white/30 hover:text-brand transition-colors">
                             <svg id="pass-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
                         </button>

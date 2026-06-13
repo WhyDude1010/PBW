@@ -22,7 +22,7 @@
                     </label>
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-bold text-[20px] text-dark mb-1">Sarah Wijaya</h3>
+                    <h3 class="font-bold text-[20px] text-dark mb-1">{{ auth()->user()->name }}</h3>
                     <p class="text-[13px] text-muted mb-3 flex items-center gap-1">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-brand"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         Bali, Indonesia
@@ -42,7 +42,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-[13px] font-bold text-dark mb-2">Full Name</label>
-                        <input type="text" value="Sarah Wijaya" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                        <input type="text" value="{{ auth()->user()->name }}" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
                     </div>
                     <div>
                         <label class="block text-[13px] font-bold text-dark mb-2">Location</label>
@@ -55,11 +55,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-[13px] font-bold text-dark mb-2">Email</label>
-                        <input type="email" value="sarah@beautique.com" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                        <input type="email" value="{{ auth()->user()->email }}" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/50 text-[14px] text-muted cursor-not-allowed" readonly>
                     </div>
                     <div>
                         <label class="block text-[13px] font-bold text-dark mb-2">Phone</label>
-                        <input type="tel" value="+62 812-3456-7890" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                        <input type="tel" value="{{ auth()->user()->phone ?? '' }}" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

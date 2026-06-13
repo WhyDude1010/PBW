@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\PackageController as AdminPackage;
 use App\Http\Controllers\Admin\BookingController as AdminBooking;
 use App\Http\Controllers\Admin\ClientController as AdminClient;
 use App\Http\Controllers\Admin\ReviewController as AdminReview;
+use App\Http\Controllers\Admin\ProfileController as AdminProfile;
 use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +26,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 
 // Booking Flow (auth required)
 Route::prefix('booking')->name('booking.')->middleware('auth')->group(function () {
-    Route::get('/choose-mua', fn() => view('booking.choose_mua'))->name('choose-mua');
+    Route::get('/choose-mua', [\App\Http\Controllers\BookingController::class, 'chooseMua'])->name('choose-mua');
     Route::get('/select-date', fn() => view('booking.select_date'))->name('select-date');
     Route::get('/summary', fn() => view('booking.summary'))->name('summary');
     Route::get('/confirmed', fn() => view('booking.confirmed'))->name('confirmed');
@@ -46,7 +47,9 @@ Route::middleware('guest')->group(function () {
 // Admin Panel
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
-    Route::get('/profile', fn() => view('admin.profile'))->name('profile');
+    Route::get('/profile', [AdminProfile::class, 'index'])->name('profile');
+    Route::put('/profile', [AdminProfile::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [AdminProfile::class, 'updatePassword'])->name('profile.password');
     Route::get('/settings', fn() => view('admin.settings'))->name('settings');
 
     Route::get('/bookings', [AdminBooking::class, 'index'])->name('bookings.index');
@@ -55,6 +58,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/muas/create', [AdminMua::class, 'create'])->name('muas.create');
     Route::post('/muas', [AdminMua::class, 'store'])->name('muas.store');
     Route::put('/muas/{muaProfile}', [AdminMua::class, 'update'])->name('muas.update');
+    Route::put('/muas/{muaProfile}/credentials', [AdminMua::class, 'updateCredentials'])->name('muas.credentials');
     Route::patch('/muas/{muaProfile}/toggle', [AdminMua::class, 'toggleAvailability'])->name('muas.toggle');
 
     Route::get('/clients', [AdminClient::class, 'index'])->name('clients.index');

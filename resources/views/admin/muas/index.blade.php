@@ -79,6 +79,26 @@
                     </div>
                 </div>
 
+                <div class="text-[12px] text-muted mb-4 truncate" title="{{ $mua->user->email }}">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="inline -mt-0.5 mr-1 text-brand"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    {{ $mua->user->email }}
+                </div>
+
+                <div x-data="{ showCred: false }" class="mb-4">
+                    <button @click="showCred = !showCred" type="button" class="w-full py-2 rounded-xl bg-cream border border-border text-[12px] font-bold text-muted hover:border-brand hover:text-brand transition-colors">
+                        <span x-text="showCred ? 'Close' : 'Edit Credentials'"></span>
+                    </button>
+                    <div x-show="showCred" x-transition class="mt-3" style="display:none">
+                        <form action="{{ route('admin.muas.credentials', $mua) }}" method="POST" class="space-y-3">
+                            @csrf
+                            @method('PUT')
+                            <input type="email" name="email" value="{{ $mua->user->email }}" placeholder="Email" class="w-full px-3 py-2.5 rounded-lg border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark" required>
+                            <input type="password" name="password" placeholder="New Password (leave blank to keep)" class="w-full px-3 py-2.5 rounded-lg border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark placeholder:text-muted">
+                            <button type="submit" class="w-full py-2.5 rounded-xl bg-dark hover:bg-black text-white text-[12px] font-bold transition-colors">Save Credentials</button>
+                        </form>
+                    </div>
+                </div>
+
                 <div class="flex gap-2">
                     <form action="{{ route('admin.muas.toggle', $mua) }}" method="POST" class="flex-1">
                         @csrf
