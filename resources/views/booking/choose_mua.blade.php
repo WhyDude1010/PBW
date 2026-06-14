@@ -89,7 +89,7 @@
                             <span class="text-[12px] text-muted block mb-0.5">Starting from</span>
                             <span class="text-[15px] font-bold text-brand">Rp {{ number_format($mua->price_min, 0, ',', '.') }}</span>
                         </div>
-                        <a href="{{ route('booking.select-date') }}" class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center group-hover:bg-brand-dark transition-colors">
+                        <a href="{{ auth()->check() ? route('booking.select-date') : route('login') }}" class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center group-hover:bg-brand-dark transition-colors">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </a>
                     </div>

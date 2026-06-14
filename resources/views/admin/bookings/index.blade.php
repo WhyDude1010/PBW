@@ -6,13 +6,20 @@
 @section('content')
 <div x-data="bookingsPage()" x-cloak>
 
+@php
+    $total = $bookings->count();
+    $pending = $bookings->where('status', 'pending')->count();
+    $confirmed = $bookings->where('status', 'confirmed')->count();
+    $cancelled = $bookings->where('status', 'cancelled')->count();
+@endphp
+
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     <div class="bg-white rounded-2xl p-6 border border-border shadow-sm flex items-start gap-4">
         <div class="w-12 h-12 rounded-xl bg-dark/5 text-dark flex items-center justify-center shrink-0">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
         </div>
         <div>
-            <div class="text-[24px] font-serif font-bold text-dark leading-none mb-1">156</div>
+            <div class="text-[24px] font-serif font-bold text-dark leading-none mb-1">{{ $total }}</div>
             <div class="text-[13px] font-bold text-muted">Total</div>
         </div>
     </div>
@@ -22,7 +29,7 @@
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </div>
         <div>
-            <div class="text-[24px] font-serif font-bold text-dark leading-none mb-1">24</div>
+            <div class="text-[24px] font-serif font-bold text-dark leading-none mb-1">{{ $pending }}</div>
             <div class="text-[13px] font-bold text-muted">Pending</div>
         </div>
     </div>
@@ -32,7 +39,7 @@
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </div>
         <div>
-            <div class="text-[24px] font-serif font-bold text-dark leading-none mb-1">118</div>
+            <div class="text-[24px] font-serif font-bold text-dark leading-none mb-1">{{ $confirmed }}</div>
             <div class="text-[13px] font-bold text-muted">Confirmed</div>
         </div>
     </div>
@@ -42,7 +49,7 @@
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </div>
         <div>
-            <div class="text-[24px] font-serif font-bold text-dark leading-none mb-1">14</div>
+            <div class="text-[24px] font-serif font-bold text-dark leading-none mb-1">{{ $cancelled }}</div>
             <div class="text-[13px] font-bold text-muted">Cancelled</div>
         </div>
     </div>
@@ -58,23 +65,15 @@
             </div>
             <select id="mua-filter" onchange="filterTable()" class="px-4 py-2 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
                 <option value="">All MUAs</option>
-                <option value="Sarah Wijaya">Sarah Wijaya</option>
-                <option value="Mia Rahardjo">Mia Rahardjo</option>
-                <option value="Dera Sanjaya">Dera Sanjaya</option>
-            </select>
-            <select id="category-filter" onchange="filterTable()" class="px-4 py-2 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
-                <option value="">All Categories</option>
-                <option value="Basic Beauty">Basic Beauty</option>
-                <option value="Creative Glam">Creative Glam</option>
-                <option value="Editorial">Editorial</option>
-                <option value="Signature Bridal">Signature Bridal</option>
-                <option value="Party Glam">Party Glam</option>
+                @foreach($muaNames as $name)
+                <option value="{{ $name }}">{{ $name }}</option>
+                @endforeach
             </select>
             <select id="status-filter" onchange="filterTable()" class="px-4 py-2 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[13px] text-dark cursor-pointer">
                 <option value="">All Status</option>
                 <option value="pending">Pending</option>
                 <option value="confirmed">Confirmed</option>
-                <option value="done">Done</option>
+                <option value="completed">Completed</option>
                 <option value="cancelled">Cancelled</option>
             </select>
         </div>
@@ -95,53 +94,55 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-border">
-                @php
-                $bookings = [
-                    ['BK-001','Rina Maharani','Sarah Wijaya','10 May · 09:00','Basic Beauty','Rp 550.000','confirmed'],
-                    ['BK-002','Delia Santoso','Mia Rahardjo','11 May · 14:00','Creative Glam','Rp 3.200.000','pending'],
-                    ['BK-003','Citra Dewi','Dera Sanjaya','12 May · 10:00','Editorial','Rp 2.100.000','confirmed'],
-                    ['BK-004','Ayu Pratiwi','Sarah Wijaya','13 May · 08:00','Signature Bridal','Rp 12.000.000','pending'],
-                    ['BK-005','Sari Indah','Mia Rahardjo','14 May · 11:00','Basic Beauty','Rp 500.000','done'],
-                    ['BK-006','Mega Putri','Dera Sanjaya','15 May · 13:00','Party Glam','Rp 1.800.000','cancelled'],
-                ];
-                @endphp
-                @foreach($bookings as $i => $b)
-                <tr data-status="{{ $b[6] }}" class="hover:bg-cream/30 transition-colors" id="booking-row-{{ $i }}">
-                    <td class="px-6 py-4 text-[12px] font-bold text-muted">{{ $b[0] }}</td>
-                    <td class="px-6 py-4 text-[14px] font-bold text-dark">{{ $b[1] }}</td>
-                    <td class="px-6 py-4 text-[14px] text-muted">{{ $b[2] }}</td>
-                    <td class="px-6 py-4 text-[13px] text-dark">{{ $b[3] }}</td>
-                    <td class="px-6 py-4 text-[14px] text-muted">{{ $b[4] }}</td>
-                    <td class="px-6 py-4 text-[14px] font-bold text-brand">{{ $b[5] }}</td>
-                    <td class="px-6 py-4" id="status-cell-{{ $i }}">
-                        @if($b[6] === 'confirmed')
+                @forelse($bookings as $b)
+                <tr data-status="{{ $b->status }}" class="hover:bg-cream/30 transition-colors">
+                    <td class="px-6 py-4 text-[12px] font-bold text-muted">BK-{{ str_pad($b->id, 3, '0', STR_PAD_LEFT) }}</td>
+                    <td class="px-6 py-4 text-[14px] font-bold text-dark">{{ $b->user->name }}</td>
+                    <td class="px-6 py-4 text-[14px] text-muted">{{ $b->muaProfile->user->name ?? '-' }}</td>
+                    <td class="px-6 py-4 text-[13px] text-dark">{{ $b->booking_date->format('d M') }} · {{ \Carbon\Carbon::parse($b->booking_time)->format('H:i') }}</td>
+                    <td class="px-6 py-4 text-[14px] text-muted">{{ $b->package ?? '-' }}</td>
+                    <td class="px-6 py-4 text-[14px] font-bold text-brand">Rp {{ number_format($b->amount, 0, ',', '.') }}</td>
+                    <td class="px-6 py-4">
+                        @if($b->status === 'confirmed')
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-500 uppercase tracking-wider">Confirmed</span>
-                        @elseif($b[6] === 'pending')
+                        @elseif($b->status === 'pending')
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-600 uppercase tracking-wider">Pending</span>
-                        @elseif($b[6] === 'done')
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand/10 text-brand uppercase tracking-wider">Done</span>
+                        @elseif($b->status === 'completed')
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand/10 text-brand uppercase tracking-wider">Completed</span>
                         @else
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-500/10 text-red-500 uppercase tracking-wider">Cancelled</span>
                         @endif
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
-                            <button @click="viewBooking({{ $i }}, '{{ $b[0] }}', '{{ $b[1] }}', '{{ $b[2] }}', '{{ $b[3] }}', '{{ $b[4] }}', '{{ $b[5] }}', '{{ $b[6] }}')" class="w-8 h-8 rounded-lg bg-cream text-muted hover:bg-dark hover:text-white flex items-center justify-center transition-colors" title="View">
+                            <button @click="viewBooking({
+                                id: 'BK-{{ str_pad($b->id, 3, '0', STR_PAD_LEFT) }}',
+                                client: '{{ $b->user->name }}',
+                                mua: '{{ $b->muaProfile->user->name ?? '-' }}',
+                                date: '{{ $b->booking_date->format('d M Y') }} · {{ \Carbon\Carbon::parse($b->booking_time)->format('H:i') }}',
+                                pkg: '{{ $b->package ?? '-' }}',
+                                amount: 'Rp {{ number_format($b->amount, 0, ',', '.') }}',
+                                status: '{{ $b->status }}'
+                            })" class="w-8 h-8 rounded-lg bg-cream text-muted hover:bg-dark hover:text-white flex items-center justify-center transition-colors" title="View">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </button>
-                            <button @click="editStatus({{ $i }}, '{{ $b[0] }}', '{{ $b[1] }}', '{{ $b[6] }}')" class="w-8 h-8 rounded-lg bg-brand/10 text-brand hover:bg-brand hover:text-white flex items-center justify-center transition-colors" title="Edit Status">
+                            <button @click="editStatus({{ $b->id }}, 'BK-{{ str_pad($b->id, 3, '0', STR_PAD_LEFT) }}', '{{ $b->user->name }}', '{{ $b->status }}')" class="w-8 h-8 rounded-lg bg-brand/10 text-brand hover:bg-brand hover:text-white flex items-center justify-center transition-colors" title="Edit Status">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             </button>
                         </div>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="8" class="px-6 py-12 text-center text-[14px] text-muted">No bookings yet.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
 </div>
 
-<div x-show="viewModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none">
+<div x-show="viewModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none">
     <div class="absolute inset-0 bg-dark/40 backdrop-blur-sm" @click="viewModal = false"></div>
     <div x-show="viewModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="relative bg-white rounded-2xl border border-border shadow-xl w-full max-w-lg overflow-hidden">
         <div class="px-6 py-5 border-b border-border flex items-center justify-between bg-cream/30">
@@ -151,36 +152,15 @@
             </button>
         </div>
         <div class="p-6 space-y-4">
-            <div class="flex items-center justify-between">
-                <span class="text-[13px] font-bold text-muted">Booking ID</span>
-                <span class="text-[14px] font-bold text-dark" x-text="selected.id"></span>
-            </div>
-            <div class="h-px bg-border"></div>
-            <div class="flex items-center justify-between">
-                <span class="text-[13px] font-bold text-muted">Client</span>
-                <span class="text-[14px] font-bold text-dark" x-text="selected.client"></span>
-            </div>
-            <div class="h-px bg-border"></div>
-            <div class="flex items-center justify-between">
-                <span class="text-[13px] font-bold text-muted">MUA Artist</span>
-                <span class="text-[14px] text-brand font-bold" x-text="selected.mua"></span>
-            </div>
-            <div class="h-px bg-border"></div>
-            <div class="flex items-center justify-between">
-                <span class="text-[13px] font-bold text-muted">Date & Time</span>
-                <span class="text-[14px] text-dark" x-text="selected.date"></span>
-            </div>
-            <div class="h-px bg-border"></div>
-            <div class="flex items-center justify-between">
-                <span class="text-[13px] font-bold text-muted">Package</span>
-                <span class="text-[14px] text-dark" x-text="selected.pkg"></span>
-            </div>
-            <div class="h-px bg-border"></div>
-            <div class="flex items-center justify-between">
-                <span class="text-[13px] font-bold text-muted">Amount</span>
-                <span class="text-[14px] font-bold text-brand" x-text="selected.amount"></span>
-            </div>
-            <div class="h-px bg-border"></div>
+            <template x-for="field in [['Booking ID', selected.id], ['Client', selected.client], ['MUA Artist', selected.mua], ['Date & Time', selected.date], ['Package', selected.pkg], ['Amount', selected.amount]]" :key="field[0]">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[13px] font-bold text-muted" x-text="field[0]"></span>
+                        <span class="text-[14px] font-bold text-dark" x-text="field[1]"></span>
+                    </div>
+                    <div class="h-px bg-border mt-4"></div>
+                </div>
+            </template>
             <div class="flex items-center justify-between">
                 <span class="text-[13px] font-bold text-muted">Status</span>
                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider" :class="statusClass(selected.status)" x-text="selected.status"></span>
@@ -192,7 +172,7 @@
     </div>
 </div>
 
-<div x-show="editModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none">
+<div x-show="editModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none">
     <div class="absolute inset-0 bg-dark/40 backdrop-blur-sm" @click="editModal = false"></div>
     <div x-show="editModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="relative bg-white rounded-2xl border border-border shadow-xl w-full max-w-md overflow-hidden">
         <div class="px-6 py-5 border-b border-border flex items-center justify-between bg-cream/30">
@@ -201,30 +181,29 @@
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
-        <div class="p-6 space-y-5">
-            <div>
-                <div class="text-[13px] font-bold text-muted mb-1">Booking</div>
-                <div class="text-[15px] font-bold text-dark"><span x-text="editing.id"></span> — <span x-text="editing.client"></span></div>
-            </div>
-            <div>
-                <label class="block text-[13px] font-bold text-dark mb-2">New Status</label>
-                <div class="grid grid-cols-2 gap-3">
-                    <template x-for="s in ['pending','confirmed','done','cancelled']" :key="s">
-                        <button @click="editing.newStatus = s" class="py-2.5 rounded-xl border text-[13px] font-bold transition-all capitalize" :class="editing.newStatus === s ? 'border-brand bg-brand/10 text-brand' : 'border-border text-muted hover:border-brand/50'" x-text="s"></button>
-                    </template>
+        <form :action="'/admin/bookings/' + editing.bookingId + '/status'" method="POST">
+            @csrf @method('PATCH')
+            <div class="p-6 space-y-5">
+                <div>
+                    <div class="text-[13px] font-bold text-muted mb-1">Booking</div>
+                    <div class="text-[15px] font-bold text-dark"><span x-text="editing.label"></span> — <span x-text="editing.client"></span></div>
+                </div>
+                <div>
+                    <label class="block text-[13px] font-bold text-dark mb-2">New Status</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <template x-for="s in ['pending','confirmed','completed','cancelled']" :key="s">
+                            <button type="button" @click="editing.newStatus = s" class="py-2.5 rounded-xl border text-[13px] font-bold transition-all capitalize" :class="editing.newStatus === s ? 'border-brand bg-brand/10 text-brand' : 'border-border text-muted hover:border-brand/50'" x-text="s"></button>
+                        </template>
+                    </div>
+                    <input type="hidden" name="status" :value="editing.newStatus">
                 </div>
             </div>
-        </div>
-        <div class="px-6 py-4 border-t border-border bg-cream/30 flex items-center justify-end gap-3">
-            <button @click="editModal = false" class="px-5 py-2.5 rounded-xl text-[13px] font-bold text-muted hover:text-dark hover:bg-cream transition-colors">Cancel</button>
-            <button @click="applyStatus()" class="px-5 py-2.5 rounded-xl bg-brand text-white text-[13px] font-bold hover:bg-brand-dark transition-colors">Save Changes</button>
-        </div>
+            <div class="px-6 py-4 border-t border-border bg-cream/30 flex items-center justify-end gap-3">
+                <button type="button" @click="editModal = false" class="px-5 py-2.5 rounded-xl text-[13px] font-bold text-muted hover:text-dark hover:bg-cream transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand text-white text-[13px] font-bold hover:bg-brand-dark transition-colors">Save Changes</button>
+            </div>
+        </form>
     </div>
-</div>
-
-<div x-show="toast" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 translate-y-4" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-dark text-white px-5 py-3.5 rounded-xl shadow-lg" style="display:none">
-    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-    <span class="text-[13px] font-bold" x-text="toastMsg"></span>
 </div>
 
 </div>
@@ -236,19 +215,10 @@ function filterTable() {
     const q = document.getElementById('search-input').value.toLowerCase();
     const s = document.getElementById('status-filter').value;
     const m = document.getElementById('mua-filter').value.toLowerCase();
-    const c = document.getElementById('category-filter').value.toLowerCase();
     document.querySelectorAll('#bookings-table tbody tr').forEach(row => {
-        const clientText = row.children[1].textContent.toLowerCase();
-        const muaText = row.children[2].textContent.toLowerCase();
-        const categoryText = row.children[4].textContent.toLowerCase();
+        const text = row.textContent.toLowerCase();
         const status = row.dataset.status;
-        
-        const matchQ = clientText.includes(q);
-        const matchS = !s || status === s;
-        const matchM = !m || muaText.includes(m);
-        const matchC = !c || categoryText.includes(c);
-        
-        row.style.display = (matchQ && matchS && matchM && matchC) ? '' : 'none';
+        row.style.display = (text.includes(q) && (!s || status === s) && (!m || text.includes(m))) ? '' : 'none';
     });
 }
 
@@ -256,45 +226,26 @@ function bookingsPage() {
     return {
         viewModal: false,
         editModal: false,
-        toast: false,
-        toastMsg: '',
         selected: { id:'', client:'', mua:'', date:'', pkg:'', amount:'', status:'' },
-        editing: { idx: 0, id:'', client:'', currentStatus:'', newStatus:'' },
+        editing: { bookingId: 0, label:'', client:'', newStatus:'' },
 
-        viewBooking(idx, id, client, mua, date, pkg, amount, status) {
-            this.selected = { id, client, mua, date, pkg, amount, status };
+        viewBooking(data) {
+            this.selected = data;
             this.viewModal = true;
         },
 
-        editStatus(idx, id, client, status) {
-            this.editing = { idx, id, client, currentStatus: status, newStatus: status };
+        editStatus(bookingId, label, client, status) {
+            this.editing = { bookingId, label, client, newStatus: status };
             this.editModal = true;
         },
 
         statusClass(s) {
-            const map = {
+            return {
                 confirmed: 'bg-emerald-500/10 text-emerald-500',
                 pending: 'bg-amber-500/10 text-amber-600',
-                done: 'bg-brand/10 text-brand',
+                completed: 'bg-brand/10 text-brand',
                 cancelled: 'bg-red-500/10 text-red-500'
-            };
-            return map[s] || '';
-        },
-
-        applyStatus() {
-            const row = document.getElementById('booking-row-' + this.editing.idx);
-            const cell = document.getElementById('status-cell-' + this.editing.idx);
-            const ns = this.editing.newStatus;
-            row.dataset.status = ns;
-            cell.innerHTML = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ' + this.statusClass(ns) + '">' + ns + '</span>';
-            this.editModal = false;
-            this.showToast('Status updated to ' + ns);
-        },
-
-        showToast(msg) {
-            this.toastMsg = msg;
-            this.toast = true;
-            setTimeout(() => { this.toast = false; }, 2500);
+            }[s] || '';
         }
     }
 }

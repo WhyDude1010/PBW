@@ -375,32 +375,13 @@
 function schedulePage() {
     var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-    var bookingsData = {
-        '2026-05-10': [{ time: '09:00', client: 'Rina Maharani', package: 'Basic Beauty', type: 'Home Service', status: 'confirmed' }],
-        '2026-05-11': [{ time: '14:00', client: 'Delia Santoso', package: 'Creative Glam', type: 'Studio Visit', status: 'pending' }],
-        '2026-05-12': [{ time: '10:00', client: 'Citra Dewi', package: 'Editorial', type: 'Home Service', status: 'confirmed' }],
-        '2026-05-13': [{ time: '08:00', client: 'Ayu Pratiwi', package: 'Signature Bridal', type: 'Home Service', status: 'pending' }],
-        '2026-05-14': [{ time: '11:00', client: 'Sari Indah', package: 'Basic Beauty', type: 'Studio Visit', status: 'done' }],
-        '2026-05-15': [{ time: '13:00', client: 'Mega Putri', package: 'Party Glam', type: 'Home Service', status: 'confirmed' }],
-        '2026-05-20': [
-            { time: '09:00', client: 'Lina Kusuma', package: 'Creative Glam', type: 'Studio Visit', status: 'confirmed' },
-            { time: '14:00', client: 'Dewi Anggraini', package: 'Basic Beauty', type: 'Home Service', status: 'pending' }
-        ],
-        '2026-05-22': [
-            { time: '08:00', client: 'Fitri Handayani', package: 'Signature Bridal', type: 'Home Service', status: 'confirmed' },
-            { time: '10:00', client: 'Ratna Sari', package: 'Party Glam', type: 'Studio Visit', status: 'confirmed' },
-            { time: '14:00', client: 'Wulan Putri', package: 'Creative Glam', type: 'Home Service', status: 'pending' }
-        ],
-        '2026-05-27': [{ time: '10:00', client: 'Anisa Rahman', package: 'Basic Beauty', type: 'Studio Visit', status: 'pending' }],
-        '2026-06-02': [{ time: '09:00', client: 'Maya Putri', package: 'Creative Glam', type: 'Home Service', status: 'pending' }],
-        '2026-06-05': [{ time: '11:00', client: 'Bella Kartika', package: 'Signature Bridal', type: 'Studio Visit', status: 'confirmed' }],
-    };
+    var bookingsData = @json($bookingsJson);
 
 
 
     return {
-        currentYear: 2026,
-        currentMonth: 4,
+        currentYear: new Date().getFullYear(),
+        currentMonth: new Date().getMonth(),
         monthLabel: '',
         calendarCells: [],
         weekDays: ['Mo','Tu','We','Th','Fr','Sa','Su'],
@@ -417,11 +398,7 @@ function schedulePage() {
 
         addBlockModal: false,
         newBlock: { date: '', reason: '' },
-        blockedDates: [
-            { date: '2026-05-25', label: '25 May 2026', reason: 'Personal Day' },
-            { date: '2026-06-01', label: '1 Jun 2026', reason: 'Holiday' },
-            { date: '2026-06-15', label: '15 Jun 2026', reason: 'Training Workshop' },
-        ],
+        blockedDates: [],
 
         toast: false,
         toastMsg: '',

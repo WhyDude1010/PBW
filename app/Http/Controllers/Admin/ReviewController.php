@@ -13,4 +13,10 @@ class ReviewController extends Controller
 
         return view('admin.reviews.index', compact('reviews'));
     }
+
+    public function destroy(Review $review)
+    {
+        $review->delete();
+        return back()->with('sukses', 'Review deleted.');
+    }
 }

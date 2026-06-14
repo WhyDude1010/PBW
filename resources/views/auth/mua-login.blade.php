@@ -28,7 +28,7 @@
                 <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-3 rounded-xl text-[13px] font-medium mb-6">{{ session('sukses') }}</div>
             @endif
             @if($errors->any())
-                <div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl text-[13px] font-medium mb-6">{{ $errors->first() }}</div>
+                <div class="bg-red-500/20 border border-red-400/30 text-white px-4 py-3 rounded-xl text-[13px] font-medium mb-6">{{ $errors->first() }}</div>
             @endif
 
             <form action="{{ route('mua.login.submit') }}" method="POST" class="space-y-5">

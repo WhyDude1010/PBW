@@ -161,24 +161,6 @@
 
                     <!-- STEP 2A: Home Service Address -->
                     <div id="step-2-home" class="hidden">
-                        <div class="w-full rounded-xl mb-4 overflow-hidden border border-border relative" style="height:260px">
-                            <iframe id="location-map" style="width:100%;height:100%;border:0" src="" allowfullscreen></iframe>
-                            <div id="map-overlay" style="position:absolute;inset:0;background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:10">
-                                <svg style="width:40px;height:40px;color:#2d2a26;opacity:0.7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"></path>
-                                </svg>
-                                <p style="font-size:13px;color:#8a8580;text-align:center;padding:0 16px">Enable location to pin your address on the map</p>
-                                <button type="button" onclick="requestLocation()" style="padding:10px 20px;background:#2d2a26;color:#fff;font-size:13px;font-weight:700;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;gap:8px">
-                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v4m0 12v4m10-10h-4M6 12H2"></path></svg>
-                                    Use My Location
-                                </button>
-                            </div>
-                            <button type="button" id="refresh-loc-btn" onclick="requestLocation()" title="Refresh Location" style="display:none;position:absolute;top:10px;right:10px;z-index:10;width:36px;height:36px;background:#fff;border:1px solid #e0dcd7;border-radius:10px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
-                                <svg width="18" height="18" fill="none" stroke="#2d2a26" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                            </button>
-                        </div>
-                        <p id="loc-status" style="font-size:12px;color:#8a8580;margin-bottom:16px;display:none"></p>
 
                         <div class="space-y-5">
                             <div>
@@ -737,53 +719,7 @@
             }
         }
 
-        function showMapAtCoords(lat, lng) {
-            var delta = 0.003;
-            var bbox = (lng - delta) + ',' + (lat - delta) + ',' + (lng + delta) + ',' + (lat + delta);
-            var src = 'https://www.openstreetmap.org/export/embed.html?bbox=' + bbox + '&layer=mapnik&marker=' + lat + ',' + lng;
-            document.getElementById('location-map').src = src;
-        }
 
-        function reverseGeocode(lat, lng) {
-            fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&addressdetails=1')
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    var a = data.address || {};
-                    document.getElementById('input-street').value = a.road || a.pedestrian || a.footway || '';
-                    document.getElementById('input-district').value = a.suburb || a.village || a.neighbourhood || '';
-                    document.getElementById('input-city').value = a.city || a.town || a.county || a.state || '';
-                })
-                .catch(function() {});
-        }
-
-        function requestLocation() {
-            var status = document.getElementById('loc-status');
-            if (!navigator.geolocation) {
-                status.textContent = 'Geolocation is not supported by your browser.';
-                status.style.display = 'block';
-                return;
-            }
-            status.textContent = 'Getting your location\u2026';
-            status.style.display = 'block';
-            navigator.geolocation.getCurrentPosition(
-                function(pos) {
-                    var lat = pos.coords.latitude, lng = pos.coords.longitude;
-                    document.getElementById('map-overlay').style.display = 'none';
-                    document.getElementById('refresh-loc-btn').style.display = 'flex';
-                    status.style.display = 'none';
-                    showMapAtCoords(lat, lng);
-                    reverseGeocode(lat, lng);
-                },
-                function(err) {
-                    if (err.code === 1) {
-                        status.textContent = 'Location access denied. Please allow location in your browser settings.';
-                    } else {
-                        status.textContent = 'Unable to get your location. Please try again.';
-                    }
-                },
-                { enableHighAccuracy: true, timeout: 10000 }
-            );
-        }
 
         renderCal();
         updateTimeSlots();

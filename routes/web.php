@@ -12,7 +12,7 @@ use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Route;
 
 // 1. Landing Page
-Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/', [LandingController::class, 'index'])->name('landing')->middleware('client.only');
 
 // 2. Auth (guest only)
 Route::middleware('guest')->group(function () {
@@ -24,9 +24,11 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-// Booking Flow (auth required)
-Route::prefix('booking')->name('booking.')->middleware('auth')->group(function () {
-    Route::get('/choose-mua', [\App\Http\Controllers\BookingController::class, 'chooseMua'])->name('choose-mua');
+// Browse MUAs (guest accessible, but not for admin/mua)
+Route::get('/booking/choose-mua', [\App\Http\Controllers\BookingController::class, 'chooseMua'])->name('booking.choose-mua')->middleware('client.only');
+
+// Booking Flow (auth required, clients only)
+Route::prefix('booking')->name('booking.')->middleware(['auth', 'client.only'])->group(function () {
     Route::get('/select-date', fn() => view('booking.select_date'))->name('select-date');
     Route::get('/summary', fn() => view('booking.summary'))->name('summary');
     Route::get('/confirmed', fn() => view('booking.confirmed'))->name('confirmed');
@@ -53,6 +55,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/settings', fn() => view('admin.settings'))->name('settings');
 
     Route::get('/bookings', [AdminBooking::class, 'index'])->name('bookings.index');
+    Route::patch('/bookings/{booking}/status', [AdminBooking::class, 'updateStatus'])->name('bookings.status');
 
     Route::get('/muas', [AdminMua::class, 'index'])->name('muas.index');
     Route::get('/muas/create', [AdminMua::class, 'create'])->name('muas.create');
@@ -63,6 +66,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 
     Route::get('/clients', [AdminClient::class, 'index'])->name('clients.index');
     Route::get('/reviews', [AdminReview::class, 'index'])->name('reviews.index');
+    Route::delete('/reviews/{review}', [AdminReview::class, 'destroy'])->name('reviews.destroy');
 
     Route::get('/packages', [AdminPackage::class, 'index'])->name('packages.index');
     Route::get('/packages/create', [AdminPackage::class, 'create'])->name('packages.create');
@@ -80,9 +84,10 @@ Route::middleware('guest')->group(function () {
 
 // MUA Panel
 Route::prefix('mua')->name('mua.')->middleware(['auth', 'role:mua'])->group(function () {
-    Route::get('/', fn() => view('mua.dashboard'))->name('dashboard');
-    Route::get('/bookings', fn() => view('mua.bookings.index'))->name('bookings');
-    Route::get('/profile', fn() => view('mua.profile'))->name('profile');
-    Route::get('/reviews', fn() => view('mua.reviews'))->name('reviews');
-    Route::get('/schedule', fn() => view('mua.schedule'))->name('schedule');
+    Route::get('/', [\App\Http\Controllers\Mua\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/bookings', [\App\Http\Controllers\Mua\BookingController::class, 'index'])->name('bookings');
+    Route::patch('/bookings/{booking}/status', [\App\Http\Controllers\Mua\BookingController::class, 'updateStatus'])->name('bookings.status');
+    Route::get('/profile', [\App\Http\Controllers\Mua\ProfileController::class, 'index'])->name('profile');
+    Route::get('/reviews', [\App\Http\Controllers\Mua\ReviewController::class, 'index'])->name('reviews');
+    Route::get('/schedule', [\App\Http\Controllers\Mua\ScheduleController::class, 'index'])->name('schedule');
 });
