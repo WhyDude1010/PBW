@@ -8,7 +8,7 @@
             <!-- Header & Stepper -->
             <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('booking.countdown') }}"
+                    <a href="{{ route('booking.countdown', $booking->id) }}"
                         class="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center text-dark hover:border-brand hover:text-brand transition-all shrink-0">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                             stroke-linecap="round">
@@ -97,7 +97,7 @@
                             <img src="{{ asset('image/model-mua.jpeg') }}" alt="MUA"
                                 class="w-16 h-16 rounded-full object-cover border-2 border-cream">
                             <div>
-                                <h3 class="font-bold text-[18px] text-dark">Sarah Wijaya</h3>
+                                <h3 class="font-bold text-[18px] text-dark">{{ $booking->muaProfile->user->name }}</h3>
                                 <p class="text-[13px] text-muted">Professional Artist</p>
                             </div>
                         </div>
@@ -140,7 +140,7 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('booking.done') }}"
+                        <a href="{{ route('booking.done', $booking->id) }}"
                             class="w-full inline-flex items-center justify-center gap-2 bg-dark hover:bg-black text-white py-4 rounded-xl font-bold text-[15px] transition-all shadow-[0_8px_20px_rgba(26,16,16,0.2)] hover:-translate-y-0.5">
                             Simulate Arrival &amp; Done
                             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"

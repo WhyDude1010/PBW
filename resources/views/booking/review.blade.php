@@ -13,7 +13,7 @@
             <div class="bg-cream rounded-2xl p-5 mb-10 flex items-center gap-4 text-left border border-border">
                 <img src="{{ asset('image/model-mua.jpeg') }}" alt="Sarah" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm">
                 <div>
-                    <h4 class="font-bold text-[15px] text-dark mb-0.5">Sarah Wijaya</h4>
+                    <h4 class="font-bold text-[15px] text-dark mb-0.5">{{ $booking->muaProfile->user->name }}</h4>
                     <p class="text-[13px] text-muted">10 May 2026 &middot; Basic Beauty Package</p>
                 </div>
             </div>
@@ -55,11 +55,11 @@
             </div>
             
             <div class="flex flex-col sm:flex-row gap-4">
-                <a href="{{ route('booking.completion') }}" class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
+                <a href="{{ route('booking.completion', $booking->id) }}" class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                     Submit Review
                 </a>
-                <a href="{{ route('booking.completion') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-xl border border-border bg-white text-[15px] font-bold text-muted hover:border-brand hover:text-brand transition-colors">
+                <a href="{{ route('booking.completion', $booking->id) }}" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-xl border border-border bg-white text-[15px] font-bold text-muted hover:border-brand hover:text-brand transition-colors">
                     Skip
                 </a>
             </div>

@@ -20,7 +20,7 @@
                     <div class="flex items-center gap-4">
                         <img src="{{ asset('image/model-mua.jpeg') }}" alt="MUA" class="w-16 h-16 rounded-full object-cover border-2 border-cream">
                         <div>
-                            <h3 class="font-bold text-[18px] text-dark">Sarah Wijaya</h3>
+                            <h3 class="font-bold text-[18px] text-dark">{{ $booking->muaProfile->user->name }}</h3>
                             <p class="text-[13px] text-muted">Professional Artist</p>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                         <strong class="text-[20px] font-bold text-brand">Rp 275.000</strong>
                     </div>
 
-                    <a href="{{ route('booking.payment') }}" class="w-full inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
+                    <a href="{{ route('booking.payment', $booking->id) }}" class="w-full inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
                         Pay Now
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
                     </a>

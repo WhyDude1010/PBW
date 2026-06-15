@@ -40,15 +40,20 @@
                 </div>
             </div>
 
-            <form class="space-y-6" @submit.prevent="saveProfile()">
+            <form class="space-y-6" action="{{ route('mua.profile.update') }}" method="POST">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="packages" :value="JSON.stringify(packages)">
+                <input type="hidden" name="add_ons" :value="JSON.stringify(addons)">
+                <input type="hidden" name="available_hours" :value="JSON.stringify(hours)">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-[13px] font-bold text-dark mb-2">Full Name</label>
-                        <input type="text" value="{{ $user->name }}" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                        <input type="text" name="name" value="{{ $user->name }}" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
                     </div>
                     <div>
                         <label class="block text-[13px] font-bold text-dark mb-2">Location</label>
-                        <input type="text" value="{{ $muaProfile->location ?? '' }}" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark" placeholder="e.g. Bali">
+                        <input type="text" name="location" value="{{ $muaProfile->location ?? '' }}" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark" placeholder="e.g. Bali">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -58,12 +63,12 @@
                     </div>
                     <div>
                         <label class="block text-[13px] font-bold text-dark mb-2">Phone</label>
-                        <input type="tel" value="{{ $user->phone ?? '' }}" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                        <input type="tel" name="phone" value="{{ $user->phone ?? '' }}" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
                     </div>
                 </div>
                 <div>
                     <label class="block text-[13px] font-bold text-dark mb-2">Bio</label>
-                    <textarea rows="4" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark resize-y">{{ $muaProfile->bio ?? '' }}</textarea>
+                    <textarea name="bio" rows="4" class="w-full px-4 py-3 rounded-xl border border-border bg-cream/30 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark resize-y">{{ $muaProfile->bio ?? '' }}</textarea>
                 </div>
 
                 <div>
@@ -103,9 +108,46 @@
                     </button>
                 </div>
 
+                <div>
+                    <label class="block text-[13px] font-bold text-dark mb-3">Add-ons</label>
+                    <div class="space-y-4 mb-4">
+                        <template x-for="(addon, index) in addons" :key="'a'+index">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-4 bg-cream/30 p-4 rounded-xl border border-border">
+                                <div class="flex-1">
+                                    <input type="text" x-model="addon.name" placeholder="Add-on Name" required class="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                                </div>
+                                <div class="flex-1 relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold text-[14px]">Rp</span>
+                                    <input type="number" x-model="addon.price" placeholder="150000" required min="0" class="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all text-[14px] text-dark">
+                                </div>
+                                <button type="button" @click="removeAddon(index)" class="w-11 h-11 shrink-0 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors" title="Remove">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                    <button type="button" @click="addAddon()" class="inline-flex items-center gap-2 bg-cream border border-border hover:border-brand hover:text-brand text-dark px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                        Add New Add-on
+                    </button>
+                </div>
+
+                <div>
+                    <label class="block text-[13px] font-bold text-dark mb-3">Available Booking Hours</label>
+                    <div class="flex flex-wrap gap-3">
+                        <template x-for="h in allHours" :key="h">
+                            <label class="flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer text-[13px] font-medium transition-colors select-none"
+                                   :class="hours.includes(h) ? 'border-brand bg-brand/10 text-brand' : 'border-border text-muted hover:border-brand'">
+                                <input type="checkbox" :value="h" @change="toggleHour(h)" :checked="hours.includes(h)" class="hidden">
+                                <span x-text="h"></span>
+                            </label>
+                        </template>
+                    </div>
+                </div>
+
                 <div class="pt-4 border-t border-border">
                     <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" {{ ($muaProfile && $muaProfile->is_available) ? 'checked' : '' }} class="w-5 h-5 text-emerald-500 border-border rounded focus:ring-emerald-500">
+                        <input type="checkbox" name="is_available" value="1" {{ ($muaProfile && $muaProfile->is_available) ? 'checked' : '' }} class="w-5 h-5 text-emerald-500 border-border rounded focus:ring-emerald-500">
                         <span class="text-[14px] font-bold text-dark group-hover:text-emerald-500 transition-colors">Available for new bookings</span>
                     </label>
                 </div>
@@ -146,46 +188,31 @@ document.querySelectorAll('.style-tag').forEach(el => {
 });
 
 function muaProfile() {
-    let savedPackages = [];
-    let savedPref = 'both';
-    try {
-        savedPackages = JSON.parse(localStorage.getItem('mua_packages'));
-        savedPref = localStorage.getItem('mua_service_pref') || 'both';
-    } catch(e) {}
-
-    if (!savedPackages || !savedPackages.length) {
-        savedPackages = [
-            { name: 'Basic Beauty', price: '500000' },
-            { name: 'Creative Glam', price: '2500000' },
-            { name: 'Signature Bridal', price: '7000000' }
-        ];
-    }
+    let savedPackages = @json($muaProfile->packages ?? [
+        ['name' => 'Basic Beauty', 'price' => 500000],
+        ['name' => 'Creative Glam', 'price' => 2500000]
+    ]);
+    let savedAddons = @json($muaProfile->add_ons ?? [
+        ['name' => 'Hair Styling', 'price' => 150000]
+    ]);
+    let savedHours = @json($muaProfile->available_hours ?? ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00']);
 
     return {
-        toast: false,
-        toastMsg: '',
         packages: savedPackages,
-        servicePref: savedPref,
-
-        addPackage() {
-            this.packages.push({ name: '', price: '' });
-        },
-        removePackage(index) {
-            if (this.packages.length > 1) {
-                this.packages.splice(index, 1);
+        addons: savedAddons,
+        hours: savedHours,
+        allHours: ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00'],
+        addPackage() { this.packages.push({ name: '', price: '' }); },
+        removePackage(i) { if(this.packages.length>1) this.packages.splice(i,1); },
+        addAddon() { this.addons.push({ name: '', price: '' }); },
+        removeAddon(i) { this.addons.splice(i,1); },
+        toggleHour(h) {
+            if (this.hours.includes(h)) {
+                this.hours = this.hours.filter(x => x !== h);
             } else {
-                this.showToast('You must have at least one package.');
+                this.hours.push(h);
             }
-        },
-        saveProfile() {
-            localStorage.setItem('mua_packages', JSON.stringify(this.packages));
-            localStorage.setItem('mua_service_pref', this.servicePref);
-            this.showToast('Profile saved successfully');
-        },
-        showToast(msg) {
-            this.toastMsg = msg;
-            this.toast = true;
-            setTimeout(() => { this.toast = false; }, 2500);
+            this.hours.sort();
         }
     }
 }

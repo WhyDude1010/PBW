@@ -35,7 +35,7 @@
                     <div class="space-y-4 mb-6">
                         <div class="flex justify-between items-start">
                             <span class="text-[14px] text-muted">Artist</span>
-                            <strong class="text-[14px] text-dark">Sarah Wijaya</strong>
+                            <strong class="text-[14px] text-dark">{{ $booking->muaProfile->user->name }}</strong>
                         </div>
                         <div class="flex justify-between items-start">
                             <span class="text-[14px] text-muted">Package</span>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 
-                <a href="{{ route('booking.review') }}" class="inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5 w-full sm:w-auto">
+                <a href="{{ route('booking.review', $booking->id) }}" class="inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5 w-full sm:w-auto">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                     Leave a Review
                 </a>

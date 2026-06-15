@@ -29,15 +29,18 @@ Route::get('/booking/choose-mua', [\App\Http\Controllers\BookingController::clas
 
 // Booking Flow (auth required, clients only)
 Route::prefix('booking')->name('booking.')->middleware(['auth', 'client.only'])->group(function () {
-    Route::get('/select-date', fn() => view('booking.select_date'))->name('select-date');
-    Route::get('/summary', fn() => view('booking.summary'))->name('summary');
-    Route::get('/confirmed', fn() => view('booking.confirmed'))->name('confirmed');
-    Route::get('/countdown', fn() => view('booking.countdown'))->name('countdown');
-    Route::get('/tracking', fn() => view('booking.tracking'))->name('tracking');
-    Route::get('/done', fn() => view('booking.done'))->name('done');
-    Route::get('/payment', fn() => view('booking.payment'))->name('payment');
-    Route::get('/review', fn() => view('booking.review'))->name('review');
-    Route::get('/completion', fn() => view('booking.completion'))->name('completion');
+    Route::get('/select-date/{mua}', [\App\Http\Controllers\BookingController::class, 'selectDate'])->name('select-date');
+    Route::get('/summary/{mua}', [\App\Http\Controllers\BookingController::class, 'summary'])->name('summary');
+    Route::post('/bookings/store/{mua}', [\App\Http\Controllers\BookingController::class, 'store'])->name('store');
+    Route::get('/transfer/{booking}', [\App\Http\Controllers\BookingController::class, 'transfer'])->name('transfer');
+    Route::post('/transfer/{booking}/confirm', [\App\Http\Controllers\BookingController::class, 'confirmTransfer'])->name('transfer.confirm');
+    Route::get('/confirmed/{booking}', [\App\Http\Controllers\BookingController::class, 'confirmed'])->name('confirmed');
+    Route::get('/countdown/{booking}', [\App\Http\Controllers\BookingController::class, 'countdown'])->name('countdown');
+    Route::get('/tracking/{booking}', [\App\Http\Controllers\BookingController::class, 'tracking'])->name('tracking');
+    Route::get('/done/{booking}', [\App\Http\Controllers\BookingController::class, 'done'])->name('done');
+    Route::get('/payment/{booking}', [\App\Http\Controllers\BookingController::class, 'payment'])->name('payment');
+    Route::get('/review/{booking}', [\App\Http\Controllers\BookingController::class, 'review'])->name('review');
+    Route::get('/completion/{booking}', [\App\Http\Controllers\BookingController::class, 'completion'])->name('completion');
 });
 
 // Admin Login
@@ -88,6 +91,7 @@ Route::prefix('mua')->name('mua.')->middleware(['auth', 'role:mua'])->group(func
     Route::get('/bookings', [\App\Http\Controllers\Mua\BookingController::class, 'index'])->name('bookings');
     Route::patch('/bookings/{booking}/status', [\App\Http\Controllers\Mua\BookingController::class, 'updateStatus'])->name('bookings.status');
     Route::get('/profile', [\App\Http\Controllers\Mua\ProfileController::class, 'index'])->name('profile');
+    Route::put('/profile', [\App\Http\Controllers\Mua\ProfileController::class, 'update'])->name('profile.update');
     Route::get('/reviews', [\App\Http\Controllers\Mua\ReviewController::class, 'index'])->name('reviews');
     Route::get('/schedule', [\App\Http\Controllers\Mua\ScheduleController::class, 'index'])->name('schedule');
 });

@@ -12,7 +12,7 @@
             </div>
             
             <h1 class="font-serif text-[32px] lg:text-[40px] font-bold text-dark leading-tight mb-4">Booking Confirmed</h1>
-            <p class="text-[15px] text-muted max-w-md mx-auto mb-10 leading-relaxed">Your payment was successful and your appointment with Sarah Wijaya is now locked in.</p>
+            <p class="text-[15px] text-muted max-w-md mx-auto mb-10 leading-relaxed">Your payment was successful and your appointment with {{ $booking->muaProfile->user->name }} is now locked in.</p>
             
             <div class="bg-cream rounded-2xl p-6 lg:p-8 text-left mb-10">
                 <div class="flex justify-between items-center pb-4 border-b border-border mb-4">
@@ -25,20 +25,20 @@
                 </div>
                 <div class="flex justify-between items-center pb-4 border-b border-border mb-4">
                     <span class="text-[14px] text-muted">Artist</span>
-                    <strong class="text-[14px] text-dark">Sarah Wijaya</strong>
+                    <strong class="text-[14px] text-dark">{{ $booking->muaProfile->user->name }}</strong>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-[14px] text-muted">Date &amp; Time</span>
-                    <strong class="text-[14px] text-dark">10 May 2026 &middot; 09:00</strong>
+                    <strong class="text-[14px] text-dark">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }} &middot; {{ $booking->booking_time }}</strong>
                 </div>
             </div>
 
             <div class="flex items-start gap-3 p-5 bg-brand/10 rounded-xl mb-10 text-left">
                 <svg class="mt-0.5 text-brand shrink-0" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <p class="text-[14px] text-brand-dark leading-relaxed"><strong>Pro Tip:</strong> Please ensure you are ready 15 minutes before the scheduled time. The remaining balance (Rp 275.000) will be paid after the service is completed.</p>
+                <p class="text-[14px] text-brand-dark leading-relaxed"><strong>Pro Tip:</strong> Please ensure you are ready 15 minutes before the scheduled time. The remaining balance (Rp {{ number_format($booking->amount / 2, 0, ',', '.') }}) will be paid after the service is completed.</p>
             </div>
             
-            <a href="{{ route('booking.countdown') }}" class="inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5 w-full sm:w-auto">
+            <a href="{{ route('booking.countdown', $booking->id) }}" class="inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5 w-full sm:w-auto">
                 View Booking Countdown
                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
             </a>

@@ -8,7 +8,7 @@
         <!-- Header & Stepper -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
             <div class="flex items-center gap-4">
-                <a href="{{ route('booking.confirmed') }}" class="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center text-dark hover:border-brand hover:text-brand transition-all shrink-0">
+                <a href="{{ route('booking.confirmed', $booking->id) }}" class="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center text-dark hover:border-brand hover:text-brand transition-all shrink-0">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                 </a>
                 <div>
@@ -57,7 +57,7 @@
                 <p class="text-[14px] text-muted font-medium uppercase tracking-wider">until artist arrives</p>
 
                 <div class="mt-12 w-full">
-                    <a href="{{ route('booking.tracking') }}" class="w-full flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
+                    <a href="{{ route('booking.tracking', $booking->id) }}" class="w-full flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
                         Go to Live Tracking
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
                     </a>
@@ -71,15 +71,15 @@
                 <div class="space-y-4 mb-8">
                     <div class="flex justify-between items-start pb-4 border-b border-border">
                         <span class="text-[14px] text-muted">Booked On</span>
-                        <strong class="text-[14px] text-dark">Today, 7 May 2026</strong>
+                        <strong class="text-[14px] text-dark">{{ $booking->created_at->format('D, d M Y') }}</strong>
                     </div>
                     <div class="flex justify-between items-start pb-4 border-b border-border">
                         <span class="text-[14px] text-muted">Appointment Date</span>
-                        <strong class="text-[14px] text-dark">10 May 2026 &middot; 09:00</strong>
+                        <strong class="text-[14px] text-dark">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }} &middot; {{ $booking->booking_time }}</strong>
                     </div>
                     <div class="flex justify-between items-start pb-4 border-b border-border">
                         <span class="text-[14px] text-muted">Artist</span>
-                        <strong class="text-[14px] text-dark">Sarah Wijaya</strong>
+                        <strong class="text-[14px] text-dark">{{ $booking->muaProfile->user->name }}</strong>
                     </div>
                     <div class="flex justify-between items-start pb-4 border-b border-border">
                         <span class="text-[14px] text-muted">Service Type</span>
@@ -90,7 +90,7 @@
                 <div class="bg-cream rounded-xl p-5 mb-6">
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-[14px] text-muted">Service Fee</span>
-                        <strong class="text-[14px] text-dark">Rp 500.000</strong>
+                        <strong class="text-[14px] text-dark">Rp {{ number_format($booking->amount - 50000, 0, ',', '.') }}</strong>
                     </div>
                     <div class="flex justify-between items-center mb-4 pb-4 border-b border-border">
                         <span class="text-[14px] text-muted">Home Service Fee</span>
@@ -98,7 +98,7 @@
                     </div>
                     <div class="flex justify-between items-end">
                         <span class="text-[15px] font-bold text-dark">Total Amount</span>
-                        <strong class="text-[18px] font-bold text-brand">Rp 550.000</strong>
+                        <strong class="text-[18px] font-bold text-brand">Rp {{ number_format($booking->amount, 0, ',', '.') }}</strong>
                     </div>
                 </div>
 
@@ -123,7 +123,10 @@
 @push('scripts')
 <script>
 // Countdown to appointment date
-const appt = new Date('2026-05-10T09:00:00');
+@php
+    $apptDateTime = \Carbon\Carbon::parse($booking->booking_date . ' ' . $booking->booking_time)->toIso8601String();
+@endphp
+const appt = new Date('{{ $apptDateTime }}');
 function updateCd() {
     const diff = appt - Date.now();
     if(diff <= 0) {

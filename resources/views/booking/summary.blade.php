@@ -8,7 +8,7 @@
         <!-- Header & Stepper -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
             <div class="flex items-center gap-4">
-                <a href="{{ route('booking.select-date') }}" class="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center text-dark hover:border-brand hover:text-brand transition-all shrink-0">
+                <a href="javascript:history.back()" class="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center text-dark hover:border-brand hover:text-brand transition-all shrink-0">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                 </a>
                 <div>
@@ -109,10 +109,17 @@
                         <p class="text-[13.5px] text-brand-dark leading-relaxed">Confirmation is automatic after payment verification. Your artist will be notified immediately.</p>
                     </div>
 
-                    <a href="{{ route('booking.confirmed') }}" id="confirm-btn" class="w-full inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
-                        Confirm &amp; Pay Rp 275.000
-                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                    </a>
+                    <form id="booking-form" action="{{ route('booking.store', $mua->id) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="booking_date" id="form_booking_date">
+                        <input type="hidden" name="booking_time" id="form_booking_time">
+                        <input type="hidden" name="package" id="form_package">
+                        <input type="hidden" name="amount" id="form_amount">
+                        <button type="submit" id="confirm-btn" class="w-full inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold text-[15px] transition-all hover:shadow-[0_8px_20px_rgba(199,155,132,0.3)] hover:-translate-y-0.5">
+                            Confirm &amp; Pay Rp 275.000
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -121,12 +128,16 @@
                 <div class="bg-white rounded-2xl border border-border p-6 lg:p-8 shadow-sm sticky top-24">
                     
                     <div class="flex items-center gap-4 mb-6 pb-6 border-b border-border">
-                        <img src="{{ asset('image/model-mua.jpeg') }}" alt="MUA" class="w-16 h-16 rounded-full object-cover border-2 border-cream">
+                        @if($mua->user->photo)
+                            <img src="{{ asset('storage/' . $mua->user->photo) }}" alt="{{ $mua->user->name }}" class="w-16 h-16 rounded-full object-cover border-2 border-cream">
+                        @else
+                            <div class="w-16 h-16 rounded-full bg-brand/20 flex items-center justify-center font-bold text-brand text-xl border-2 border-cream">{{ substr($mua->user->name, 0, 1) }}</div>
+                        @endif
                         <div>
-                            <h3 class="font-bold text-[18px] text-dark">Sarah Wijaya</h3>
+                            <h3 class="font-bold text-[18px] text-dark">{{ $mua->user->name }}</h3>
                             <p class="text-[13px] text-muted flex items-center gap-1 mt-1">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--color-amber-500)" stroke="var(--color-amber-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                                <span class="font-bold text-dark">4.9</span> &middot; Bali
+                                <span class="font-bold text-dark">{{ number_format($mua->reviews()->avg('rating') ?? 0, 1) ?: '-' }}</span> &middot; {{ $mua->location }}
                             </p>
                         </div>
                     </div>
@@ -246,8 +257,39 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('sum-total').textContent = formatRupiah(data.total);
             
             document.getElementById('confirm-btn').innerHTML = 'Confirm &amp; Pay ' + formatRupiah(data.dp) + ' <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>';
+            
+            document.getElementById('form_booking_date').value = data.date;
+            document.getElementById('form_booking_time').value = data.time;
+            document.getElementById('form_package').value = data.pkgName;
+            document.getElementById('form_amount').value = data.total;
         }
     } catch(e) {}
+    
+    document.getElementById('booking-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var form = this;
+        var btn = document.getElementById('confirm-btn');
+        btn.innerHTML = 'Processing...';
+        btn.disabled = true;
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            } else {
+                alert('An error occurred. Please try again.');
+                btn.innerHTML = 'Confirm & Pay';
+                btn.disabled = false;
+            }
+        });
+    });
 });
 </script>
 @endpush

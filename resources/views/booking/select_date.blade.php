@@ -104,27 +104,26 @@
                             <div>
                                 <h3 class="text-[13px] font-bold text-muted uppercase tracking-wider mb-4">Morning</h3>
                                 <div class="grid grid-cols-3 gap-3 mb-6">
-                                    <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all"
-                                        onclick="selectSlot(this)">08:00</div>
-                                    <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all"
-                                        onclick="selectSlot(this)">09:00</div>
-                                    <div
-                                        class="slot unavailable px-2 py-2.5 border border-transparent bg-cream rounded-xl text-center text-[13.5px] font-bold text-muted/40 cursor-not-allowed line-through">
-                                        10:00</div>
-                                    <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all"
-                                        onclick="selectSlot(this)">11:00</div>
+                                    @php $hours = $mua->available_hours ?? ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00']; @endphp
+                                    @foreach($hours as $slot)
+                                        @if((int)substr($slot, 0, 2) < 12)
+                                        <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all" onclick="selectSlot(this)">{{ $slot }}</div>
+                                        @endif
+                                    @endforeach
+                                    @if(!collect($hours)->contains(fn($s) => (int)substr($s, 0, 2) < 12))
+                                        <div class="col-span-3 text-[13px] text-muted text-center py-2">No morning slots available</div>
+                                    @endif
                                 </div>
                                 <h3 class="text-[13px] font-bold text-muted uppercase tracking-wider mb-4">Afternoon</h3>
                                 <div class="grid grid-cols-3 gap-3 mb-6">
-                                    <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all"
-                                        onclick="selectSlot(this)">13:00</div>
-                                    <div
-                                        class="slot unavailable px-2 py-2.5 border border-transparent bg-cream rounded-xl text-center text-[13.5px] font-bold text-muted/40 cursor-not-allowed line-through">
-                                        14:00</div>
-                                    <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all"
-                                        onclick="selectSlot(this)">15:00</div>
-                                    <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all"
-                                        onclick="selectSlot(this)">16:00</div>
+                                    @foreach($hours as $slot)
+                                        @if((int)substr($slot, 0, 2) >= 12)
+                                        <div class="slot px-2 py-2.5 border border-border rounded-xl text-center text-[13.5px] font-bold text-muted cursor-pointer hover:border-brand hover:text-brand transition-all" onclick="selectSlot(this)">{{ $slot }}</div>
+                                        @endif
+                                    @endforeach
+                                    @if(!collect($hours)->contains(fn($s) => (int)substr($s, 0, 2) >= 12))
+                                        <div class="col-span-3 text-[13px] text-muted text-center py-2">No afternoon slots available</div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -202,22 +201,21 @@
 
                     <!-- STEP 2B: Studio Service -->
                     <div id="step-2-studio" class="hidden">
-                        <div class="rounded-xl overflow-hidden mb-6 h-48 lg:h-64">
-                            <img src="{{ asset('image/about-mua.jpeg') }}" alt="Studio" class="w-full h-full object-cover">
+                        <div class="rounded-xl overflow-hidden mb-6 h-48 lg:h-64 relative">
+                            @if($mua->user->photo)
+                                <img src="{{ asset('storage/' . $mua->user->photo) }}" alt="Studio" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full bg-brand/20 flex items-center justify-center">
+                                    <span class="text-brand font-bold text-xl">{{ $mua->user->name }}</span>
+                                </div>
+                            @endif
                         </div>
-                        <h4 class="text-[20px] font-bold text-dark mb-2">Sarah Wijaya Studio</h4>
+                        <h4 class="text-[20px] font-bold text-dark mb-2">{{ $mua->user->name }} Studio</h4>
                         <p class="text-[14px] text-muted flex items-center gap-1.5 mb-2">
-                            <svg width="16" height="16" fill="none" stroke="var(--color-brand)" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
-                                </path>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z">
-                                </path>
-                            </svg>
-                            Jl. Raya Seminyak 88, Bali
+                            <svg width="16" height="16" fill="none" stroke="var(--color-brand)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            {{ $mua->location }}
                         </p>
-                        <p class="text-[14px] text-muted mb-8">⭐ 4.9 &middot; Studio visit available</p>
+                        <p class="text-[14px] text-muted mb-8">&middot; Studio visit available</p>
 
                         <div class="bg-cream rounded-xl p-6">
                             <div class="flex justify-between items-center py-3 border-b border-border">
@@ -243,26 +241,33 @@
                                 <label class="block text-[13.5px] font-bold text-dark mb-2">Package</label>
                                 <select id="package-select" onchange="updateSummary()"
                                     class="w-full px-4 py-3.5 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark">
-                                    <option value="500000" data-name="Basic Beauty">Basic Beauty (Rp 500.000)</option>
-                                    <option value="2500000" data-name="Creative Glam">Creative Glam (Rp 2.500.000)</option>
-                                    <option value="7000000" data-name="Signature Bridal">Signature Bridal (Rp 7.000.000)</option>
+                                    @php $packages = $mua->packages ?? [['name' => 'Basic Beauty', 'price' => 500000]]; @endphp
+                                    @foreach($packages as $pkg)
+                                    <option value="{{ $pkg['price'] }}" data-name="{{ $pkg['name'] }}">{{ $pkg['name'] }} (Rp {{ number_format($pkg['price'], 0, ',', '.') }})</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-[13.5px] font-bold text-dark mb-2">Makeup Style</label>
-                                <select
-                                    class="w-full px-4 py-3.5 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark">
-                                    <option>Natural</option>
-                                    <option>Korean Dewy</option>
-                                    <option>Soft Glam</option>
-                                    <option>Full Glam</option>
-                                    <option>Bold / Latina</option>
+                                <select class="w-full px-4 py-3.5 bg-cream border border-transparent rounded-xl focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-[14.5px] text-dark">
+                                    @foreach($mua->styles ?? ['Natural', 'Party'] as $style)
+                                    <option>{{ $style }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div id="addons-section">
                                 <label class="block text-[13.5px] font-bold text-dark mb-3">Add-on Services</label>
                                 <div class="space-y-3" id="addons-container">
-                                    <!-- Dynamic content here -->
+                                    @php $addons = $mua->add_ons ?? []; @endphp
+                                    @foreach($addons as $addon)
+                                    <label class="flex items-center justify-between p-4 bg-white border border-border rounded-xl cursor-pointer hover:border-brand transition-colors">
+                                        <div class="flex items-center gap-3">
+                                            <input type="checkbox" value="{{ $addon['price'] }}" onchange="updateSummary()" class="addon-checkbox w-4 h-4 rounded border-border text-brand focus:ring-brand bg-cream">
+                                            <span class="text-[14.5px] font-semibold text-dark">{{ $addon['name'] }}</span>
+                                        </div>
+                                        <span class="text-[13px] font-bold text-brand">+Rp {{ number_format($addon['price'], 0, ',', '.') }}</span>
+                                    </label>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -285,10 +290,13 @@
                 <div class="lg:col-span-5 xl:col-span-4">
                     <div class="bg-white rounded-2xl border border-border p-6 shadow-sm sticky top-24">
                         <div class="flex items-center gap-4 mb-6 pb-6 border-b border-border">
-                            <img src="{{ asset('image/model-mua.jpeg') }}" alt="MUA"
-                                class="w-16 h-16 rounded-full object-cover">
+                            @if($mua->user->photo)
+                                <img src="{{ asset('storage/' . $mua->user->photo) }}" alt="{{ $mua->user->name }}" class="w-16 h-16 rounded-full object-cover">
+                            @else
+                                <div class="w-16 h-16 rounded-full bg-brand/20 flex items-center justify-center font-bold text-brand text-xl">{{ substr($mua->user->name, 0, 1) }}</div>
+                            @endif
                             <div>
-                                <h3 class="font-bold text-[16px] text-dark">Sarah Wijaya</h3>
+                                <h3 class="font-bold text-[16px] text-dark">{{ $mua->user->name }}</h3>
                                 <p class="text-[13px] text-muted">Professional Artist</p>
                             </div>
                         </div>
@@ -372,9 +380,9 @@
     <script>
         let currentStep = 1, serviceType = 'home', selectedDay = null, selectedSlotEl = null;
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        let viewDate = new Date(2026, 4, 1);
+        let viewDate = new Date();
 
-        const allTimeSlots = ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00'];
+        const allTimeSlots = @json($hours);
 
         const bookedSlots = {
             '2026-05-10': ['09:00'],
@@ -572,7 +580,7 @@
                     dp: (pkgPrice + addonsPrice + 50000) / 2
                 };
                 localStorage.setItem('current_booking', JSON.stringify(bookingData));
-                window.location.href = '{{ route("booking.summary") }}';
+                window.location.href = '{{ route("booking.summary", $mua->id) }}';
             }
         }
 
@@ -625,46 +633,7 @@
         }
 
         function loadServices() {
-            var select = document.getElementById('package-select');
-            try {
-                var savedPkgs = JSON.parse(localStorage.getItem('mua_packages'));
-                if (savedPkgs && savedPkgs.length > 0) {
-                    select.innerHTML = '';
-                    savedPkgs.forEach(function(pkg) {
-                        var opt = document.createElement('option');
-                        opt.value = pkg.price;
-                        opt.dataset.name = pkg.name;
-                        opt.textContent = pkg.name + ' (' + formatRupiah(pkg.price) + ')';
-                        select.appendChild(opt);
-                    });
-                }
-            } catch(e) {}
-
-            var container = document.getElementById('addons-container');
-            var addonsSection = document.getElementById('addons-section');
-            try {
-                var savedAddons = JSON.parse(localStorage.getItem('mua_addons'));
-                if (savedAddons && savedAddons.length > 0) {
-                    addonsSection.classList.remove('hidden');
-                    container.innerHTML = '';
-                    savedAddons.forEach(function(addon) {
-                        var label = document.createElement('label');
-                        label.className = 'flex items-center justify-between p-4 bg-white border border-border rounded-xl cursor-pointer hover:border-brand transition-colors';
-                        label.innerHTML = `
-                            <div class="flex items-center gap-3">
-                                <input type="checkbox" value="${addon.price}" onchange="updateSummary()"
-                                    class="addon-checkbox w-4 h-4 rounded border-border text-brand focus:ring-brand bg-cream">
-                                <span class="text-[14.5px] font-semibold text-dark">${addon.name}</span>
-                            </div>
-                            <span class="text-[13px] font-bold text-brand">+${formatRupiah(addon.price)}</span>
-                        `;
-                        container.appendChild(label);
-                    });
-                } else {
-                    addonsSection.classList.add('hidden');
-                    container.innerHTML = '';
-                }
-            } catch(e) {}
+            // Replaced by Blade static rendering
         }
 
         function updateSummary() {
